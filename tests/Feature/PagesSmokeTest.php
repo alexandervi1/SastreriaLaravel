@@ -71,6 +71,9 @@ class PagesSmokeTest extends TestCase
         $producto = Producto::firstOrFail();
 
         $this->get(route('home'))->assertOk();
+        $this->get(route('ayuda'))->assertOk();
+        $this->get(route('politicas'))->assertOk();
+        $this->get(route('terminos'))->assertOk();
         $this->get(route('productos.show', $producto->slug))->assertOk();
         $this->get(route('categorias.show', $producto->categoria_id))->assertOk();
 

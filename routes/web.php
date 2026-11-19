@@ -16,6 +16,8 @@ use App\Http\Controllers\Admin\ConfiguracionController as AdminConfiguracionCont
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/quienes-somos', [HomeController::class, 'quienesSomos'])->name('quienes.somos');
 Route::get('/ayuda', [HomeController::class, 'ayuda'])->name('ayuda');
+Route::get('/politicas', [HomeController::class, 'politicas'])->name('politicas');
+Route::get('/terminos', [HomeController::class, 'terminos'])->name('terminos');
 
 
 
@@ -72,6 +74,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('productos.variantes', \App\Http\Controllers\Admin\VarianteController::class)
         ->parameters(['variantes' => 'variante'])
         ->only(['store', 'update', 'destroy']);
+
+    // Galería de imágenes
+    Route::post('/productos/{producto}/imagenes', [\App\Http\Controllers\Admin\ProductoImagenController::class, 'store'])->name('productos.imagenes.store');
+    Route::put('/productos/{producto}/imagenes/{imagen}', [\App\Http\Controllers\Admin\ProductoImagenController::class, 'update'])->name('productos.imagenes.update');
+    Route::put('/productos/{producto}/imagenes/{imagen}/mover/{direccion}', [\App\Http\Controllers\Admin\ProductoImagenController::class, 'mover'])->name('productos.imagenes.mover');
+    Route::put('/productos/{producto}/imagenes/{imagen}/portada', [\App\Http\Controllers\Admin\ProductoImagenController::class, 'portada'])->name('productos.imagenes.portada');
+    Route::delete('/productos/{producto}/imagenes/{imagen}', [\App\Http\Controllers\Admin\ProductoImagenController::class, 'destroy'])->name('productos.imagenes.destroy');
 
     // CRUD de Categorías
     Route::resource('categorias', \App\Http\Controllers\Admin\CategoriaController::class)->except(['create', 'show', 'edit']);

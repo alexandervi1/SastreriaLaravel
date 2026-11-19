@@ -34,7 +34,15 @@ class HomeController extends Controller
         }
         
         $productos = $query->get();
-        return view('home', compact('productos', 'categorias', 'categoria_actual'));
+
+        $destacados = Producto::with('categoria')
+            ->where('activo', true)
+            ->where('destacado', true)
+            ->orderBy('nombre')
+            ->take(4)
+            ->get();
+
+        return view('home', compact('productos', 'categorias', 'categoria_actual', 'destacados'));
     }
 
     public function quienesSomos()
@@ -45,5 +53,15 @@ class HomeController extends Controller
     public function ayuda()
     {
         return view('pages.ayuda');
+    }
+
+    public function politicas()
+    {
+        return view('pages.politicas');
+    }
+
+    public function terminos()
+    {
+        return view('pages.terminos');
     }
 }

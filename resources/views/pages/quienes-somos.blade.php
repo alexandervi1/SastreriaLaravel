@@ -1,34 +1,35 @@
 @extends('layouts.app')
 
-@section('title', 'Quiénes Somos')
+@section('title', 'Quiénes somos')
 
 @section('content')
-<div class="row align-items-center mb-5 my-5">
-    <div class="col-md-6 order-md-2">
-        <h2 class="display-5 fw-bold text-info mb-4">Comercial de Mariscos "Don Walter"</h2>
-        <p class="lead">Somos una empresa familiar con más de 20 años de experiencia ofreciendo los productos del mar más frescos y de la más alta calidad.</p>
-        <p>Trabajamos directamente con pescadores artesanales para asegurar que cada producto que llega a su mesa cumpla con nuestros estrictos estándares de frescura, responsabilidad ecológica y precio justo.</p>
-        
-        <div class="row mt-5 text-center g-4">
-            <div class="col-6">
-                <i class="fas fa-anchor fa-3x text-primary mb-3"></i>
-                <h5 class="fw-bold">Calidad</h5>
-                <p class="text-muted small">Seleccionamos a mano lo mejor del día.</p>
+<div class="row g-5 align-items-center">
+    <div class="col-lg-6">
+        <h1 class="display-5 fw-bold mb-3">Una sastrería de oficio</h1>
+        <p class="lead text-muted">
+            [COMPLETAR: historia de la sastre, años de oficio, foto del taller]
+        </p>
+        <p class="text-muted">
+            Cada terno se corta y ajusta a la persona que lo va a usar. Trabajamos con telas seleccionadas y tiempos de confección claros, para que llegues a la ocasión con un traje que se sienta tuyo.
+        </p>
+        <div class="row g-3 mt-4">
+            <div class="col-sm-6">
+                <div class="border rounded-4 p-3 h-100 bg-white">
+                    <h2 class="h6 fw-bold">Confección a medida</h2>
+                    <p class="small text-muted mb-0">Tela, medidas y pruebas en el taller.</p>
+                </div>
             </div>
-            <div class="col-6">
-                <i class="fas fa-truck-fast fa-3x text-primary mb-3"></i>
-                <h5 class="fw-bold">Frescura</h5>
-                <p class="text-muted small">Del mar al mostrador en horas.</p>
+            <div class="col-sm-6">
+                <div class="border rounded-4 p-3 h-100 bg-white">
+                    <h2 class="h6 fw-bold">Asesoría personal</h2>
+                    <p class="small text-muted mb-0">Te acompañamos en corte, color y ocasión.</p>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-6 order-md-1 position-relative pe-md-5">
-        <img src="{{ asset('img/placeholder.svg') }}" class="img-fluid rounded-4 shadow-lg w-100" alt="Imagen">
-        <div class="position-absolute bottom-0 end-0 bg-white p-4 rounded-top-left-4 pe-md-5 shadow-sm d-none d-md-block" style="border-top-left-radius: 2rem;">
-            <p class="fs-4 fw-bold text-dark mb-0 align-items-center d-flex">
-                <i class="fas fa-star text-warning me-2"></i> Tradición Familiar
-            </p>
-        </div>
+    <div class="col-lg-6">
+        <img src="{{ asset('img/placeholder.svg') }}" alt="Taller de sastrería" class="img-fluid rounded-4 shadow-sm w-100">
+        <p class="small text-muted mt-2 mb-0">[COMPLETAR: foto real del taller]</p>
     </div>
 </div>
 @endsection

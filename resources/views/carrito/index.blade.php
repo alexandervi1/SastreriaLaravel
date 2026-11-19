@@ -139,7 +139,7 @@
                             <i class="fas fa-check-circle me-2"></i> Confirmar Pedido
                         </button>
                         <p class="text-muted small text-center mt-3 mb-0">
-                            Al confirmar aceptas las <a href="{{ route('ayuda') }}">políticas de cambios y devoluciones</a>.
+                            Al confirmar aceptas las <a href="{{ route('politicas') }}">políticas de cambios y devoluciones</a>.
                         </p>
                     </form>
                     
