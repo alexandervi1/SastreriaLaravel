@@ -37,7 +37,9 @@
                                             <img src="{{ asset($linea->producto->imagen_url ?? 'img/placeholder.svg') }}" class="rounded-3 me-3 object-fit-cover" style="width: 50px; height: 50px;" alt="{{ $linea->producto_nombre }}">
                                             <div>
                                                 <span class="fw-bold d-block">{{ $linea->producto_nombre }}</span>
-                                                @if($linea->talla || $linea->color)
+                                                @if($linea->tipo === 'medida')
+                                                    <small class="text-muted">A medida @if($linea->tela_nombre) · {{ $linea->tela_nombre }}@endif</small>
+                                                @elseif($linea->talla || $linea->color)
                                                     <small class="text-muted">{{ $linea->talla }}@if($linea->color) · {{ $linea->color }}@endif</small>
                                                 @endif
                                             </div>

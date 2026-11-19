@@ -10,7 +10,12 @@ class Carrito extends Model
     protected $primaryKey = 'carrito_id';
     public $timestamps = false;
 
-    protected $fillable = ['usuario_id', 'producto_id', 'variante_id', 'cantidad'];
+    protected $fillable = ['usuario_id', 'producto_id', 'variante_id', 'tipo', 'tela_id', 'medida_id', 'requiere_cita', 'notas', 'cantidad'];
+
+    protected $casts = [
+        'requiere_cita' => 'boolean',
+        'cantidad' => 'integer',
+    ];
 
     /** @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Usuario, $this> */
     public function usuario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -28,6 +33,18 @@ class Carrito extends Model
     public function variante(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(ProductoVariante::class, 'variante_id', 'variante_id');
+    }
+
+    /** @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Tela, $this> */
+    public function tela(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Tela::class, 'tela_id', 'tela_id');
+    }
+
+    /** @return \Illuminate\Database\Eloquent\Relations\BelongsTo<MedidaCliente, $this> */
+    public function medida(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(MedidaCliente::class, 'medida_id', 'medida_id');
     }
 
     /**

@@ -28,41 +28,55 @@ class OrderService
     public function processOrder(Usuario $usuario): Pedido
     {
         return DB::transaction(function () use ($usuario) {
-            $items = Carrito::with('producto')->where('usuario_id', $usuario->usuario_id)->get();
+            $items = Carrito::with(['producto', 'variante', 'tela', 'medida'])
+                ->where('usuario_id', $usuario->usuario_id)
+                ->get();
 
             if ($items->isEmpty()) {
                 throw new RuntimeException('El carrito está vacío.');
             }
 
-            $ids = $items->pluck('variante_id')->filter()->unique();
+            $idsTalla = $items->where('tipo', 'talla')->pluck('variante_id')->filter()->unique();
 
-            if ($ids->count() !== $items->count()) {
+            if ($idsTalla->count() !== $items->where('tipo', 'talla')->count()) {
                 throw new RuntimeException('Una de las tallas del carrito ya no está disponible. Vuelve a elegirla.');
             }
 
             // Bloquea las variantes para que dos checkouts simultáneos no sobrevendan.
-            $variantes = ProductoVariante::whereIn('variante_id', $ids)
+            $variantes = ProductoVariante::whereIn('variante_id', $idsTalla)
                 ->lockForUpdate()
                 ->get()
                 ->keyBy('variante_id');
 
             $subtotal = 0.0;
+            $precios = [];
 
             foreach ($items as $item) {
-                $variante = $variantes->get($item->variante_id);
                 $producto = $item->producto;
 
-                if (! $variante || ! $producto || ! $variante->activo) {
-                    throw new RuntimeException('Una de las tallas del carrito ya no está disponible. Vuelve a elegirla.');
+                if (! $producto) {
+                    throw new RuntimeException('Uno de los productos del carrito ya no está disponible.');
                 }
 
-                if ($item->cantidad > $variante->stock) {
-                    throw new RuntimeException(
-                        "Stock insuficiente para {$producto->nombre} talla {$variante->talla}: disponible {$variante->stock}, solicitado {$item->cantidad}."
-                    );
+                if ($item->tipo === 'medida') {
+                    $this->validarMedida($item, $usuario);
+                } else {
+                    $variante = $variantes->get($item->variante_id);
+
+                    if (! $variante || ! $variante->activo) {
+                        throw new RuntimeException('Una de las tallas del carrito ya no está disponible. Vuelve a elegirla.');
+                    }
+
+                    if ($item->cantidad > $variante->stock) {
+                        throw new RuntimeException(
+                            "Stock insuficiente para {$producto->nombre} talla {$variante->talla}: disponible {$variante->stock}, solicitado {$item->cantidad}."
+                        );
+                    }
                 }
 
-                $subtotal += $item->cantidad * (float) $producto->precio;
+                $precio = $this->pricing->precioLinea($producto, $item->tela, $item->tipo);
+                $precios[$item->carrito_id] = $precio;
+                $subtotal += $item->cantidad * $precio;
             }
 
             $totales = $this->pricing->desglosar($subtotal);
@@ -82,29 +96,65 @@ class OrderService
             $pedido->save();
 
             foreach ($items as $item) {
-                $variante = $variantes->get($item->variante_id);
                 $producto = $item->producto;
-                $precio = (float) $producto->precio;
+                $precio = $precios[$item->carrito_id];
+                $variante = $item->tipo === 'talla' ? $variantes->get($item->variante_id) : null;
 
                 PedidoLinea::create([
                     'pedido_id' => $pedido->pedido_id,
                     'producto_id' => $producto->producto_id,
-                    'variante_id' => $variante->variante_id,
+                    'variante_id' => $variante?->variante_id,
+                    'tipo' => $item->tipo,
+                    'tela_id' => $item->tela_id,
+                    'tela_nombre' => $item->tela?->nombre,
+                    'medidas' => $item->tipo === 'medida' ? $item->medida?->comoArreglo() : null,
+                    'requiere_cita' => $item->requiere_cita,
+                    'notas' => $item->notas,
                     'producto_nombre' => $producto->nombre,
-                    'talla' => $variante->talla,
-                    'color' => $variante->color,
+                    'talla' => $variante?->talla,
+                    'color' => $variante?->color,
                     'cantidad' => $item->cantidad,
                     'precio_unitario' => $precio,
                     'subtotal' => round($item->cantidad * $precio, 2),
                 ]);
 
-                $variante->descontarStock((int) $item->cantidad);
+                if ($variante) {
+                    $variante->descontarStock((int) $item->cantidad);
+                }
             }
 
             Carrito::where('usuario_id', $usuario->usuario_id)->delete();
 
             return $pedido->fresh();
         });
+    }
+
+    /**
+     * Valida que el encargo a medida siga siendo realizable.
+     *
+     * @throws \RuntimeException
+     */
+    private function validarMedida(Carrito $item, Usuario $usuario): void
+    {
+        if (! $item->producto->vende_a_medida) {
+            throw new RuntimeException("{$item->producto->nombre} ya no se confecciona a medida.");
+        }
+
+        if (! $item->tela || ! $item->tela->activo) {
+            throw new RuntimeException('La tela elegida ya no está disponible. Elige otra.');
+        }
+
+        if ($item->requiere_cita) {
+            return;
+        }
+
+        if (! $item->medida || $item->medida->usuario_id !== $usuario->usuario_id) {
+            throw new RuntimeException('El perfil de medidas elegido ya no está disponible.');
+        }
+
+        if (! $item->medida->tieneMedidasMinimas()) {
+            throw new RuntimeException('El perfil de medidas está incompleto. Completa las medidas o pide tomarlas en el taller.');
+        }
     }
 
     /**
@@ -125,16 +175,18 @@ class OrderService
                 throw new RuntimeException("No se puede cancelar un pedido en estado {$bloqueado->estado}.");
             }
 
-            $lineas = PedidoLinea::where('pedido_id', $bloqueado->pedido_id)->get();
+            $lineas = PedidoLinea::where('pedido_id', $bloqueado->pedido_id)
+                ->whereNotNull('variante_id')
+                ->get();
 
             // Mismo bloqueo que processOrder: evita que un checkout simultáneo pise la reposición.
-            $variantes = ProductoVariante::whereIn('variante_id', $lineas->pluck('variante_id')->filter()->unique())
+            $variantes = ProductoVariante::whereIn('variante_id', $lineas->pluck('variante_id')->unique())
                 ->lockForUpdate()
                 ->get()
                 ->keyBy('variante_id');
 
             foreach ($lineas as $linea) {
-                $variante = $linea->variante_id ? $variantes->get($linea->variante_id) : null;
+                $variante = $variantes->get($linea->variante_id);
 
                 // La variante pudo borrarse; la cancelación no debe fallar por eso.
                 if ($variante) {

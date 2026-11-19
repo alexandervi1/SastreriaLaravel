@@ -60,7 +60,7 @@
             @foreach($pedido->lineas as $linea)
             <tr>
                 <td>{{ $linea->cantidad }}</td>
-                <td>{{ $linea->producto_nombre }}@if($linea->talla) Talla {{ $linea->talla }}@endif @if($linea->color) · {{ $linea->color }}@endif</td>
+                <td>{{ $linea->producto_nombre }}@if($linea->talla) Talla {{ $linea->talla }}@endif @if($linea->color) · {{ $linea->color }}@endif @if($linea->tela_nombre) · {{ $linea->tela_nombre }}@endif</td>
                 <td class="text-end">${{ number_format($linea->precio_unitario, 2) }}</td>
                 <td class="text-end">${{ number_format($linea->subtotal, 2) }}</td>
             </tr>

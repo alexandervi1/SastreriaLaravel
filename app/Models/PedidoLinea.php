@@ -13,6 +13,12 @@ class PedidoLinea extends Model
         'pedido_id',
         'producto_id',
         'variante_id',
+        'tipo',
+        'tela_id',
+        'tela_nombre',
+        'medidas',
+        'requiere_cita',
+        'notas',
         'producto_nombre',
         'talla',
         'color',
@@ -25,6 +31,8 @@ class PedidoLinea extends Model
         'cantidad' => 'integer',
         'precio_unitario' => 'decimal:2',
         'subtotal' => 'decimal:2',
+        'medidas' => 'array',
+        'requiere_cita' => 'boolean',
     ];
 
     public function pedido(): \Illuminate\Database\Eloquent\Relations\BelongsTo

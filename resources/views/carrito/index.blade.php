@@ -48,7 +48,10 @@
                                                     <h6 class="mb-0 fw-bold">{{ $item->producto->nombre }}</h6>
                                                     <small class="text-muted">
                                                         {{ $item->producto->categoria->nombre ?? '' }}
-                                                        @if($item->variante)
+                                                        @if($item->tipo === 'medida')
+                                                            · A medida @if($item->tela) · {{ $item->tela->nombre }}@endif
+                                                            @if($item->requiere_cita) · Medidas en taller @endif
+                                                        @elseif($item->variante)
                                                             · Talla {{ $item->variante->talla }}@if($item->variante->color) · {{ $item->variante->color }}@endif
                                                         @endif
                                                     </small>
@@ -56,20 +59,24 @@
                                             </div>
                                         </td>
                                         <td class="text-center">
-                                            ${{ number_format($item->producto->precio, 2) }}
+                                            ${{ number_format($precios[$item->carrito_id], 2) }}
                                         </td>
                                         <td>
-                                            <form action="{{ route('carrito.actualizar') }}" method="POST" class="d-flex justify-content-center">
-                                                @csrf
-                                                @method('PUT')
-                                                <input type="hidden" name="carrito_id" value="{{ $item->carrito_id }}">
-                                                <div class="input-group input-group-sm w-75">
-                                                    <input type="number" name="cantidad" class="form-control text-center bg-light" value="{{ $item->cantidad }}" min="1" max="{{ $item->variante->stock ?? 0 }}" onchange="this.form.submit()">
-                                                </div>
-                                            </form>
+                                            @if($item->tipo === 'medida')
+                                                <div class="text-center text-muted small">1 unidad</div>
+                                            @else
+                                                <form action="{{ route('carrito.actualizar') }}" method="POST" class="d-flex justify-content-center">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="hidden" name="carrito_id" value="{{ $item->carrito_id }}">
+                                                    <div class="input-group input-group-sm w-75">
+                                                        <input type="number" name="cantidad" class="form-control text-center bg-light" value="{{ $item->cantidad }}" min="1" max="{{ $item->variante->stock ?? 0 }}" onchange="this.form.submit()">
+                                                    </div>
+                                                </form>
+                                            @endif
                                         </td>
                                         <td class="text-end fw-bold text-success">
-                                            ${{ number_format($item->subtotal, 2) }}
+                                            ${{ number_format($subtotales[$item->carrito_id], 2) }}
                                         </td>
                                         <td class="text-center pe-4">
                                             <form action="{{ route('carrito.eliminar') }}" method="POST">
