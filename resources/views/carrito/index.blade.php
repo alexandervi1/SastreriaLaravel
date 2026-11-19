@@ -43,7 +43,7 @@
                                     <tr>
                                         <td class="ps-4 py-3">
                                             <div class="d-flex align-items-center">
-                                                <img src="{{ asset($item->producto->imagen_url ?? 'img/placeholder.jpg') }}" class="rounded-3 me-3 object-fit-cover" style="width: 60px; height: 60px;" alt="{{ $item->producto->nombre }}">
+                                                <img src="{{ asset($item->producto->imagen_url ?? 'img/placeholder.svg') }}" class="rounded-3 me-3 object-fit-cover" style="width: 60px; height: 60px;" alt="{{ $item->producto->nombre }}">
                                                 <div>
                                                     <h6 class="mb-0 fw-bold">{{ $item->producto->nombre }}</h6>
                                                     <small class="text-muted">{{ $item->producto->categoria->nombre ?? '' }}</small>

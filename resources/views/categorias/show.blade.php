@@ -22,7 +22,7 @@
         <div class="col-sm-6 col-md-4 col-xl-3">
             <div class="card h-100 shadow-sm border-0 product-card overflow-hidden rounded-4">
                 <div class="position-relative">
-                    <img src="{{ asset($producto->imagen_url ?? 'img/placeholder.jpg') }}" class="card-img-top object-fit-cover" style="height: 200px;" alt="{{ $producto->nombre }}">
+                    <img src="{{ asset($producto->imagen_url ?? 'img/placeholder.svg') }}" class="card-img-top object-fit-cover" style="height: 200px;" alt="{{ $producto->nombre }}">
                     @if($producto->stockVenta <= 0)
                         <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex justify-content-center align-items-center">
                             <span class="badge bg-danger fs-5 px-3 py-2">Agotado</span>

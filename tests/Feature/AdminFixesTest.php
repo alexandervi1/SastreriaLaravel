@@ -436,7 +436,7 @@ class AdminFixesTest extends TestCase
                 'comprobante_serie' => '001-001',
                 'password_rotacion_dias' => 90,
                 'zona_horaria' => 'America/Guayaquil',
-                'negocio_nombre' => 'Pescadería Test',
+                'negocio_nombre' => 'Sastrería Test',
                 'negocio_ruc' => '1301234567001',
                 'negocio_direccion' => 'Manta',
                 'negocio_telefono' => '0999999999',

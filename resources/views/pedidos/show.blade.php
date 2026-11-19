@@ -34,7 +34,7 @@
                                 <tr>
                                     <td class="ps-4 py-3">
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ asset($producto->imagen_url ?? 'img/placeholder.jpg') }}" class="rounded-3 me-3 object-fit-cover" style="width: 50px; height: 50px;" alt="{{ $producto->nombre }}">
+                                            <img src="{{ asset($producto->imagen_url ?? 'img/placeholder.svg') }}" class="rounded-3 me-3 object-fit-cover" style="width: 50px; height: 50px;" alt="{{ $producto->nombre }}">
                                             <span class="fw-bold">{{ $producto->nombre }}</span>
                                         </div>
                                     </td>

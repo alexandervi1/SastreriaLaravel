@@ -11,7 +11,7 @@
         <a href="#catalogo" class="btn btn-primary btn-lg fw-bold px-4 shadow">Ver Productos <i class="fas fa-arrow-right ms-2"></i></a>
     </div>
     <div class="col-md-6 p-0 h-100 position-relative d-none d-md-block" style="min-height: 400px;">
-        <img src="{{ asset('img/fondo1.jpg') }}" class="position-absolute w-100 h-100 object-fit-cover" alt="Mariscos Frescos">
+        <img src="{{ asset('img/placeholder.svg') }}" class="position-absolute w-100 h-100 object-fit-cover" alt="Imagen">
         <div class="bg-gradient-hero position-absolute w-100 h-100"></div>
     </div>
 </div>
@@ -43,7 +43,7 @@
             <div class="card h-100 shadow-sm border-0 product-card overflow-hidden rounded-4">
                 <div class="position-relative overflow-hidden">
                     <a href="{{ route('productos.show', $producto->producto_id) }}">
-                        <img src="{{ asset($producto->imagen_url ?? 'img/placeholder.jpg') }}" class="card-img-top object-fit-cover" style="height: 220px; transition: transform 0.5s ease;" alt="{{ $producto->nombre }}">
+                        <img src="{{ asset($producto->imagen_url ?? 'img/placeholder.svg') }}" class="card-img-top object-fit-cover" style="height: 220px; transition: transform 0.5s ease;" alt="{{ $producto->nombre }}">
                     </a>
                     @if($producto->stockVenta <= 0)
                         <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex justify-content-center align-items-center">

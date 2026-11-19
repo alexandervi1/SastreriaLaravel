@@ -23,7 +23,7 @@
         </div>
     </div>
     <div class="col-md-6 order-md-1 position-relative pe-md-5">
-        <img src="{{ asset('img/mision.jpg') }}" class="img-fluid rounded-4 shadow-lg w-100" alt="Local Pescadería">
+        <img src="{{ asset('img/placeholder.svg') }}" class="img-fluid rounded-4 shadow-lg w-100" alt="Imagen">
         <div class="position-absolute bottom-0 end-0 bg-white p-4 rounded-top-left-4 pe-md-5 shadow-sm d-none d-md-block" style="border-top-left-radius: 2rem;">
             <p class="fs-4 fw-bold text-dark mb-0 align-items-center d-flex">
                 <i class="fas fa-star text-warning me-2"></i> Tradición Familiar

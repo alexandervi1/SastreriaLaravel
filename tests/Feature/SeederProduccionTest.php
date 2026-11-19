@@ -135,7 +135,7 @@ class SeederProduccionTest extends TestCase
         $this->enProduccion();
         putenv('INITIAL_ADMIN_USER=admin_prod');
         putenv('INITIAL_ADMIN_PASSWORD=claveSeguraDeProduccion');
-        putenv('INITIAL_ADMIN_EMAIL=admin@pescaderia.example');
+        putenv('INITIAL_ADMIN_EMAIL=admin@sastreria.example');
         putenv('INITIAL_ADMIN_NAME=Encargado');
 
         $this->sembrar();

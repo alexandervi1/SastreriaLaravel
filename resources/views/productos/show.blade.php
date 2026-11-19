@@ -17,7 +17,7 @@
         <!-- Columna Izquierda: Imagen Grande -->
         <div class="col-md-6 col-xl-5">
             <div class="bg-white rounded-4 shadow-sm border p-4 text-center position-relative h-100 d-flex align-items-center justify-content-center" style="min-height: 450px;">
-                <img src="{{ asset($producto->imagen_url ?? 'img/placeholder.jpg') }}" 
+                <img src="{{ asset($producto->imagen_url ?? 'img/placeholder.svg') }}" 
                      alt="{{ $producto->nombre }}" 
                      class="img-fluid rounded-3" 
                      style="max-height: 500px; object-fit: contain;">
