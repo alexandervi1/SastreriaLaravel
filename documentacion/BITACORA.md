@@ -18,12 +18,19 @@ con el hash real del commit de la subfase.
 - [x] F1.3 — `b233a3c` — compra por talla y líneas de pedido propias — pruebas: 94 passed
 - [x] F1.4 — `cfb7f5b` — reportes de inventario por variante — pruebas: 97 passed
 
+<!-- F2 -->
+- [x] F2.1 — `24db689` — catálogo de telas — pruebas: 101 passed
+- [x] F2.2 — `fa6d665` — perfiles de medidas del cliente — pruebas: 108 passed
+- [x] F2.3 — `47d7ed4` — encargo a medida desde la ficha — pruebas: 112 passed
+- [x] F2.4 — `1ad47c8` — líneas a medida con medidas y tela congeladas — pruebas: 118 passed
+- [x] F2.5 — `8e61ba3` — flujo de confección y orden de trabajo — pruebas: 124 passed
+
 ## Puertas Docker
 
 | Fase | Resultado |
 |---|---|
 | F1 | **OK.** Build `sastreria:verif`; `/api/salud` → `{"estado":"ok"}`. Básico: `/`, `/login`, `/registro`, `/ayuda` y ficha por slug → 200; `/admin` sin sesión → 302. Flujo talla: registro → login → variante 1 con cantidad 2 → checkout → stock 10→8 → admin cancela → 8→10 → reactivar a Entregado rechazado (sigue `Cancelado`). Permisos en `public/img/productos` y `storage/framework/cache` OK; `production.ERROR` = 0. `/politicas` y `public/img/telas` llegan en F4.3 y F2.1, así que no se probaron en esta puerta. |
-| F2 | pendiente |
+| F2 | **OK.** Build `sastreria:verif`; `/api/salud` 200. Flujo talla cubierto en F1. Flujo medida: admin crea tela y modelo a medida → cliente se registra, crea perfil (pecho 101.5) → agrega encargo con tela → checkout → `pedido_linea.medidas` contiene la copia (pecho 101.5) → admin pasa a `Confirmado` y `En confección` → `fecha_entrega_estimada` = 2026-12-03 → orden de trabajo 200 y muestra 101.5 y la tela. Permisos en `public/img/telas` OK; `production.ERROR` = 0. |
 | F3 | pendiente |
 | F5 | pendiente |
 
@@ -73,3 +80,12 @@ con el hash real del commit de la subfase.
 - **2026-11-19 — F1 (puerta Docker):** `/politicas` aún no existe (llega en F4.3) y
   `public/img/telas` tampoco (F2.1); la verificación de permisos se limitó a las
   carpetas existentes y se repetirá en las puertas siguientes.
+- **2026-11-19 — F2.4:** carrito y pedido_linea se renumeraron a `000015` y `000016`
+  para que sus FK a `tela` y `medida_cliente` existan al migrar. Sigue en la ventana
+  editable de F2.
+- **2026-11-19 — F2.5:** el estado `Enviado` se sustituye por el flujo de confección;
+  las pruebas y los badges se adaptaron. El checkout mantiene `retiro` como valor
+  por defecto cuando no se envía el campo, para no romper integraciones existentes.
+- **2026-11-19 — F2.3/F2.4:** la ficha muestra telas y medidas solo a usuarios con
+  sesión de cliente; un visitante ve el CTA de login. Coste si es erróneo: el visitante
+  no ve el catálogo de telas antes de registrarse.
