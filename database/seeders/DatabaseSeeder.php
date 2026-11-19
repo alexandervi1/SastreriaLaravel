@@ -26,11 +26,12 @@ class DatabaseSeeder extends Seeder
 
         // ── 2. Configuración ──
         Configuracion::create(['clave' => 'iva_actual', 'valor' => '15']);
-        Configuracion::create(['clave' => 'negocio_nombre', 'valor' => 'COMERCIAL DE MARISCOS DON WALTER']);
-        Configuracion::create(['clave' => 'negocio_ruc', 'valor' => '1301234567001']);
-        Configuracion::create(['clave' => 'negocio_direccion', 'valor' => 'Barrio Tarqui, Calle 101 y Av. 102, Manta, Ecuador']);
-        Configuracion::create(['clave' => 'negocio_telefono', 'valor' => '0995432109']);
-        Configuracion::create(['clave' => 'negocio_leyenda', 'valor' => 'CONTRIBUYENTE RÉGIMEN RIMPE - NEGOCIO POPULAR']);
+        Configuracion::create(['clave' => 'negocio_nombre', 'valor' => '<NOMBRE_NEGOCIO>']);
+        Configuracion::create(['clave' => 'negocio_ruc', 'valor' => '']);
+        Configuracion::create(['clave' => 'negocio_direccion', 'valor' => '']);
+        Configuracion::create(['clave' => 'negocio_telefono', 'valor' => '']);
+        Configuracion::create(['clave' => 'negocio_leyenda', 'valor' => '']);
+        Configuracion::create(['clave' => 'negocio_logo', 'valor' => 'img/negocio/logo-placeholder.svg']);
 
         // Taller y citas
         Configuracion::create(['clave' => 'taller_dias', 'valor' => '1,2,3,4,5,6']);
