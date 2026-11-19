@@ -41,6 +41,11 @@
                             </td>
                             <td class="fw-bold">
                                 {{ $producto->nombre }}
+                                <div class="small text-muted fw-normal mt-1 d-flex flex-wrap gap-1">
+                                    @foreach($producto->tallas as $talla)
+                                        <span class="badge bg-light text-dark">{{ $talla->talla }}: {{ $talla->cantidad }}</span>
+                                    @endforeach
+                                </div>
                             </td>
                             <td>
                                 <span class="badge bg-light text-dark">{{ $producto->categoria_nombre ?? 'N/A' }}</span>

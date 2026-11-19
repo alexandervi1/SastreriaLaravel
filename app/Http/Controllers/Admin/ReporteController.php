@@ -34,19 +34,34 @@ class ReporteController extends Controller
 
     public function masVendidos()
     {
-        $productos = DB::table('pedido_linea')
+        $filas = DB::table('pedido_linea')
             ->join('producto', 'pedido_linea.producto_id', '=', 'producto.producto_id')
             ->leftJoin('categoria', 'producto.categoria_id', '=', 'categoria.categoria_id')
             ->select(
                 'producto.producto_id',
                 'producto.nombre',
                 'categoria.nombre as categoria_nombre',
+                'pedido_linea.talla',
                 DB::raw('SUM(pedido_linea.cantidad) as cantidad_vendida')
             )
-            ->groupBy('producto.producto_id', 'producto.nombre', 'categoria.nombre')
-            ->orderByDesc('cantidad_vendida')
-            ->limit(10)
+            ->groupBy('producto.producto_id', 'producto.nombre', 'categoria.nombre', 'pedido_linea.talla')
             ->get();
+
+        $productos = $filas
+            ->groupBy('producto_id')
+            ->map(fn ($grupo) => (object) [
+                'producto_id' => $grupo->first()->producto_id,
+                'nombre' => $grupo->first()->nombre,
+                'categoria_nombre' => $grupo->first()->categoria_nombre,
+                'cantidad_vendida' => (int) $grupo->sum('cantidad_vendida'),
+                'tallas' => $grupo->map(fn ($fila) => (object) [
+                    'talla' => $fila->talla ?? 'Única',
+                    'cantidad' => (int) $fila->cantidad_vendida,
+                ])->sortByDesc('cantidad')->values(),
+            ])
+            ->sortByDesc('cantidad_vendida')
+            ->take(10)
+            ->values();
 
         return view('admin.reportes.mas_vendidos', compact('productos'));
     }
