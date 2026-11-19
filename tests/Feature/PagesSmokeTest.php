@@ -46,6 +46,8 @@ class PagesSmokeTest extends TestCase
             route('admin.categorias.index'),
             route('admin.telas.index'),
             route('admin.telas.create'),
+            route('admin.citas.index'),
+            route('admin.citas.create'),
             route('admin.clientes.index'),
             route('admin.clientes.create'),
             route('admin.carritos.index'),

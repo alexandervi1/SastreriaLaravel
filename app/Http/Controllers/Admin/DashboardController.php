@@ -59,9 +59,13 @@ class DashboardController extends Controller
             $datosGrafico[] = $ventasMesesRaw[$fecha->format('Y-m')] ?? 0;
         }
 
+        $citasHoy = \App\Models\Cita::whereDate('inicio', now()->toDateString())
+            ->whereIn('estado', \App\Models\Cita::ESTADOS_ACTIVOS)
+            ->count();
+
         return view('admin.dashboard', compact(
             'totalProductos', 'totalClientes', 'totalPedidos', 'ingresosTotales',
-            'pedidosRecientes', 'productosBajoStock', 'labelsGrafico', 'datosGrafico', 'umbral'
+            'pedidosRecientes', 'productosBajoStock', 'labelsGrafico', 'datosGrafico', 'umbral', 'citasHoy'
         ));
     }
 }

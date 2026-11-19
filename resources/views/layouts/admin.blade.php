@@ -86,6 +86,14 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link rounded d-flex align-items-center justify-content-between {{ request()->routeIs('admin.citas.*') ? 'active' : 'text-dark' }}" href="{{ route('admin.citas.index') }}">
+                                <span><i class="fas fa-calendar-check fa-fw me-2"></i> Agenda</span>
+                                @if($citasHoy > 0)
+                                    <span class="badge badge-menu" title="{{ $citasHoy }} {{ $citasHoy === 1 ? 'cita hoy' : 'citas hoy' }}">{{ $citasHoy }}</span>
+                                @endif
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link rounded {{ request()->routeIs('admin.carritos.*') ? 'active' : 'text-dark' }}" href="{{ route('admin.carritos.index') }}">
                                 <i class="fas fa-cart-shopping fa-fw me-2"></i> Carritos
                             </a>

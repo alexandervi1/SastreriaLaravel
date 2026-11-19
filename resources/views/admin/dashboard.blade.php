@@ -52,6 +52,22 @@
         </div>
     </div>
 
+    <!-- Citas de hoy -->
+    <div class="col">
+        <div class="card h-100 rounded-4 border-0 shadow-sm stat-card stat-card-navy">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="text-uppercase fw-bold stat-label mb-0">Citas de hoy</h6>
+                    <i class="fas fa-calendar-check fa-2x opacity-75"></i>
+                </div>
+                <h2 class="display-5 fw-bold mb-0">{{ $citasHoy }}</h2>
+            </div>
+            <div class="card-footer bg-transparent border-0 pt-0 px-4 pb-4">
+                <a href="{{ route('admin.citas.index') }}" class="text-white text-decoration-none small text-uppercase fw-bold">Ver agenda <i class="fas fa-arrow-right ms-1"></i></a>
+            </div>
+        </div>
+    </div>
+
     <!-- Resumen de Ingresos -->
     <div class="col">
         <div class="card h-100 rounded-4 border-0 shadow-sm stat-card stat-card-sky">

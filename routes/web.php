@@ -81,6 +81,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('/clientes/{cliente}/medidas/{medida}', [\App\Http\Controllers\Admin\MedidaClienteController::class, 'update'])
         ->name('clientes.medidas.update');
 
+    // Agenda del taller
+    Route::get('/citas', [\App\Http\Controllers\Admin\CitaController::class, 'index'])->name('citas.index');
+    Route::get('/citas/nueva', [\App\Http\Controllers\Admin\CitaController::class, 'create'])->name('citas.create');
+    Route::post('/citas', [\App\Http\Controllers\Admin\CitaController::class, 'store'])->name('citas.store');
+    Route::put('/citas/{cita}', [\App\Http\Controllers\Admin\CitaController::class, 'update'])->name('citas.update');
+    Route::post('/citas/bloqueos', [\App\Http\Controllers\Admin\CitaController::class, 'storeBloqueo'])->name('citas.bloqueos.store');
+    Route::delete('/citas/bloqueos/{bloqueo}', [\App\Http\Controllers\Admin\CitaController::class, 'destroyBloqueo'])->name('citas.bloqueos.destroy');
+
     // Carritos activos (seguimiento comercial)
     Route::get('/carritos', [\App\Http\Controllers\Admin\CarritoController::class, 'index'])->name('carritos.index');
 
