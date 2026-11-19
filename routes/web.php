@@ -50,6 +50,12 @@ Route::middleware(['auth', 'cliente'])->group(function () {
     Route::get('/mis-medidas/{medida}/editar', [\App\Http\Controllers\MedidaClienteController::class, 'edit'])->name('medidas.edit');
     Route::put('/mis-medidas/{medida}', [\App\Http\Controllers\MedidaClienteController::class, 'update'])->name('medidas.update');
     Route::delete('/mis-medidas/{medida}', [\App\Http\Controllers\MedidaClienteController::class, 'destroy'])->name('medidas.destroy');
+
+    // Citas en el taller
+    Route::get('/citas', [\App\Http\Controllers\CitaClienteController::class, 'index'])->name('citas.index');
+    Route::get('/citas/nueva', [\App\Http\Controllers\CitaClienteController::class, 'create'])->name('citas.create');
+    Route::post('/citas', [\App\Http\Controllers\CitaClienteController::class, 'store'])->name('citas.store')->middleware('throttle:citas');
+    Route::delete('/citas/{cita}', [\App\Http\Controllers\CitaClienteController::class, 'destroy'])->name('citas.destroy');
 });
 
 // ── Rutas de Administrador (Requiere Rol Admin) ──

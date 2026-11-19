@@ -98,6 +98,18 @@
                     <a href="{{ route('pedidos.receipt', $pedido->pedido_id) }}" target="_blank" class="btn btn-brand-dark w-100 py-2 fw-bold">
                         <i class="fas fa-file-invoice me-2"></i> Ver Recibo / Imprimir
                     </a>
+
+                    @if($pedido->lineas->contains('requiere_cita', true) && $pedido->estado !== 'Cancelado')
+                        <a href="{{ route('citas.create', ['tipo' => 'medidas', 'pedido_id' => $pedido->pedido_id]) }}" class="btn btn-primary w-100 py-2 fw-bold mt-2">
+                            <i class="fas fa-calendar-plus me-2"></i> Agenda tu cita de medidas
+                        </a>
+                    @endif
+
+                    @if($pedido->estado === 'En confección')
+                        <a href="{{ route('citas.create', ['tipo' => 'prueba', 'pedido_id' => $pedido->pedido_id]) }}" class="btn btn-outline-primary w-100 py-2 fw-bold mt-2">
+                            <i class="fas fa-ruler me-2"></i> Agendar prueba
+                        </a>
+                    @endif
                 </div>
             </div>
             <div class="card-footer bg-light border-0 rounded-bottom-4 py-3 text-center">
