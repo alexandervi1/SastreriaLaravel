@@ -11,13 +11,13 @@ if [ -z "${APP_KEY:-}" ]; then
 fi
 
 if [ "${DB_CONNECTION:-mysql}" = "mysql" ]; then
-    echo "entrypoint: esperando a MySQL en ${DB_HOST:-db}:${DB_PORT:-3306}..."
+    echo "entrypoint: esperando a MySQL en ${DB_HOST:-sastreria-db}:${DB_PORT:-3306}..."
     attempts=0
     # shellcheck disable=SC2016  # el código PHP va literal: las variables las resuelve PHP.
     until php -r '
-        $host = getenv("DB_HOST") ?: "db";
+        $host = getenv("DB_HOST") ?: "sastreria-db";
         $port = getenv("DB_PORT") ?: "3306";
-        $name = getenv("DB_DATABASE") ?: "pescaderia";
+        $name = getenv("DB_DATABASE") ?: "sastreria";
         try {
             new PDO("mysql:host={$host};port={$port};dbname={$name}", getenv("DB_USERNAME") ?: "root", getenv("DB_PASSWORD") ?: "");
         } catch (Throwable $e) {
@@ -51,9 +51,9 @@ php artisan migrate --force
 if [ "${SEED_ON_START:-true}" = "true" ]; then
     # shellcheck disable=SC2016  # el código PHP va literal: las variables las resuelve PHP.
     usuarios="$(php -r '
-        $host = getenv("DB_HOST") ?: "db";
+        $host = getenv("DB_HOST") ?: "sastreria-db";
         $port = getenv("DB_PORT") ?: "3306";
-        $name = getenv("DB_DATABASE") ?: "pescaderia";
+        $name = getenv("DB_DATABASE") ?: "sastreria";
         $pdo = new PDO("mysql:host={$host};port={$port};dbname={$name}", getenv("DB_USERNAME") ?: "root", getenv("DB_PASSWORD") ?: "");
         echo (int) $pdo->query("select count(*) from usuario")->fetchColumn();
     ')"

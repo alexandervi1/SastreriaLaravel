@@ -88,6 +88,6 @@ class Configuracion extends Model
 
     public static function obtenerLogo(): string
     {
-        return (string) self::obtenerValor('negocio_logo', 'img/Pescaderia Don Walter logo.png');
+        return (string) self::obtenerValor('negocio_logo', 'img/placeholder.svg');
     }
 }

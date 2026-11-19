@@ -66,21 +66,21 @@ class AppServiceProvider extends ServiceProvider
     {
         try {
             return [
-                'nombre' => (string) Configuracion::obtenerValor('negocio_nombre', 'Pescadería Don Walter'),
+                'nombre' => (string) Configuracion::obtenerValor('negocio_nombre', '<NOMBRE_NEGOCIO>'),
                 'ruc' => (string) Configuracion::obtenerValor('negocio_ruc', ''),
-                'direccion' => (string) Configuracion::obtenerValor('negocio_direccion', 'Manta, Ecuador'),
+                'direccion' => (string) Configuracion::obtenerValor('negocio_direccion', ''),
                 'telefono' => (string) Configuracion::obtenerValor('negocio_telefono', ''),
                 'leyenda' => (string) Configuracion::obtenerValor('negocio_leyenda', ''),
                 'logo' => Configuracion::obtenerLogo(),
             ];
         } catch (QueryException) {
             return [
-                'nombre' => 'Pescadería Don Walter',
+                'nombre' => '<NOMBRE_NEGOCIO>',
                 'ruc' => '',
-                'direccion' => 'Manta, Ecuador',
+                'direccion' => '',
                 'telefono' => '',
                 'leyenda' => '',
-                'logo' => 'img/Pescaderia Don Walter logo.png',
+                'logo' => 'img/placeholder.svg',
             ];
         }
     }
