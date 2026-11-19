@@ -16,6 +16,10 @@ class Producto extends Model
         'slug',
         'activo',
         'destacado',
+        'vende_por_talla',
+        'vende_a_medida',
+        'precio_medida',
+        'dias_confeccion',
         'imagen_url',
         'categoria_id',
     ];
@@ -24,6 +28,10 @@ class Producto extends Model
         'precio' => 'decimal:2',
         'activo' => 'boolean',
         'destacado' => 'boolean',
+        'vende_por_talla' => 'boolean',
+        'vende_a_medida' => 'boolean',
+        'precio_medida' => 'decimal:2',
+        'dias_confeccion' => 'integer',
     ];
 
     // ── Relaciones ──

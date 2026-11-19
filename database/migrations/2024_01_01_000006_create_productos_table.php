@@ -16,6 +16,10 @@ return new class extends Migration
             $table->string('slug', 160)->unique();
             $table->boolean('activo')->default(true);
             $table->boolean('destacado')->default(false);
+            $table->boolean('vende_por_talla')->default(true);
+            $table->boolean('vende_a_medida')->default(false);
+            $table->decimal('precio_medida', 10, 2)->nullable();
+            $table->unsignedSmallInteger('dias_confeccion')->nullable();
             $table->string('imagen_url', 255)->nullable();
             $table->unsignedBigInteger('categoria_id')->nullable();
             $table->timestamps();

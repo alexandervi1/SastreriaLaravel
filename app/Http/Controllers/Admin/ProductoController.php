@@ -27,6 +27,8 @@ class ProductoController extends Controller
     public function store(\App\Http\Requests\Admin\StoreProductoRequest $request)
     {
         $data = Arr::except($request->validated(), ['imagen']);
+        $data['vende_por_talla'] = $request->has('vende_por_talla') ? $request->boolean('vende_por_talla') : true;
+        $data['vende_a_medida'] = $request->boolean('vende_a_medida');
 
         if ($request->hasFile('imagen')) {
             $data['imagen_url'] = $this->guardarImagen($request);
@@ -53,6 +55,8 @@ class ProductoController extends Controller
     public function update(\App\Http\Requests\Admin\UpdateProductoRequest $request, Producto $producto)
     {
         $data = Arr::except($request->validated(), ['imagen']);
+        $data['vende_por_talla'] = $request->has('vende_por_talla') ? $request->boolean('vende_por_talla') : true;
+        $data['vende_a_medida'] = $request->boolean('vende_a_medida');
 
         if ($request->hasFile('imagen')) {
             $this->borrarImagen($producto->imagen_url);

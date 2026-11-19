@@ -63,6 +63,38 @@
                 @endif
             </div>
 
+            <h6 class="fw-bold border-bottom pb-2 mb-4 text-primary mt-5"><i class="fas fa-ruler-combined me-2"></i> Modos de venta</h6>
+
+            <div class="row g-4 mb-4 bg-light p-3 rounded-4">
+                <div class="col-md-3 d-flex align-items-center">
+                    <div class="form-check">
+                        <input type="hidden" name="vende_por_talla" value="0">
+                        <input class="form-check-input" type="checkbox" id="vende_por_talla" name="vende_por_talla" value="1" {{ old('vende_por_talla', $producto->vende_por_talla ?? true) ? 'checked' : '' }}>
+                        <label class="form-check-label fw-bold" for="vende_por_talla">Vender por talla</label>
+                    </div>
+                </div>
+                <div class="col-md-3 d-flex align-items-center">
+                    <div class="form-check">
+                        <input type="hidden" name="vende_a_medida" value="0">
+                        <input class="form-check-input" type="checkbox" id="vende_a_medida" name="vende_a_medida" value="1" {{ old('vende_a_medida', $producto->vende_a_medida ?? false) ? 'checked' : '' }}>
+                        <label class="form-check-label fw-bold" for="vende_a_medida">Vender a medida</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label for="precio_medida" class="form-label fw-bold d-block text-secondary">Precio a medida</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                        <input type="number" step="0.01" min="0" class="form-control @error('precio_medida') is-invalid @enderror" id="precio_medida" name="precio_medida" value="{{ old('precio_medida', $producto->precio_medida ?? '') }}" placeholder="0.00">
+                        @error('precio_medida')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label for="dias_confeccion" class="form-label fw-bold d-block text-secondary">Días de confección</label>
+                    <input type="number" step="1" min="1" max="90" class="form-control @error('dias_confeccion') is-invalid @enderror" id="dias_confeccion" name="dias_confeccion" value="{{ old('dias_confeccion', $producto->dias_confeccion ?? '') }}">
+                    @error('dias_confeccion')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+
             <h6 class="fw-bold border-bottom pb-2 mb-4 text-primary mt-5"><i class="fas fa-image me-2"></i> Fotografía del Producto</h6>
 
             <div class="row g-4 align-items-center">
