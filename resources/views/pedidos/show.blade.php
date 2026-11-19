@@ -110,6 +110,13 @@
                             <i class="fas fa-ruler me-2"></i> Agendar prueba
                         </a>
                     @endif
+
+                    @php($waPago = \App\Support\WhatsApp::enlace('Hola, quiero coordinar el pago del pedido ' . ($pedido->numero_comprobante ?? $pedido->pedido_id) . ' por $' . number_format((float) $pedido->total, 2) . '.'))
+                    @if($waPago)
+                        <a href="{{ $waPago }}" target="_blank" rel="noopener" class="btn btn-success w-100 py-2 fw-bold mt-2">
+                            <i class="fab fa-whatsapp me-2"></i> Coordinar pago por WhatsApp
+                        </a>
+                    @endif
                 </div>
             </div>
             <div class="card-footer bg-light border-0 rounded-bottom-4 py-3 text-center">
