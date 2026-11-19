@@ -18,6 +18,8 @@ class ProductoPublicoController extends Controller
             ->orderBy('color')
             ->get();
 
+        $imagenes = $producto->imagenes()->get();
+
         $telas = $producto->vende_a_medida
             ? Tela::where('activo', true)->orderBy('nombre')->get()
             : collect();
@@ -30,6 +32,6 @@ class ProductoPublicoController extends Controller
             ? Carbon::now()->addWeekdays((int) $producto->dias_confeccion)
             : null;
 
-        return view('productos.show', compact('producto', 'variantes', 'telas', 'medidas', 'fechaEstimada'));
+        return view('productos.show', compact('producto', 'variantes', 'telas', 'medidas', 'fechaEstimada', 'imagenes'));
     }
 }

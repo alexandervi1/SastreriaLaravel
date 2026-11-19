@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('title', $producto->nombre)
+@section('meta_description', \Illuminate\Support\Str::limit($producto->descripcion ?? 'Terno de gala en la sastrería.', 155))
+@section('og_title', $producto->nombre)
+@section('og_image', asset($producto->imagen_url ?? 'img/placeholder.svg'))
 
 @section('content')
 <div class="container py-4">
@@ -16,13 +19,25 @@
     <div class="row g-4 mb-5">
         <!-- Columna Izquierda: Imagen Grande -->
         <div class="col-md-6 col-xl-5">
-            <div class="bg-white rounded-4 shadow-sm border p-4 text-center position-relative h-100 d-flex align-items-center justify-content-center" style="min-height: 450px;">
-                <img src="{{ asset($producto->imagen_url ?? 'img/placeholder.svg') }}" 
-                     alt="{{ $producto->nombre }}" 
-                     class="img-fluid rounded-3" 
-                     style="max-height: 500px; object-fit: contain;">
-                
-                @if($producto->stock_total <= 0)
+            <div class="bg-white rounded-4 shadow-sm border p-4 text-center position-relative h-100">
+                <div class="d-flex align-items-center justify-content-center" style="min-height: 380px;">
+                    <img id="imagen-principal" src="{{ asset($producto->imagen_url ?? 'img/placeholder.svg') }}"
+                         alt="{{ $producto->nombre }}"
+                         class="img-fluid rounded-3"
+                         style="max-height: 500px; object-fit: contain;">
+                </div>
+
+                @if($imagenes->isNotEmpty())
+                    <div class="d-flex gap-2 flex-wrap justify-content-center mt-3">
+                        @foreach($imagenes as $imagen)
+                            <button type="button" class="btn p-1 border rounded-3 thumb-galeria" data-src="{{ asset($imagen->url) }}" aria-label="Ver {{ $imagen->alt }}">
+                                <img src="{{ asset($imagen->url) }}" alt="{{ $imagen->alt }}" style="width: 64px; height: 64px; object-fit: cover;" class="rounded-2">
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
+
+                @if($producto->stock_total <= 0 && $variantes->isEmpty() && ! $producto->vende_a_medida)
                     <div class="position-absolute top-0 start-0 w-100 h-100 bg-white bg-opacity-75 rounded-4 d-flex justify-content-center align-items-center">
                         <span class="badge bg-danger fs-3 py-3 px-5 shadow border border-light border-3">Agotado</span>
                     </div>
@@ -250,6 +265,13 @@
     };
     radios.forEach(r => r.addEventListener('change', pintar));
     pintar();
+
+    const principal = document.getElementById('imagen-principal');
+    document.querySelectorAll('.thumb-galeria').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (principal) principal.src = btn.dataset.src;
+        });
+    });
 })();
 </script>
 @endpush

@@ -122,4 +122,5 @@
 </div>
 
 @yield('variantes')
+@yield('galeria')
 @endsection

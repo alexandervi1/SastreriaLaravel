@@ -46,6 +46,12 @@ class Producto extends Model
         return $this->hasMany(ProductoVariante::class, 'producto_id', 'producto_id');
     }
 
+    /** @return \Illuminate\Database\Eloquent\Relations\HasMany<ProductoImagen, $this> */
+    public function imagenes(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ProductoImagen::class, 'producto_id', 'producto_id')->orderBy('orden');
+    }
+
     // ── Helpers ──
 
     /**

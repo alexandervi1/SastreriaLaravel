@@ -48,8 +48,9 @@ class ProductoController extends Controller
         $categorias = Categoria::all();
         $tallas = self::TALLAS_SUGERIDAS;
         $variantes = $producto->variantes()->orderBy('talla')->orderBy('color')->get();
+        $imagenes = $producto->imagenes()->get();
 
-        return view('admin.productos.edit', compact('producto', 'categorias', 'tallas', 'variantes'));
+        return view('admin.productos.edit', compact('producto', 'categorias', 'tallas', 'variantes', 'imagenes'));
     }
 
     public function update(\App\Http\Requests\Admin\UpdateProductoRequest $request, Producto $producto)
