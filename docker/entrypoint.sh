@@ -33,7 +33,7 @@ if [ "${DB_CONNECTION:-mysql}" = "mysql" ]; then
     done
 fi
 
-mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache public/img/productos public/img/negocio
+mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache public/img/productos public/img/negocio public/img/telas
 chown -R www-data:www-data storage bootstrap/cache public/img 2>/dev/null || true
 
 php artisan config:clear --no-interaction >/dev/null 2>&1 || true

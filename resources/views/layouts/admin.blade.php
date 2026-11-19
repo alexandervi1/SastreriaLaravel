@@ -65,6 +65,11 @@
                                 <i class="fas fa-tags fa-fw me-2"></i> Categorías
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link rounded {{ request()->routeIs('admin.telas.*') ? 'active' : 'text-dark' }}" href="{{ route('admin.telas.index') }}">
+                                <i class="fas fa-scroll fa-fw me-2"></i> Telas
+                            </a>
+                        </li>
 
                         <li class="nav-section">Ventas</li>
                         <li class="nav-item">

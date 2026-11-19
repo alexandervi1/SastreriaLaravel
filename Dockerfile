@@ -29,7 +29,7 @@ COPY --from=vendor /app/vendor /var/www/html/vendor
 WORKDIR /var/www/html
 COPY . .
 
-RUN mkdir -p public/img/productos public/img/negocio \
+RUN mkdir -p public/img/productos public/img/negocio public/img/telas \
     && chown -R www-data:www-data storage bootstrap/cache public/img \
     && chmod +x docker/entrypoint.sh
 
