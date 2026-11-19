@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+
 /* ==========================================================================
-   Pescadería Don Walter — sistema visual único
+   Sastrería — sistema visual único
    --------------------------------------------------------------------------
    Una sola fuente de verdad para color, tipografía, radios, sombras y
    espaciado. Ningún otro archivo CSS ni vista debe declarar hex propios:
@@ -9,21 +11,21 @@
 /* ── 1. Primitivos ───────────────────────────────────────────────────────── */
 :root {
     /* Marca */
-    --brand-900: #002E5D;
-    --brand-800: #0B3F75;
-    --brand-700: #1A519D;
-    --brand-600: #2A6DC3;
-    --brand-300: #7CCCED;
-    --brand-100: #D6E9F8;
-    --brand-50:  #EEF5FC;
+    --brand-900: #1C1C1E; /* carbón */
+    --brand-800: #16203A; /* azul noche profundo */
+    --brand-700: #1F2A44; /* azul noche */
+    --brand-600: #43506F; /* azul noche claro para foco */
+    --brand-300: #B08D57; /* dorado champaña */
+    --brand-100: #E8E0CF; /* dorado tenue */
+    --brand-50:  #F7F4EE; /* marfil */
 
     /* Neutros */
-    --ink-900: #1F2933;
-    --ink-700: #3E4C59;
-    --ink-500: #616E7C;
-    --ink-300: #9AA5B1;
-    --ink-100: #E4E7EB;
-    --ink-50:  #F5F7FA;
+    --ink-900: #1C1C1E;
+    --ink-700: #3E4248;
+    --ink-500: #5C5F66;
+    --ink-300: #8C8F96;
+    --ink-100: #E4DFD6;
+    --ink-50:  #F7F4EE;
     --white:   #FFFFFF;
 
     /* Semánticos de estado */
@@ -32,7 +34,7 @@
     --green-50:  #E7F4EC;
     --amber-700: #B45309;
     --amber-50:  #FFF4E5;
-    --red-600:   #DC3545;
+    --red-600:   #B02A37;
     --red-50:    #FDECEA;
     --teal-600:  #0E7C86;
     --teal-50:   #E6F4F5;
@@ -71,10 +73,11 @@
     --color-medal-bronze: #B08D57;
 
     --color-focus: var(--brand-600);
-    --color-focus-ring: rgba(42, 109, 195, 0.35);
+    --color-focus-ring: rgba(67, 80, 111, 0.35);
 
     /* Tipografía */
-    --font-sans: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
     --font-mono: 'Courier New', Courier, monospace;
     --text-xs: 0.75rem;
     --text-sm: 0.875rem;
@@ -133,12 +136,13 @@ body {
     background-color: var(--color-page);
     color: var(--color-text);
     font-family: var(--font-sans);
-    line-height: 1.55;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, h5, h6 {
     color: var(--color-text);
+    font-family: var(--font-display);
     font-weight: 600;
     letter-spacing: -0.01em;
 }
