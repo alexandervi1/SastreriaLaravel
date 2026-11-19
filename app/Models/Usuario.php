@@ -62,6 +62,11 @@ class Usuario extends Authenticatable
         return $this->hasMany(Pedido::class, 'usuario_id', 'usuario_id');
     }
 
+    public function medidas(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(MedidaCliente::class, 'usuario_id', 'usuario_id');
+    }
+
     // ── Helpers de rol ──
 
     public function esAdmin(): bool

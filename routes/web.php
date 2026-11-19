@@ -42,6 +42,14 @@ Route::middleware(['auth', 'cliente'])->group(function () {
     Route::get('/mis-pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
     Route::get('/mis-pedidos/{pedido}', [PedidoController::class, 'show'])->name('pedidos.show');
     Route::get('/mis-pedidos/{pedido}/recibo', [PedidoController::class, 'receipt'])->name('pedidos.receipt');
+
+    // Perfiles de medidas
+    Route::get('/mis-medidas', [\App\Http\Controllers\MedidaClienteController::class, 'index'])->name('medidas.index');
+    Route::get('/mis-medidas/nueva', [\App\Http\Controllers\MedidaClienteController::class, 'create'])->name('medidas.create');
+    Route::post('/mis-medidas', [\App\Http\Controllers\MedidaClienteController::class, 'store'])->name('medidas.store');
+    Route::get('/mis-medidas/{medida}/editar', [\App\Http\Controllers\MedidaClienteController::class, 'edit'])->name('medidas.edit');
+    Route::put('/mis-medidas/{medida}', [\App\Http\Controllers\MedidaClienteController::class, 'update'])->name('medidas.update');
+    Route::delete('/mis-medidas/{medida}', [\App\Http\Controllers\MedidaClienteController::class, 'destroy'])->name('medidas.destroy');
 });
 
 // ── Rutas de Administrador (Requiere Rol Admin) ──
@@ -64,6 +72,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // CRUD de Clientes
     Route::resource('clientes', AdminClienteController::class)->except(['show']);
+    Route::put('/clientes/{cliente}/medidas/{medida}', [\App\Http\Controllers\Admin\MedidaClienteController::class, 'update'])
+        ->name('clientes.medidas.update');
 
     // Carritos activos (seguimiento comercial)
     Route::get('/carritos', [\App\Http\Controllers\Admin\CarritoController::class, 'index'])->name('carritos.index');
