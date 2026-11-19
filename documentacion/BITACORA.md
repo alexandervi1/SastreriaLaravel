@@ -25,13 +25,21 @@ con el hash real del commit de la subfase.
 - [x] F2.4 — `1ad47c8` — líneas a medida con medidas y tela congeladas — pruebas: 118 passed
 - [x] F2.5 — `8e61ba3` — flujo de confección y orden de trabajo — pruebas: 124 passed
 
+<!-- F3 -->
+- [x] F3.1 — `0f0ce23` — horario del taller y bloqueos configurables — pruebas: 127 passed
+- [x] F3.2 — `a3cdccc` — disponibilidad y reserva transaccional — pruebas: 135 passed
+- [x] F3.3 — `09e4dec` — reserva y cancelación para clientes — pruebas: 141 passed
+- [x] F3.4 — `dc293a7` — agenda del taller en el panel — pruebas: 146 passed
+- [x] F3.5 — `3ccf209` — enlaces de WhatsApp para pagos y citas — pruebas: 149 passed
+- [x] F3.5b — `e208a5a` — corrige la compilación de los enlaces de WhatsApp — pruebas: 149 passed
+
 ## Puertas Docker
 
 | Fase | Resultado |
 |---|---|
 | F1 | **OK.** Build `sastreria:verif`; `/api/salud` → `{"estado":"ok"}`. Básico: `/`, `/login`, `/registro`, `/ayuda` y ficha por slug → 200; `/admin` sin sesión → 302. Flujo talla: registro → login → variante 1 con cantidad 2 → checkout → stock 10→8 → admin cancela → 8→10 → reactivar a Entregado rechazado (sigue `Cancelado`). Permisos en `public/img/productos` y `storage/framework/cache` OK; `production.ERROR` = 0. `/politicas` y `public/img/telas` llegan en F4.3 y F2.1, así que no se probaron en esta puerta. |
 | F2 | **OK.** Build `sastreria:verif`; `/api/salud` 200. Flujo talla cubierto en F1. Flujo medida: admin crea tela y modelo a medida → cliente se registra, crea perfil (pecho 101.5) → agrega encargo con tela → checkout → `pedido_linea.medidas` contiene la copia (pecho 101.5) → admin pasa a `Confirmado` y `En confección` → `fecha_entrega_estimada` = 2026-12-03 → orden de trabajo 200 y muestra 101.5 y la tela. Permisos en `public/img/telas` OK; `production.ERROR` = 0. |
-| F3 | pendiente |
+| F3 | **OK.** Build `sastreria:verif`. Flujo talla: stock 10→8. Flujo medida: pedido con copia de medidas (101.5), admin lo confirma y pasa a `En confección`; orden de trabajo 200 con las medidas. Flujo cita: 12 huecos para el viernes; cliente A reserva 09:00; cliente B intenta el mismo hueco y queda 1 sola cita; el admin la confirma y la agenda del día la muestra. `production.ERROR` = 0. |
 | F5 | pendiente |
 
 ## Datos pendientes de la dueña (`PENDIENTE DATO`)
@@ -89,3 +97,10 @@ con el hash real del commit de la subfase.
 - **2026-11-19 — F2.3/F2.4:** la ficha muestra telas y medidas solo a usuarios con
   sesión de cliente; un visitante ve el CTA de login. Coste si es erróneo: el visitante
   no ve el catálogo de telas antes de registrarse.
+- **2026-11-19 — F3.1:** la actualización de Configuración acepta envíos parciales
+  (`sometimes`) para que la pestaña Taller no exija los datos del negocio. La pestaña
+  Negocio sigue validando sus campos cuando se envían.
+- **2026-11-19 — F3.5:** `@php(...)` con paréntesis anidados compilaba mal en
+  `admin/pedidos/show` (error 500). Se reemplazó por bloques `@php ... @endphp` y se
+  añadió una prueba que renderiza esa vista; las puertas Docker lo detectaron porque
+  la suite no visitaba el detalle del pedido en el panel.
