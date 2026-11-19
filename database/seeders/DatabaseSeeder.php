@@ -32,6 +32,15 @@ class DatabaseSeeder extends Seeder
         Configuracion::create(['clave' => 'negocio_telefono', 'valor' => '0995432109']);
         Configuracion::create(['clave' => 'negocio_leyenda', 'valor' => 'CONTRIBUYENTE RÉGIMEN RIMPE - NEGOCIO POPULAR']);
 
+        // Taller y citas
+        Configuracion::create(['clave' => 'taller_dias', 'valor' => '1,2,3,4,5,6']);
+        Configuracion::create(['clave' => 'taller_hora_inicio', 'valor' => '09:00']);
+        Configuracion::create(['clave' => 'taller_hora_fin', 'valor' => '18:00']);
+        Configuracion::create(['clave' => 'cita_duracion_min', 'valor' => '45']);
+        Configuracion::create(['clave' => 'cita_anticipacion_max_dias', 'valor' => '30']);
+        Configuracion::create(['clave' => 'cita_cancelacion_min_horas', 'valor' => '24']);
+        Configuracion::create(['clave' => 'negocio_whatsapp', 'valor' => '']);
+
         // ── 3. Categorías ──
         Categoria::insert([
             ['categoria_id' => 1, 'nombre' => 'Pescados'],

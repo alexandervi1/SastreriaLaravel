@@ -90,4 +90,47 @@ class Configuracion extends Model
     {
         return (string) self::obtenerValor('negocio_logo', 'img/placeholder.svg');
     }
+
+    /**
+     * Días ISO en que abre el taller.
+     *
+     * @return array<int, int>
+     */
+    public static function obtenerDiasTaller(): array
+    {
+        $csv = (string) self::obtenerValor('taller_dias', '1,2,3,4,5,6');
+        $dias = array_filter(array_map('intval', explode(',', $csv)), fn (int $dia) => $dia >= 1 && $dia <= 7);
+
+        return array_values(array_unique($dias));
+    }
+
+    public static function obtenerHoraInicio(): string
+    {
+        return (string) self::obtenerValor('taller_hora_inicio', '09:00');
+    }
+
+    public static function obtenerHoraFin(): string
+    {
+        return (string) self::obtenerValor('taller_hora_fin', '18:00');
+    }
+
+    public static function obtenerDuracionCita(): int
+    {
+        return (int) self::obtenerValor('cita_duracion_min', 45);
+    }
+
+    public static function obtenerAnticipacionMaxima(): int
+    {
+        return (int) self::obtenerValor('cita_anticipacion_max_dias', 30);
+    }
+
+    public static function obtenerCancelacionMinima(): int
+    {
+        return (int) self::obtenerValor('cita_cancelacion_min_horas', 24);
+    }
+
+    public static function obtenerWhatsapp(): string
+    {
+        return (string) self::obtenerValor('negocio_whatsapp', '');
+    }
 }

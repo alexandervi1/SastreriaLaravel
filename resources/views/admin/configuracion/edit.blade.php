@@ -14,6 +14,11 @@
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
+                        <button class="nav-link {{ $tab === 'taller' ? 'active fw-bold text-primary px-4 py-3 border-0 text-nowrap border-bottom border-primary border-3' : 'fw-bold text-secondary px-4 py-3 border-0 text-nowrap' }}" id="taller-tab" data-bs-toggle="tab" data-bs-target="#taller" type="button" role="tab" aria-controls="taller" aria-selected="{{ $tab === 'taller' ? 'true' : 'false' }}">
+                            <i class="fas fa-scissors me-2"></i> Taller
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
                         <button class="nav-link {{ $tab === 'seguridad' ? 'active fw-bold text-primary px-4 py-3 border-0 text-nowrap border-bottom border-primary border-3' : 'fw-bold text-secondary px-4 py-3 border-0 text-nowrap' }}" id="seguridad-tab" data-bs-toggle="tab" data-bs-target="#seguridad" type="button" role="tab" aria-controls="seguridad" aria-selected="{{ $tab === 'seguridad' ? 'true' : 'false' }}">
                             <i class="fas fa-shield-alt me-2"></i> Seguridad y Acceso
                         </button>
@@ -127,6 +132,53 @@
                             <div class="d-flex justify-content-end mt-5 pt-3 border-top">
                                 <button type="submit" class="btn btn-primary btn-lg fw-bold shadow-sm rounded-pill px-5">
                                     Guardar Negocio <i class="fas fa-save ms-2"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="tab-pane fade {{ $tab === 'taller' ? 'show active' : '' }} p-4 p-md-5 bg-white" id="taller" role="tabpanel" aria-labelledby="taller-tab">
+                        <form action="{{ route('admin.configuracion.update') }}" method="POST">
+                            @csrf
+                            @method('PUT')
+
+                            <h6 class="fw-bold mb-4 text-primary"><i class="fas fa-clock me-2"></i> Horario de atención</h6>
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-secondary" for="taller_dias">Días de atención (ISO)</label>
+                                    <input type="text" class="form-control" id="taller_dias" name="taller_dias" value="{{ old('taller_dias', $configuraciones['taller_dias']) }}" placeholder="1,2,3,4,5,6">
+                                    <div class="form-text">1 = lunes … 7 = domingo, separados por comas.</div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold text-secondary" for="taller_hora_inicio">Apertura</label>
+                                    <input type="time" class="form-control" id="taller_hora_inicio" name="taller_hora_inicio" value="{{ old('taller_hora_inicio', $configuraciones['taller_hora_inicio']) }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold text-secondary" for="taller_hora_fin">Cierre</label>
+                                    <input type="time" class="form-control" id="taller_hora_fin" name="taller_hora_fin" value="{{ old('taller_hora_fin', $configuraciones['taller_hora_fin']) }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold text-secondary" for="cita_duracion_min">Duración de cada cita (min)</label>
+                                    <input type="number" min="15" max="240" class="form-control" id="cita_duracion_min" name="cita_duracion_min" value="{{ old('cita_duracion_min', $configuraciones['cita_duracion_min']) }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold text-secondary" for="cita_anticipacion_max_dias">Anticipación máxima (días)</label>
+                                    <input type="number" min="1" max="365" class="form-control" id="cita_anticipacion_max_dias" name="cita_anticipacion_max_dias" value="{{ old('cita_anticipacion_max_dias', $configuraciones['cita_anticipacion_max_dias']) }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold text-secondary" for="cita_cancelacion_min_horas">Cancelación mínima (horas)</label>
+                                    <input type="number" min="0" max="168" class="form-control" id="cita_cancelacion_min_horas" name="cita_cancelacion_min_horas" value="{{ old('cita_cancelacion_min_horas', $configuraciones['cita_cancelacion_min_horas']) }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-secondary" for="negocio_whatsapp">WhatsApp del taller</label>
+                                    <input type="text" class="form-control" id="negocio_whatsapp" name="negocio_whatsapp" value="{{ old('negocio_whatsapp', $configuraciones['negocio_whatsapp']) }}" placeholder="593999999999">
+                                    <div class="form-text">Formato internacional sin «+».</div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end mt-5 pt-3 border-top">
+                                <button type="submit" class="btn btn-primary btn-lg fw-bold shadow-sm rounded-pill px-5">
+                                    Guardar Taller <i class="fas fa-save ms-2"></i>
                                 </button>
                             </div>
                         </form>
