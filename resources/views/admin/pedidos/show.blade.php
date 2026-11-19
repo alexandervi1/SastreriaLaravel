@@ -24,7 +24,9 @@
                 <p class="mb-2"><i class="fas fa-id-card text-muted me-2"></i> {{ $pedido->usuario->identificacion ?? 'N/A' }}</p>
                 <p class="mb-2"><i class="fas fa-envelope text-muted me-2"></i> {{ $pedido->usuario->correo ?? 'N/A' }}</p>
                 <p class="mb-2"><i class="fas fa-phone text-muted me-2"></i> {{ $pedido->usuario->telefono ?? 'N/A' }}</p>
-                @php($waCliente = \App\Support\WhatsApp::enlace('Hola ' . ($pedido->usuario->nombre_completo ?? '') . ', te escribimos por tu pedido ' . ($pedido->numero_comprobante ?? $pedido->pedido_id) . '.'))
+                @php
+                    $waCliente = \App\Support\WhatsApp::enlace('Hola ' . ($pedido->usuario->nombre_completo ?? '') . ', te escribimos por tu pedido ' . ($pedido->numero_comprobante ?? $pedido->pedido_id) . '.');
+                @endphp
                 @if($waCliente && $pedido->usuario->telefono)
                     <a href="{{ $waCliente }}" target="_blank" rel="noopener" class="btn btn-success btn-sm rounded-pill mb-2">
                         <i class="fab fa-whatsapp me-1"></i> Escribir al cliente

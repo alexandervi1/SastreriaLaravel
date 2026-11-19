@@ -111,7 +111,9 @@
                         </a>
                     @endif
 
-                    @php($waPago = \App\Support\WhatsApp::enlace('Hola, quiero coordinar el pago del pedido ' . ($pedido->numero_comprobante ?? $pedido->pedido_id) . ' por $' . number_format((float) $pedido->total, 2) . '.'))
+                    @php
+                        $waPago = \App\Support\WhatsApp::enlace('Hola, quiero coordinar el pago del pedido ' . ($pedido->numero_comprobante ?? $pedido->pedido_id) . ' por $' . number_format((float) $pedido->total, 2) . '.');
+                    @endphp
                     @if($waPago)
                         <a href="{{ $waPago }}" target="_blank" rel="noopener" class="btn btn-success w-100 py-2 fw-bold mt-2">
                             <i class="fab fa-whatsapp me-2"></i> Coordinar pago por WhatsApp

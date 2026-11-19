@@ -42,7 +42,9 @@
                                     Cancelar cita
                                 </button>
                             </form>
-                            @php($waCita = \App\Support\WhatsApp::enlace('Hola, tengo una cita el ' . $cita->inicio->format('d/m/Y') . ' a las ' . $cita->inicio->format('H:i') . '.'))
+                            @php
+                                $waCita = \App\Support\WhatsApp::enlace('Hola, tengo una cita el ' . $cita->inicio->format('d/m/Y') . ' a las ' . $cita->inicio->format('H:i') . '.');
+                            @endphp
                             @if($waCita)
                                 <a href="{{ $waCita }}" target="_blank" rel="noopener" class="btn btn-success w-100 rounded-pill fw-bold mt-2">
                                     <i class="fab fa-whatsapp me-2"></i> Avisar al taller

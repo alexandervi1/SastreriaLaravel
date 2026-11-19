@@ -20,11 +20,16 @@ class WhatsAppTest extends TestCase
 
     private Usuario $cliente;
 
+    private Usuario $admin;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        Rol::insert([['rol_id' => 2, 'nombre' => 'Cliente']]);
+        Rol::insert([
+            ['rol_id' => 1, 'nombre' => 'Administrador'],
+            ['rol_id' => 2, 'nombre' => 'Cliente'],
+        ]);
         Categoria::insert([['categoria_id' => 1, 'nombre' => 'Ternos']]);
 
         $this->cliente = Usuario::create([
@@ -34,6 +39,16 @@ class WhatsAppTest extends TestCase
             'rol_id' => 2,
             'direccion' => 'Calle 1',
             'correo' => 'cliente1@example.com',
+            'telefono' => '0988888888',
+        ]);
+
+        $this->admin = Usuario::create([
+            'nombre_usuario' => 'admin1',
+            'nombre_completo' => 'Admin Uno',
+            'password' => Hash::make('secret123'),
+            'rol_id' => 1,
+            'direccion' => 'Calle 2',
+            'correo' => 'admin1@example.com',
         ]);
     }
 
@@ -98,5 +113,10 @@ class WhatsAppTest extends TestCase
             ->get(route('pedidos.show', $pedido->pedido_id))
             ->assertOk()
             ->assertSee('Coordinar pago por WhatsApp');
+
+        $this->actingAs($this->admin)
+            ->get(route('admin.pedidos.show', $pedido->pedido_id))
+            ->assertOk()
+            ->assertSee('Escribir al cliente');
     }
 }

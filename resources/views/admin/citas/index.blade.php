@@ -55,7 +55,9 @@
                                             @if($cita->notas)
                                                 <div class="small text-muted">{{ $cita->notas }}</div>
                                             @endif
-                                            @php($waCliente = \App\Support\WhatsApp::enlace('Hola ' . ($cita->usuario->nombre_completo ?? '') . ', te escribimos por tu cita del ' . $cita->inicio->format('d/m/Y H:i') . '.'))
+                                            @php
+                                                $waCliente = \App\Support\WhatsApp::enlace('Hola ' . ($cita->usuario->nombre_completo ?? '') . ', te escribimos por tu cita del ' . $cita->inicio->format('d/m/Y H:i') . '.');
+                                            @endphp
                                             @if($waCliente && $cita->usuario?->telefono)
                                                 <a href="{{ $waCliente }}" target="_blank" rel="noopener" class="btn btn-sm btn-success mt-2">
                                                     <i class="fab fa-whatsapp me-1"></i> Escribir al cliente
