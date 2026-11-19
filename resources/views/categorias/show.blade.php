@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('title', 'Categoría: ' . $categoria->nombre)
+@section('meta_description', 'Ternos y accesorios de la categoría ' . $categoria->nombre . '.')
+@section('og_title', $categoria->nombre)
 
 @section('content')
 <!-- Reusamos el catálogo del home pero filtrado -->
