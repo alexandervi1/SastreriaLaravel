@@ -105,8 +105,7 @@
                                 </td>
                                 <td class="py-3 align-middle">${{ number_format($producto->precio, 2) }}</td>
                                 <td class="py-3 align-middle">
-                                    {{ $producto->pivot->cantidad }} 
-                                    <small class="text-muted">{{ $producto->unidadVenta->abreviatura ?? '' }}</small>
+                                    {{ $producto->pivot->cantidad }} u
                                 </td>
                                 <td class="text-end pe-4 py-3 align-middle fw-bold">
                                     ${{ number_format($producto->precio * $producto->pivot->cantidad, 2) }}

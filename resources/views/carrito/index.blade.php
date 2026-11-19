@@ -51,7 +51,7 @@
                                             </div>
                                         </td>
                                         <td class="text-center">
-                                            ${{ number_format($item->producto->precio, 2) }} <small class="text-muted">/ {{ $item->producto->unidadVenta->abreviatura }}</small>
+                                            ${{ number_format($item->producto->precio, 2) }}
                                         </td>
                                         <td>
                                             <form action="{{ route('carrito.actualizar') }}" method="POST" class="d-flex justify-content-center">
@@ -59,7 +59,7 @@
                                                 @method('PUT')
                                                 <input type="hidden" name="carrito_id" value="{{ $item->carrito_id }}">
                                                 <div class="input-group input-group-sm w-75">
-                                                    <input type="number" name="cantidad" class="form-control text-center bg-light" value="{{ floor($item->cantidad) }}" min="1" max="{{ floor($item->producto->stockVenta) }}" onchange="this.form.submit()">
+                                                    <input type="number" name="cantidad" class="form-control text-center bg-light" value="{{ $item->cantidad }}" min="1" max="{{ $item->producto->stock }}" onchange="this.form.submit()">
                                                 </div>
                                             </form>
                                         </td>

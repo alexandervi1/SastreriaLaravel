@@ -22,7 +22,7 @@
                      class="img-fluid rounded-3" 
                      style="max-height: 500px; object-fit: contain;">
                 
-                @if($producto->stockVenta <= 0)
+                @if($producto->stock <= 0)
                     <div class="position-absolute top-0 start-0 w-100 h-100 bg-white bg-opacity-75 rounded-4 d-flex justify-content-center align-items-center">
                         <span class="badge bg-danger fs-3 py-3 px-5 shadow border border-light border-3">Agotado</span>
                     </div>
@@ -54,9 +54,6 @@
             <div class="my-4">
                 <div class="d-flex align-items-baseline mb-2">
                     <span class="display-5 fw-bold text-dark">${{ number_format($producto->precio, 2) }}</span>
-                    @if($producto->unidadVenta)
-                        <span class="fs-5 text-muted ms-2"> / {{ $producto->unidadVenta->abreviatura }}</span>
-                    @endif
                 </div>
                 <p class="text-secondary small mb-0"><i class="fas fa-info-circle me-1"></i> Impuestos calculados en el checkout.</p>
             </div>
@@ -80,13 +77,13 @@
                 <div class="card-body p-4 d-flex flex-column">
                     <h5 class="fw-bold mb-3 text-dark">Panel de Compra</h5>
                     
-                    @if($producto->stockVenta > 0)
+                    @if($producto->stock > 0)
                         <div class="mb-4">
                             <span class="d-block text-success fw-bold mb-1 fs-5">
                                 <i class="fas fa-check-circle me-1"></i> Disponible
                             </span>
                             <span class="text-muted small">
-                                Stock actual: <strong>{{ floor($producto->stockVenta) }} {{ $producto->unidadVenta->abreviatura ?? 'u' }}</strong>
+                                Stock actual: <strong>{{ $producto->stock }} u</strong>
                             </span>
                         </div>
                         
@@ -96,10 +93,10 @@
                                     @csrf
                                     <input type="hidden" name="producto_id" value="{{ $producto->producto_id }}">
                                     
-                                    <label class="form-label text-muted small fw-bold mb-1">Cantidad ({{ $producto->unidadVenta->abreviatura ?? 'u' }}):</label>
+                                    <label class="form-label text-muted small fw-bold mb-1">Cantidad (u):</label>
                                     <div class="input-group mb-3">
                                         <button class="btn btn-outline-secondary px-3" type="button" onclick="document.getElementById('cantidad_input').stepDown()"><i class="fas fa-minus"></i></button>
-                                        <input type="number" name="cantidad" id="cantidad_input" class="form-control text-center fw-bold" value="1" min="1" max="{{ floor($producto->stockVenta) }}" style="max-width: 80px;">
+                                        <input type="number" name="cantidad" id="cantidad_input" class="form-control text-center fw-bold" value="1" min="1" max="{{ $producto->stock }}" style="max-width: 80px;">
                                         <button class="btn btn-outline-secondary px-3" type="button" onclick="document.getElementById('cantidad_input').stepUp()"><i class="fas fa-plus"></i></button>
                                     </div>
                                     

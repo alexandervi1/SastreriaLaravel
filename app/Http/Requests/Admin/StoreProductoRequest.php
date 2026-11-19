@@ -28,29 +28,9 @@ class StoreProductoRequest extends FormRequest
             'nombre'            => 'required|string|max:255',
             'descripcion'       => 'nullable|string',
             'precio'            => 'required|numeric|min:0',
-            'stock'             => 'required|numeric|min:0',
+            'stock'             => 'required|integer|min:0',
             'categoria_id'      => 'required|exists:categoria,categoria_id',
-            'unidad_compra_id'  => 'required|exists:unidad_medida,unidad_id',
-            'unidad_venta_id'   => 'required|exists:unidad_medida,unidad_id',
             'imagen'            => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048|dimensions:max_width=4000,max_height=4000',
         ];
-    }
-
-    /**
-     * Rechaza combinaciones de unidades sin factor de conversión definido.
-     */
-    public function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            $compra = $this->input('unidad_compra_id');
-            $venta = $this->input('unidad_venta_id');
-
-            if ($compra && $venta && \App\Models\Producto::factorConversion((int) $compra, (int) $venta) === null) {
-                $validator->errors()->add(
-                    'unidad_venta_id',
-                    'La combinación de unidad de compra y unidad de venta no tiene conversión definida.'
-                );
-            }
-        });
     }
 }

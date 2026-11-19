@@ -9,7 +9,7 @@ class CarritoController extends Controller
 {
     public function index()
     {
-        $carritos = Carrito::with(['usuario', 'producto.categoria', 'producto.unidadVenta'])
+        $carritos = Carrito::with(['usuario', 'producto.categoria'])
             ->orderBy('fecha_agregado', 'desc')
             ->get();
 

@@ -22,8 +22,8 @@
                         <th scope="col" class="ps-4">Producto</th>
                         <th scope="col">Categoría</th>
                         <th scope="col" class="text-center">Precio Unit.</th>
-                        <th scope="col" class="text-center">Stock Venta</th>
-                        <th scope="col" class="text-center d-none d-xl-table-cell">Inventario General</th>
+                        <th scope="col" class="text-center">Stock</th>
+                        <th scope="col" class="text-center d-none d-xl-table-cell">Unidades en bodega</th>
                         <th scope="col" class="text-center pe-4">Acciones</th>
                     </tr>
                 </thead>
@@ -46,15 +46,14 @@
                                 ${{ number_format($producto->precio, 2) }}
                             </td>
                             <td class="text-center">
-                                @php $stockVenta = floor($producto->stockVenta); @endphp
-                                @if($stockVenta < 50)
-                                    <span class="badge bg-danger rounded-pill px-2">{{ $stockVenta }} {{ $producto->unidadVenta->abreviatura ?? 'u' }}</span>
+                                @if($producto->stock < 50)
+                                    <span class="badge bg-danger rounded-pill px-2">{{ $producto->stock }} u</span>
                                 @else
-                                    <span class="px-2">{{ $stockVenta }} {{ $producto->unidadVenta->abreviatura ?? 'u' }}</span>
+                                    <span class="px-2">{{ $producto->stock }} u</span>
                                 @endif
                             </td>
                             <td class="text-center text-muted small d-none d-xl-table-cell">
-                                {{ number_format($producto->stock, 4) }} {{ $producto->unidadCompra->abreviatura ?? '?' }}
+                                {{ $producto->stock }} u
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center gap-2">

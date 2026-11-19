@@ -28,7 +28,7 @@ class DashboardController extends Controller
         // 3. Productos Críticos con Bajo Stock (umbral configurable)
         $umbral = Configuracion::obtenerUmbralBajoStock();
 
-        $productosBajoStock = Producto::with(['categoria', 'unidadVenta'])
+        $productosBajoStock = Producto::with(['categoria'])
             ->bajoStock()
             ->take(5)
             ->get();

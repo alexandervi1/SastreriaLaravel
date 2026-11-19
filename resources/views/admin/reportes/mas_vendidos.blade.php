@@ -46,8 +46,7 @@
                                 <span class="badge bg-light text-dark">{{ $producto->categoria->nombre ?? 'N/A' }}</span>
                             </td>
                             <td class="text-end pe-4">
-                                <span class="fs-5 fw-bold text-primary">{{ floor($producto->cantidad_vendida ?? 0) }}</span> 
-                                <small class="text-muted">{{ $producto->unidadVenta->abreviatura ?? 'u' }}</small>
+                                <span class="fs-5 fw-bold text-primary">{{ floor($producto->cantidad_vendida ?? 0) }}</span>
                             </td>
                         </tr>
                     @empty

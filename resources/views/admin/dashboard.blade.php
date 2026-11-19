@@ -105,7 +105,7 @@
                                     <small class="text-muted"><i class="fas fa-tag me-1"></i>{{ $prod->categoria->nombre ?? 'Sin Categoría' }}</small>
                                 </div>
                             </div>
-                            <span class="badge bg-danger rounded-pill px-3 py-2 fs-6 shadow-sm">Solo {{ floor($prod->stockVenta) }} {{ $prod->unidadVenta->abreviatura ?? 'u' }}</span>
+                            <span class="badge bg-danger rounded-pill px-3 py-2 fs-6 shadow-sm">Solo {{ $prod->stock }} u</span>
                         </div>
                     @empty
                         <div class="text-center py-5">

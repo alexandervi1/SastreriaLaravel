@@ -44,7 +44,6 @@ class PagesSmokeTest extends TestCase
             route('admin.productos.index'),
             route('admin.productos.create'),
             route('admin.categorias.index'),
-            route('admin.unidades.index'),
             route('admin.clientes.index'),
             route('admin.clientes.create'),
             route('admin.carritos.index'),
@@ -78,6 +77,7 @@ class PagesSmokeTest extends TestCase
     public function test_receipt_shows_persisted_totals(): void
     {
         $producto = Producto::firstOrFail();
+        $producto->update(['stock' => 10]);
 
         Carrito::create([
             'usuario_id' => $this->cliente->usuario_id,

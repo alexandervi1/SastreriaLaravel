@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Categoria;
 use App\Models\Producto;
 use App\Models\Rol;
-use App\Models\UnidadMedida;
 use App\Models\Usuario;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -35,12 +34,6 @@ class ImagenProductoTest extends TestCase
             ['rol_id' => 3, 'nombre' => 'Visitante'],
         ]);
 
-        UnidadMedida::insert([
-            ['unidad_id' => 1, 'nombre' => 'Tonelada', 'abreviatura' => 'Tn'],
-            ['unidad_id' => 2, 'nombre' => 'Libra', 'abreviatura' => 'lb'],
-            ['unidad_id' => 3, 'nombre' => 'Unidad', 'abreviatura' => 'u'],
-        ]);
-
         Categoria::insert([['categoria_id' => 1, 'nombre' => 'Pescados']]);
 
         $this->admin = Usuario::create([
@@ -61,8 +54,6 @@ class ImagenProductoTest extends TestCase
             'precio' => 10,
             'stock' => 5,
             'categoria_id' => 1,
-            'unidad_compra_id' => 3,
-            'unidad_venta_id' => 3,
         ], $overrides);
     }
 

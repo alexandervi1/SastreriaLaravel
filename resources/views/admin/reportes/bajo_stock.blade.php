@@ -45,22 +45,22 @@
                     <tbody>
                         @foreach($productos as $producto)
                             @php 
-                                $stockVenta = floor($producto->stockVenta); 
-                                $critico = $stockVenta <= 10;
+                                $stock = $producto->stock; 
+                                $critico = $stock <= 10;
                             @endphp
                             <tr class="{{ $critico ? 'table-danger' : '' }}">
                                 <td class="ps-4 py-3 fw-bold">
                                     {{ $producto->nombre }}
                                 </td>
                                 <td>
-                                    <span class="fs-5 fw-bold {{ $critico ? 'text-danger' : 'text-warning' }}">{{ $stockVenta }}</span> 
-                                    <small>{{ $producto->unidadVenta->abreviatura ?? 'u' }}</small>
+                                    <span class="fs-5 fw-bold {{ $critico ? 'text-danger' : 'text-warning' }}">{{ $stock }}</span> 
+                                    <small>u</small>
                                 </td>
                                 <td class="text-muted small">
-                                    {{ number_format($producto->stock, 4) }} {{ $producto->unidadCompra->abreviatura ?? '?' }}
+                                    {{ $stock }} u
                                 </td>
                                 <td class="text-center">
-                                    @if($stockVenta == 0)
+                                    @if($stock == 0)
                                         <span class="badge bg-dark rounded-pill">Agotado</span>
                                     @elseif($critico)
                                         <span class="badge bg-danger rounded-pill">Crítico</span>

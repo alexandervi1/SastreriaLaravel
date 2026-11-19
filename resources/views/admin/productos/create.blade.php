@@ -47,47 +47,16 @@
             <h6 class="fw-bold border-bottom pb-2 mb-4 text-primary mt-5"><i class="fas fa-boxes me-2"></i> Inventario y Precios</h6>
             
             <div class="row g-4 mb-4 bg-light p-3 rounded-4">
-                <div class="col-md-3">
-                    <label for="stock" class="form-label fw-bold d-block text-secondary">Stock Inicial</label>
+                <div class="col-md-6">
+                    <label for="stock" class="form-label fw-bold d-block text-secondary">Stock Inicial *</label>
                      <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-boxes"></i></span>
-                        <input type="number" step="0.0001" min="0" class="form-control" id="stock" name="stock" value="{{ old('stock', $producto->stock ?? '') }}" required placeholder="0.00">
+                        <input type="number" step="1" min="0" class="form-control" id="stock" name="stock" value="{{ old('stock', $producto->stock ?? '') }}" required placeholder="0">
                     </div>
                 </div>
                 
-                <div class="col-md-3">
-                    <label for="unidad_compra_id" class="form-label fw-bold d-block text-secondary">Unidad de Compra *</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-truck-loading"></i></span>
-                        <select class="form-select" id="unidad_compra_id" name="unidad_compra_id" required>
-                            <option value="">-- Seleccione --</option>
-                            @foreach($unidades as $u)
-                                @if(in_array($u->nombre, ['Tonelada', 'Unidad']))
-                                    <option value="{{ $u->unidad_id }}" {{ old('unidad_compra_id', $producto->unidad_compra_id ?? '') == $u->unidad_id ? 'selected' : '' }}>
-                                        {{ $u->nombre }} ({{ $u->abreviatura }})
-                                    </option>
-                                @endif
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <label for="unidad_venta_id" class="form-label fw-bold d-block text-secondary">Unidad de Venta *</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-balance-scale"></i></span>
-                        <select class="form-select" id="unidad_venta_id" name="unidad_venta_id" required>
-                            @foreach($unidades as $u)
-                                <option value="{{ $u->unidad_id }}" {{ old('unidad_venta_id', $producto->unidad_venta_id ?? '') == $u->unidad_id ? 'selected' : '' }}>
-                                    {{ $u->nombre }} ({{ $u->abreviatura }})
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="col-md-3">
-                    <label for="precio" class="form-label fw-bold d-block text-success">Precio (x Un. Venta) *</label>
+                <div class="col-md-6">
+                    <label for="precio" class="form-label fw-bold d-block text-success">Precio Unitario *</label>
                      <div class="input-group">
                         <span class="input-group-text bg-success text-white"><i class="fas fa-dollar-sign"></i></span>
                         <input type="number" step="0.01" min="0" class="form-control" id="precio" name="precio" value="{{ old('precio', $producto->precio ?? '') }}" required placeholder="0.00">

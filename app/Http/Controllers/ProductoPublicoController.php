@@ -8,7 +8,7 @@ class ProductoPublicoController extends Controller
 {
     public function show($id)
     {
-        $producto = Producto::with(['categoria', 'unidadVenta'])->findOrFail($id);
+        $producto = Producto::with(['categoria'])->findOrFail($id);
         return view('productos.show', compact('producto'));
     }
 }

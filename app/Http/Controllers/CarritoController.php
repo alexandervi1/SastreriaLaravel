@@ -11,7 +11,7 @@ class CarritoController extends Controller
 {
     public function index(PricingService $pricing)
     {
-        $items = Carrito::with('producto.categoria', 'producto.unidadVenta')
+        $items = Carrito::with('producto.categoria')
             ->where('usuario_id', auth()->id())
             ->get();
 
@@ -42,10 +42,10 @@ class CarritoController extends Controller
 
         $nuevaCantidad = (int) $item->cantidad + $cantidad;
 
-        if ($nuevaCantidad > $producto->stockVenta + 1e-9) {
+        if ($nuevaCantidad > $producto->stock) {
             return back()->with(
                 'error',
-                "No hay stock suficiente de {$producto->nombre}: disponible {$producto->stockVenta}."
+                "No hay stock suficiente de {$producto->nombre}: disponible {$producto->stock}."
             );
         }
 
@@ -73,10 +73,10 @@ class CarritoController extends Controller
             return back()->with('success', 'Carrito actualizado.');
         }
 
-        if ($data['cantidad'] > $item->producto->stockVenta + 1e-9) {
+        if ($data['cantidad'] > $item->producto->stock) {
             return back()->with(
                 'error',
-                "No hay stock suficiente de {$item->producto->nombre}: disponible {$item->producto->stockVenta}."
+                "No hay stock suficiente de {$item->producto->nombre}: disponible {$item->producto->stock}."
             );
         }
 

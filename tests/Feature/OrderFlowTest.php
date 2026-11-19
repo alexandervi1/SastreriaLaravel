@@ -8,7 +8,6 @@ use App\Models\Configuracion;
 use App\Models\Pedido;
 use App\Models\Producto;
 use App\Models\Rol;
-use App\Models\UnidadMedida;
 use App\Models\Usuario;
 use App\Services\OrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -29,12 +28,6 @@ class OrderFlowTest extends TestCase
             ['rol_id' => 1, 'nombre' => 'Administrador'],
             ['rol_id' => 2, 'nombre' => 'Cliente'],
             ['rol_id' => 3, 'nombre' => 'Visitante'],
-        ]);
-
-        UnidadMedida::insert([
-            ['unidad_id' => 1, 'nombre' => 'Tonelada', 'abreviatura' => 'Tn'],
-            ['unidad_id' => 2, 'nombre' => 'Libra', 'abreviatura' => 'lb'],
-            ['unidad_id' => 3, 'nombre' => 'Unidad', 'abreviatura' => 'u'],
         ]);
 
         Categoria::insert([['categoria_id' => 1, 'nombre' => 'Pescados']]);
@@ -59,8 +52,6 @@ class OrderFlowTest extends TestCase
             'precio' => 10,
             'stock' => 100,
             'categoria_id' => 1,
-            'unidad_compra_id' => 3,
-            'unidad_venta_id' => 3,
         ], $overrides));
     }
 
@@ -117,7 +108,7 @@ class OrderFlowTest extends TestCase
         }
 
         $this->assertDatabaseCount('pedido', 0);
-        $this->assertEquals(1.0, (float) $producto->fresh()->stock);
+        $this->assertEquals(1, $producto->fresh()->stock);
         $this->assertDatabaseCount('carrito', 1);
     }
 
@@ -148,8 +139,8 @@ class OrderFlowTest extends TestCase
 
         $this->assertDatabaseCount('pedido', 0);
         $this->assertDatabaseCount('pedidoproducto', 0);
-        $this->assertEquals(10.0, (float) $suficiente->fresh()->stock);
-        $this->assertEquals(1.0, (float) $corto->fresh()->stock);
+        $this->assertEquals(10, $suficiente->fresh()->stock);
+        $this->assertEquals(1, $corto->fresh()->stock);
     }
 
     public function test_cart_rejects_quantity_above_stock(): void

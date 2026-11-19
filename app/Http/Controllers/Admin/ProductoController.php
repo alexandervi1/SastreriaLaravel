@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Categoria;
 use App\Models\PedidoProducto;
 use App\Models\Producto;
-use App\Models\UnidadMedida;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -15,15 +14,14 @@ class ProductoController extends Controller
 {
     public function index()
     {
-        $productos = Producto::with(['categoria', 'unidadCompra', 'unidadVenta'])->get();
+        $productos = Producto::with(['categoria'])->get();
         return view('admin.productos.index', compact('productos'));
     }
 
     public function create()
     {
         $categorias = Categoria::all();
-        $unidades = UnidadMedida::all();
-        return view('admin.productos.create', compact('categorias', 'unidades'));
+        return view('admin.productos.create', compact('categorias'));
     }
 
     public function store(\App\Http\Requests\Admin\StoreProductoRequest $request)
@@ -43,8 +41,7 @@ class ProductoController extends Controller
     public function edit(Producto $producto)
     {
         $categorias = Categoria::all();
-        $unidades = UnidadMedida::all();
-        return view('admin.productos.edit', compact('producto', 'categorias', 'unidades'));
+        return view('admin.productos.edit', compact('producto', 'categorias'));
     }
 
     public function update(\App\Http\Requests\Admin\UpdateProductoRequest $request, Producto $producto)

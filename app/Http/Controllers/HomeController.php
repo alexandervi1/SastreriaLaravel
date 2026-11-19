@@ -10,7 +10,7 @@ class HomeController extends Controller
     public function index(\Illuminate\Http\Request $request)
     {
         $categorias = Categoria::all();
-        $query = Producto::with(['categoria', 'unidadVenta']);
+        $query = Producto::with(['categoria']);
         
         $categoria_actual = null;
         if ($request->has('categoria') && !empty($request->categoria)) {

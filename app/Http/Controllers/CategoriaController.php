@@ -8,7 +8,7 @@ class CategoriaController extends Controller
 {
     public function show($id)
     {
-        $categoria = Categoria::with(['productos.unidadVenta'])->findOrFail($id);
+        $categoria = Categoria::with(['productos'])->findOrFail($id);
         $categorias = Categoria::all();
         return view('categorias.show', compact('categoria', 'categorias'));
     }

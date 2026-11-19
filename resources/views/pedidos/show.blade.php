@@ -42,7 +42,7 @@
                                         ${{ number_format($producto->pivot->precio_unitario, 2) }}
                                     </td>
                                     <td class="text-center">
-                                        {{ floor($producto->pivot->cantidad) }} {{ $producto->unidadVenta->abreviatura ?? 'u' }}
+                                        {{ floor($producto->pivot->cantidad) }} u
                                     </td>
                                     <td class="text-end fw-bold pe-4">
                                         ${{ number_format($producto->pivot->subtotal, 2) }}

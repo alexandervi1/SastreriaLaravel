@@ -34,7 +34,7 @@ class ReporteController extends Controller
 
     public function masVendidos()
     {
-        $productos = Producto::with(['categoria', 'unidadVenta'])
+        $productos = Producto::with(['categoria'])
         ->withCount(['pedidos as cantidad_vendida' => function($query) {
             $query->select(DB::raw('SUM(pedidoproducto.cantidad)'));
         }])
@@ -49,7 +49,7 @@ class ReporteController extends Controller
     {
         $umbral = Configuracion::obtenerUmbralBajoStock();
 
-        $productos = Producto::with(['unidadVenta', 'unidadCompra'])->bajoStock()->get();
+        $productos = Producto::bajoStock()->get();
 
         return view('admin.reportes.bajo_stock', compact('productos', 'umbral'));
     }
@@ -60,7 +60,7 @@ class ReporteController extends Controller
         
         $stockCategorias = DB::table('producto')
             ->join('categoria', 'producto.categoria_id', '=', 'categoria.categoria_id')
-            ->select('categoria.nombre', DB::raw('SUM(producto.stock * producto.factor_conversion) as total_stock'))
+            ->select('categoria.nombre', DB::raw('SUM(producto.stock) as total_stock'))
             ->groupBy('categoria.categoria_id', 'categoria.nombre')
             ->get();
 

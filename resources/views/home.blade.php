@@ -45,7 +45,7 @@
                     <a href="{{ route('productos.show', $producto->producto_id) }}">
                         <img src="{{ asset($producto->imagen_url ?? 'img/placeholder.svg') }}" class="card-img-top object-fit-cover" style="height: 220px; transition: transform 0.5s ease;" alt="{{ $producto->nombre }}">
                     </a>
-                    @if($producto->stockVenta <= 0)
+                    @if($producto->stock <= 0)
                         <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex justify-content-center align-items-center">
                             <span class="badge bg-danger fs-5 px-3 py-2">Agotado</span>
                         </div>
@@ -64,22 +64,19 @@
                     <div class="d-flex justify-content-between align-items-baseline mt-auto">
                         <div class="d-flex align-items-baseline">
                             <span class="fs-3 fw-bold text-primary">${{ number_format($producto->precio, 2) }}</span>
-                            @if($producto->unidadVenta)
-                                <span class="text-muted small ms-1">/ {{ $producto->unidadVenta->abreviatura }}</span>
-                            @endif
                         </div>
                     </div>
                 </div>
                 <div class="card-footer bg-white border-0 pt-0 pb-3 mt-2 px-3">
-                    @if($producto->stockVenta > 0)
+                    @if($producto->stock > 0)
                         @auth
                             @if(auth()->user()->esCliente())
                                 <form action="{{ route('carrito.agregar') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="producto_id" value="{{ $producto->producto_id }}">
                                     <div class="input-group mb-2">
-                                        <input type="number" name="cantidad" class="form-control form-control-sm text-center" value="1" min="1" max="{{ floor($producto->stockVenta) }}">
-                                        <span class="input-group-text">{{ $producto->unidadVenta->abreviatura ?? 'u' }}</span>
+                                        <input type="number" name="cantidad" class="form-control form-control-sm text-center" value="1" min="1" max="{{ $producto->stock }}">
+                                        <span class="input-group-text">u</span>
                                     </div>
                                     <button type="submit" class="btn btn-primary w-100 fw-bold shadow-sm">
                                         <i class="fas fa-cart-plus me-1"></i> Agregar

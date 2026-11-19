@@ -49,9 +49,9 @@ class OrderService
                     throw new RuntimeException('Uno de los productos del carrito ya no está disponible.');
                 }
 
-                if ($item->cantidad > $producto->stockVenta + 1e-9) {
+                if ($item->cantidad > $producto->stock) {
                     throw new RuntimeException(
-                        "Stock insuficiente para {$producto->nombre}: disponible {$producto->stockVenta}, solicitado {$item->cantidad}."
+                        "Stock insuficiente para {$producto->nombre}: disponible {$producto->stock}, solicitado {$item->cantidad}."
                     );
                 }
 
@@ -86,7 +86,7 @@ class OrderService
                     'subtotal' => round($item->cantidad * $precio, 2),
                 ]);
 
-                $producto->descontarStock((float) $item->cantidad);
+                $producto->descontarStock((int) $item->cantidad);
             }
 
             Carrito::where('usuario_id', $usuario->usuario_id)->delete();
@@ -126,7 +126,7 @@ class OrderService
 
                 // El producto pudo borrarse; la cancelación no debe fallar por eso.
                 if ($producto) {
-                    $producto->reponerStock((float) $linea->cantidad);
+                    $producto->reponerStock((int) $linea->cantidad);
                 }
             }
 

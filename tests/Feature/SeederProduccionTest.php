@@ -105,7 +105,6 @@ class SeederProduccionTest extends TestCase
 
         $this->assertDatabaseCount('rol', 0);
         $this->assertDatabaseCount('configuracion', 0);
-        $this->assertDatabaseCount('unidad_medida', 0);
         $this->assertDatabaseCount('categoria', 0);
         $this->assertDatabaseCount('usuario', 0);
     }
@@ -126,7 +125,6 @@ class SeederProduccionTest extends TestCase
         $this->assertSame(0, \App\Models\Producto::count());
         $this->assertDatabaseCount('rol', 3);
         $this->assertDatabaseCount('categoria', 3);
-        $this->assertDatabaseCount('unidad_medida', 3);
         $this->assertDatabaseCount('configuracion', 6);
     }
 

@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Rol;
 use App\Models\Configuracion;
-use App\Models\UnidadMedida;
 use App\Models\Categoria;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Hash;
@@ -33,21 +32,14 @@ class DatabaseSeeder extends Seeder
         Configuracion::create(['clave' => 'negocio_telefono', 'valor' => '0995432109']);
         Configuracion::create(['clave' => 'negocio_leyenda', 'valor' => 'CONTRIBUYENTE RÉGIMEN RIMPE - NEGOCIO POPULAR']);
 
-        // ── 3. Unidades de Medida ──
-        UnidadMedida::insert([
-            ['unidad_id' => 1, 'nombre' => 'Tonelada', 'abreviatura' => 'Tn'],
-            ['unidad_id' => 2, 'nombre' => 'Libra', 'abreviatura' => 'lb'],
-            ['unidad_id' => 3, 'nombre' => 'Unidad', 'abreviatura' => 'u'],
-        ]);
-
-        // ── 4. Categorías ──
+        // ── 3. Categorías ──
         Categoria::insert([
             ['categoria_id' => 1, 'nombre' => 'Pescados'],
             ['categoria_id' => 2, 'nombre' => 'Crustáceos y Moluscos'],
             ['categoria_id' => 3, 'nombre' => 'Pulpos y Calamares'],
         ]);
 
-        // ── 5. Usuario Admin ──
+        // ── 4. Usuario Admin ──
         // En producción se define desde el entorno para no arrancar con credenciales conocidas.
         Usuario::create([
             'nombre_usuario'      => $admin['usuario'],
@@ -60,7 +52,7 @@ class DatabaseSeeder extends Seeder
             'password_changed_at' => $admin['password_changed_at'],
         ]);
 
-        // ── 6. Catálogo de demostración ──
+        // ── 5. Catálogo de demostración ──
         if (filter_var(env('SEED_DEMO', ! app()->environment('production')), FILTER_VALIDATE_BOOLEAN)) {
             $this->call(DemoCatalogoSeeder::class);
         }

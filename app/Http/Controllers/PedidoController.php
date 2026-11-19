@@ -14,7 +14,7 @@ class PedidoController extends Controller
 
     public function show($id)
     {
-        $pedido = Pedido::with(['productos.unidadVenta'])->where('usuario_id', auth()->id())->findOrFail($id);
+        $pedido = Pedido::with(['productos'])->where('usuario_id', auth()->id())->findOrFail($id);
 
         return view('pedidos.show', compact('pedido'));
     }
@@ -44,7 +44,7 @@ class PedidoController extends Controller
 
     public function receipt($id)
     {
-        $pedido = Pedido::with(['productos.unidadVenta', 'usuario'])->where('usuario_id', auth()->id())->findOrFail($id);
+        $pedido = Pedido::with(['productos', 'usuario'])->where('usuario_id', auth()->id())->findOrFail($id);
 
         return view('pedidos.receipt', compact('pedido'));
     }

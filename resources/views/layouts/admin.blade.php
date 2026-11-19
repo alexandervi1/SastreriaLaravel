@@ -65,11 +65,6 @@
                                 <i class="fas fa-tags fa-fw me-2"></i> Categorías
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link rounded {{ request()->routeIs('admin.unidades.*') ? 'active' : 'text-dark' }}" href="{{ route('admin.unidades.index') }}">
-                                <i class="fas fa-ruler-combined fa-fw me-2"></i> Unidades
-                            </a>
-                        </li>
 
                         <li class="nav-section">Ventas</li>
                         <li class="nav-item">

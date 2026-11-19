@@ -60,7 +60,7 @@
             @foreach($pedido->productos as $producto)
             <tr>
                 <td>{{ number_format($producto->pivot->cantidad, 2) }}</td>
-                <td>{{ $producto->nombre }} ({{ $producto->unidadVenta->nombre ?? 'Unidad' }})</td>
+                <td>{{ $producto->nombre }}</td>
                 <td class="text-end">${{ number_format($producto->pivot->precio_unitario, 2) }}</td>
                 <td class="text-end">${{ number_format($producto->pivot->subtotal, 2) }}</td>
             </tr>

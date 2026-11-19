@@ -54,11 +54,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // CRUD de Categorías
     Route::resource('categorias', \App\Http\Controllers\Admin\CategoriaController::class)->except(['create', 'show', 'edit']);
 
-    // Unidades de medida (determinan los factores de conversión)
-    Route::resource('unidades', \App\Http\Controllers\Admin\UnidadMedidaController::class)
-        ->parameters(['unidades' => 'unidad'])
-        ->only(['index', 'store', 'update', 'destroy']);
-
     // CRUD de Clientes
     Route::resource('clientes', AdminClienteController::class)->except(['show']);
 
