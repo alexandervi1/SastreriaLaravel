@@ -211,15 +211,24 @@ class AdminManagementTest extends TestCase
     public function test_abandoned_carts_are_listed(): void
     {
         $producto = Producto::create([
-            'nombre' => 'Albacora',
+            'nombre' => 'Terno de prueba',
             'precio' => 10,
-            'stock' => 5,
             'categoria_id' => 1,
+        ]);
+
+        $variante = \App\Models\ProductoVariante::create([
+            'producto_id' => $producto->producto_id,
+            'talla' => '40',
+            'color' => null,
+            'sku' => 'SKU-CARRITO',
+            'stock' => 5,
+            'activo' => true,
         ]);
 
         Carrito::create([
             'usuario_id' => $this->cliente->usuario_id,
             'producto_id' => $producto->producto_id,
+            'variante_id' => $variante->variante_id,
             'cantidad' => 2,
         ]);
 
@@ -227,7 +236,7 @@ class AdminManagementTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('cliente1');
-        $response->assertSee('Albacora');
+        $response->assertSee('Terno de prueba');
         $response->assertSee('$20.00');
     }
 

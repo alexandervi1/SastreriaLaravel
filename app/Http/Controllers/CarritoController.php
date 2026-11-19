@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Carrito;
-use App\Models\Producto;
+use App\Models\ProductoVariante;
 use App\Services\PricingService;
 use Illuminate\Http\Request;
 
@@ -11,7 +11,7 @@ class CarritoController extends Controller
 {
     public function index(PricingService $pricing)
     {
-        $items = Carrito::with('producto.categoria')
+        $items = Carrito::with('producto.categoria', 'variante')
             ->where('usuario_id', auth()->id())
             ->get();
 
@@ -27,25 +27,30 @@ class CarritoController extends Controller
     public function agregar(Request $request)
     {
         $data = $request->validate([
-            'producto_id' => 'required|exists:producto,producto_id',
+            'variante_id' => 'required|exists:producto_variante,variante_id',
             'cantidad'    => 'nullable|integer|min:1',
         ]);
 
-        $producto = Producto::findOrFail($data['producto_id']);
+        $variante = ProductoVariante::with('producto')->findOrFail($data['variante_id']);
+        $producto = $variante->producto;
         $cantidad = (int) ($data['cantidad'] ?? 1);
-        $usuario_id = auth()->user()->usuario_id;
+
+        if (! $variante->activo) {
+            return back()->with('error', 'Esa talla ya no está disponible.');
+        }
 
         $item = Carrito::firstOrNew([
-            'usuario_id'  => $usuario_id,
-            'producto_id' => $producto->producto_id,
+            'usuario_id'  => auth()->user()->usuario_id,
+            'variante_id' => $variante->variante_id,
         ]);
 
+        $item->producto_id = $producto->producto_id;
         $nuevaCantidad = (int) $item->cantidad + $cantidad;
 
-        if ($nuevaCantidad > $producto->stock) {
+        if ($nuevaCantidad > $variante->stock) {
             return back()->with(
                 'error',
-                "No hay stock suficiente de {$producto->nombre}: disponible {$producto->stock}."
+                "No hay stock suficiente de {$producto->nombre} talla {$variante->talla}: disponible {$variante->stock}."
             );
         }
 
@@ -62,7 +67,7 @@ class CarritoController extends Controller
             'cantidad'   => 'required|integer|min:0',
         ]);
 
-        $item = Carrito::with('producto')
+        $item = Carrito::with('producto', 'variante')
             ->where('carrito_id', $data['carrito_id'])
             ->where('usuario_id', auth()->user()->usuario_id)
             ->firstOrFail();
@@ -73,10 +78,14 @@ class CarritoController extends Controller
             return back()->with('success', 'Carrito actualizado.');
         }
 
-        if ($data['cantidad'] > $item->producto->stock) {
+        if (! $item->variante || ! $item->variante->activo) {
+            return back()->with('error', 'Esa talla ya no está disponible. Elimina la línea y elige otra.');
+        }
+
+        if ($data['cantidad'] > $item->variante->stock) {
             return back()->with(
                 'error',
-                "No hay stock suficiente de {$item->producto->nombre}: disponible {$item->producto->stock}."
+                "No hay stock suficiente de {$item->producto->nombre} talla {$item->variante->talla}: disponible {$item->variante->stock}."
             );
         }
 

@@ -101,8 +101,10 @@
                             <div class="d-flex align-items-center">
                                 <span class="bg-danger rounded-circle p-2 me-3 d-inline-block shadow-sm"></span>
                                 <div>
-                                    <h6 class="mb-0 fw-bold">{{ $prod->nombre }}</h6>
-                                    <small class="text-muted"><i class="fas fa-tag me-1"></i>{{ $prod->categoria->nombre ?? 'Sin Categoría' }}</small>
+                                    <h6 class="mb-0 fw-bold">{{ $prod->producto->nombre ?? 'Modelo eliminado' }}</h6>
+                                    <small class="text-muted">
+                                        <i class="fas fa-ruler-combined me-1"></i>Talla {{ $prod->talla }}@if($prod->color) · {{ $prod->color }}@endif
+                                    </small>
                                 </div>
                             </div>
                             <span class="badge bg-danger rounded-pill px-3 py-2 fs-6 shadow-sm">Solo {{ $prod->stock }} u</span>

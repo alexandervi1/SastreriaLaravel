@@ -10,7 +10,7 @@ class Carrito extends Model
     protected $primaryKey = 'carrito_id';
     public $timestamps = false;
 
-    protected $fillable = ['usuario_id', 'producto_id', 'cantidad'];
+    protected $fillable = ['usuario_id', 'producto_id', 'variante_id', 'cantidad'];
 
     /** @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Usuario, $this> */
     public function usuario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -22,6 +22,12 @@ class Carrito extends Model
     public function producto(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Producto::class, 'producto_id', 'producto_id');
+    }
+
+    /** @return \Illuminate\Database\Eloquent\Relations\BelongsTo<ProductoVariante, $this> */
+    public function variante(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(ProductoVariante::class, 'variante_id', 'variante_id');
     }
 
     /**

@@ -13,7 +13,6 @@ class Producto extends Model
         'nombre',
         'descripcion',
         'precio',
-        'stock',
         'slug',
         'activo',
         'destacado',
@@ -23,7 +22,6 @@ class Producto extends Model
 
     protected $casts = [
         'precio' => 'decimal:2',
-        'stock' => 'integer',
         'activo' => 'boolean',
         'destacado' => 'boolean',
     ];
@@ -40,55 +38,7 @@ class Producto extends Model
         return $this->hasMany(ProductoVariante::class, 'producto_id', 'producto_id');
     }
 
-    public function pedidos(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
-    {
-        return $this->belongsToMany(Pedido::class, 'pedidoproducto', 'producto_id', 'pedido_id')
-                    ->withPivot('cantidad');
-    }
-
     // ── Helpers ──
-
-    /**
-     * Descontar stock al registrar un pedido.
-     *
-     * @throws \RuntimeException cuando la cantidad supera la existencia disponible.
-     */
-    public function descontarStock(int $cantidad): void
-    {
-        if ($cantidad <= 0) {
-            throw new \InvalidArgumentException('La cantidad a descontar debe ser mayor que cero.');
-        }
-
-        if ($cantidad > $this->stock) {
-            throw new \RuntimeException(
-                "Stock insuficiente para {$this->nombre}: disponible {$this->stock}, solicitado {$cantidad}."
-            );
-        }
-
-        $this->stock -= $cantidad;
-        $this->save();
-    }
-
-    /**
-     * Devolver stock al anular un pedido.
-     */
-    public function reponerStock(int $cantidad): void
-    {
-        if ($cantidad <= 0) {
-            return;
-        }
-
-        $this->stock += $cantidad;
-        $this->save();
-    }
-
-    /**
-     * Productos por debajo del umbral configurado de bajo stock.
-     */
-    public function scopeBajoStock($query): \Illuminate\Database\Eloquent\Builder
-    {
-        return $query->where('stock', '<', Configuracion::obtenerUmbralBajoStock());
-    }
 
     /**
      * Stock sumado de las variantes activas.

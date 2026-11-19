@@ -23,6 +23,7 @@ class ProductoVariante extends Model
         'activo' => 'boolean',
     ];
 
+    /** @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Producto, $this> */
     public function producto(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Producto::class, 'producto_id', 'producto_id');

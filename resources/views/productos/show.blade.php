@@ -22,7 +22,7 @@
                      class="img-fluid rounded-3" 
                      style="max-height: 500px; object-fit: contain;">
                 
-                @if($producto->stock <= 0)
+                @if($producto->stock_total <= 0)
                     <div class="position-absolute top-0 start-0 w-100 h-100 bg-white bg-opacity-75 rounded-4 d-flex justify-content-center align-items-center">
                         <span class="badge bg-danger fs-3 py-3 px-5 shadow border border-light border-3">Agotado</span>
                     </div>
@@ -77,34 +77,44 @@
                 <div class="card-body p-4 d-flex flex-column">
                     <h5 class="fw-bold mb-3 text-dark">Panel de Compra</h5>
                     
-                    @if($producto->stock > 0)
-                        <div class="mb-4">
+                    @if($variantes->isNotEmpty())
+                        <div class="mb-3">
                             <span class="d-block text-success fw-bold mb-1 fs-5">
                                 <i class="fas fa-check-circle me-1"></i> Disponible
                             </span>
                             <span class="text-muted small">
-                                Stock actual: <strong>{{ $producto->stock }} u</strong>
+                                Stock total: <strong>{{ $producto->stock_total }} u</strong>
                             </span>
                         </div>
-                        
+
                         @auth
                             @if(auth()->user()->esCliente())
                                 <form action="{{ route('carrito.agregar') }}" method="POST" class="mt-auto">
                                     @csrf
-                                    <input type="hidden" name="producto_id" value="{{ $producto->producto_id }}">
-                                    
+
+                                    <label class="form-label text-muted small fw-bold mb-1">Talla y color *</label>
+                                    <div class="d-grid gap-2 mb-3">
+                                        @foreach($variantes as $variante)
+                                            <input type="radio" class="btn-check" name="variante_id"
+                                                   id="variante-{{ $variante->variante_id }}"
+                                                   value="{{ $variante->variante_id }}"
+                                                   {{ $loop->first ? 'checked' : '' }} required>
+                                            <label class="btn btn-outline-primary text-start" for="variante-{{ $variante->variante_id }}">
+                                                <strong>Talla {{ $variante->talla }}</strong>@if($variante->color) · {{ $variante->color }}@endif
+                                                <span class="d-block small text-muted">{{ $variante->stock }} disponibles</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+
                                     <label class="form-label text-muted small fw-bold mb-1">Cantidad (u):</label>
                                     <div class="input-group mb-3">
                                         <button class="btn btn-outline-secondary px-3" type="button" onclick="document.getElementById('cantidad_input').stepDown()"><i class="fas fa-minus"></i></button>
-                                        <input type="number" name="cantidad" id="cantidad_input" class="form-control text-center fw-bold" value="1" min="1" max="{{ $producto->stock }}" style="max-width: 80px;">
+                                        <input type="number" name="cantidad" id="cantidad_input" class="form-control text-center fw-bold" value="1" min="1" max="{{ $variantes->max('stock') }}" style="max-width: 80px;">
                                         <button class="btn btn-outline-secondary px-3" type="button" onclick="document.getElementById('cantidad_input').stepUp()"><i class="fas fa-plus"></i></button>
                                     </div>
-                                    
+
                                     <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold rounded-pill shadow-sm">
                                         <i class="fas fa-cart-shopping me-2"></i> Agregar al Carrito
-                                    </button>
-                                    <button type="button" class="btn btn-light btn-lg w-100 fw-bold rounded-pill text-dark border shadow-sm mt-2">
-                                        <i class="fas fa-heart me-2 text-danger"></i> Favorito
                                     </button>
                                 </form>
                             @else
@@ -123,7 +133,7 @@
                                 </a>
                             </div>
                         @endauth
-                        
+
                         <div class="mt-4 pt-3 border-top text-center text-muted small">
                             <i class="fas fa-lock me-1"></i> Transacción segura SSL
                         </div>

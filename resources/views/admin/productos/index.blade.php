@@ -46,14 +46,14 @@
                                 ${{ number_format($producto->precio, 2) }}
                             </td>
                             <td class="text-center">
-                                @if($producto->stock < 50)
-                                    <span class="badge bg-danger rounded-pill px-2">{{ $producto->stock }} u</span>
+                                @if($producto->stock_total < 50)
+                                    <span class="badge bg-danger rounded-pill px-2">{{ $producto->stock_total }} u</span>
                                 @else
-                                    <span class="px-2">{{ $producto->stock }} u</span>
+                                    <span class="px-2">{{ $producto->stock_total }} u</span>
                                 @endif
                             </td>
                             <td class="text-center text-muted small d-none d-xl-table-cell">
-                                {{ $producto->stock }} u
+                                {{ $producto->stock_total }} u
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center gap-2">

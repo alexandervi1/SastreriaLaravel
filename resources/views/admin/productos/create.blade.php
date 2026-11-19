@@ -48,20 +48,19 @@
             
             <div class="row g-4 mb-4 bg-light p-3 rounded-4">
                 <div class="col-md-6">
-                    <label for="stock" class="form-label fw-bold d-block text-secondary">Stock Inicial *</label>
-                     <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-boxes"></i></span>
-                        <input type="number" step="1" min="0" class="form-control" id="stock" name="stock" value="{{ old('stock', $producto->stock ?? '') }}" required placeholder="0">
-                    </div>
-                </div>
-                
-                <div class="col-md-6">
                     <label for="precio" class="form-label fw-bold d-block text-success">Precio Unitario *</label>
                      <div class="input-group">
                         <span class="input-group-text bg-success text-white"><i class="fas fa-dollar-sign"></i></span>
                         <input type="number" step="0.01" min="0" class="form-control" id="precio" name="precio" value="{{ old('precio', $producto->precio ?? '') }}" required placeholder="0.00">
                     </div>
                 </div>
+                @if(isset($producto))
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold d-block text-secondary">Stock total</label>
+                        <div class="form-control-plaintext fw-bold">{{ $producto->stock_total }} u</div>
+                        <div class="form-text">Se gestiona por talla en la tabla de abajo.</div>
+                    </div>
+                @endif
             </div>
 
             <h6 class="fw-bold border-bottom pb-2 mb-4 text-primary mt-5"><i class="fas fa-image me-2"></i> Fotografía del Producto</h6>

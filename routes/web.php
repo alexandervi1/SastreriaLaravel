@@ -19,7 +19,7 @@ Route::get('/ayuda', [HomeController::class, 'ayuda'])->name('ayuda');
 
 
 
-Route::get('/productos/{producto}', [ProductoPublicoController::class, 'show'])->name('productos.show');
+Route::get('/productos/{producto:slug}', [ProductoPublicoController::class, 'show'])->name('productos.show');
 Route::get('/categorias/{categoria}', [CategoriaController::class, 'show'])->name('categorias.show');
 
 // ── Rutas de Autenticación ──

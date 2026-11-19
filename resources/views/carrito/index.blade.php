@@ -46,7 +46,12 @@
                                                 <img src="{{ asset($item->producto->imagen_url ?? 'img/placeholder.svg') }}" class="rounded-3 me-3 object-fit-cover" style="width: 60px; height: 60px;" alt="{{ $item->producto->nombre }}">
                                                 <div>
                                                     <h6 class="mb-0 fw-bold">{{ $item->producto->nombre }}</h6>
-                                                    <small class="text-muted">{{ $item->producto->categoria->nombre ?? '' }}</small>
+                                                    <small class="text-muted">
+                                                        {{ $item->producto->categoria->nombre ?? '' }}
+                                                        @if($item->variante)
+                                                            · Talla {{ $item->variante->talla }}@if($item->variante->color) · {{ $item->variante->color }}@endif
+                                                        @endif
+                                                    </small>
                                                 </div>
                                             </div>
                                         </td>
@@ -59,7 +64,7 @@
                                                 @method('PUT')
                                                 <input type="hidden" name="carrito_id" value="{{ $item->carrito_id }}">
                                                 <div class="input-group input-group-sm w-75">
-                                                    <input type="number" name="cantidad" class="form-control text-center bg-light" value="{{ $item->cantidad }}" min="1" max="{{ $item->producto->stock }}" onchange="this.form.submit()">
+                                                    <input type="number" name="cantidad" class="form-control text-center bg-light" value="{{ $item->cantidad }}" min="1" max="{{ $item->variante->stock ?? 0 }}" onchange="this.form.submit()">
                                                 </div>
                                             </form>
                                         </td>

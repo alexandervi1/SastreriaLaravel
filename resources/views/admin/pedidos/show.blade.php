@@ -89,26 +89,31 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($pedido->productos as $producto)
+                            @foreach($pedido->lineas as $linea)
                             <tr class="border-bottom border-light">
                                 <td class="ps-4 py-3">
                                     <div class="d-flex align-items-center">
-                                        @if($producto->imagen_url)
-                                            <img src="{{ asset($producto->imagen_url) }}" class="rounded me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                                        @if($linea->producto->imagen_url)
+                                            <img src="{{ asset($linea->producto->imagen_url) }}" class="rounded me-3" style="width: 40px; height: 40px; object-fit: cover;">
                                         @else
                                             <div class="bg-light text-muted d-flex align-items-center justify-content-center rounded me-3" style="width: 40px; height: 40px;">
                                                 <i class="fas fa-image"></i>
                                             </div>
                                         @endif
-                                        <span class="fw-bold">{{ $producto->nombre }}</span>
+                                        <div>
+                                            <span class="fw-bold d-block">{{ $linea->producto_nombre }}</span>
+                                            @if($linea->talla || $linea->color)
+                                                <small class="text-muted">{{ $linea->talla }}@if($linea->color) · {{ $linea->color }}@endif</small>
+                                            @endif
+                                        </div>
                                     </div>
                                 </td>
-                                <td class="py-3 align-middle">${{ number_format($producto->precio, 2) }}</td>
+                                <td class="py-3 align-middle">${{ number_format($linea->precio_unitario, 2) }}</td>
                                 <td class="py-3 align-middle">
-                                    {{ $producto->pivot->cantidad }} u
+                                    {{ $linea->cantidad }} u
                                 </td>
                                 <td class="text-end pe-4 py-3 align-middle fw-bold">
-                                    ${{ number_format($producto->precio * $producto->pivot->cantidad, 2) }}
+                                    ${{ number_format($linea->subtotal, 2) }}
                                 </td>
                             </tr>
                             @endforeach

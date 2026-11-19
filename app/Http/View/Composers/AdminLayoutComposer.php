@@ -4,7 +4,7 @@ namespace App\Http\View\Composers;
 
 use App\Models\Configuracion;
 use App\Models\Pedido;
-use App\Models\Producto;
+use App\Models\ProductoVariante;
 use Illuminate\View\View;
 
 /**
@@ -16,7 +16,7 @@ class AdminLayoutComposer
     {
         $view->with([
             'pendingOrders' => Pedido::where('estado', 'Pendiente')->count(),
-            'lowStockCount' => Producto::bajoStock()->count(),
+            'lowStockCount' => ProductoVariante::bajoStock()->count(),
             'passwordRotationDays' => Configuracion::obtenerRotacionDias(),
         ]);
     }

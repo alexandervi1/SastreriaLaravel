@@ -52,7 +52,6 @@ class ImagenProductoTest extends TestCase
             'nombre' => 'Producto de prueba',
             'descripcion' => 'Descripción',
             'precio' => 10,
-            'stock' => 5,
             'categoria_id' => 1,
         ], $overrides);
     }

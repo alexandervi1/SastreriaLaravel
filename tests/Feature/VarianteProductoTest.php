@@ -42,7 +42,6 @@ class VarianteProductoTest extends TestCase
         $this->producto = Producto::create([
             'nombre' => 'Terno Slim Fit Azul Noche',
             'precio' => 250,
-            'stock' => 0,
             'categoria_id' => 1,
         ]);
     }
@@ -159,12 +158,48 @@ class VarianteProductoTest extends TestCase
         $this->assertSame(8, $this->producto->fresh()->stock_total);
     }
 
+    public function test_una_variante_con_pedidos_se_desactiva_en_lugar_de_borrarse(): void
+    {
+        $variante = $this->crearVariante();
+
+        $pedido = \App\Models\Pedido::create([
+            'usuario_id' => $this->admin->usuario_id,
+            'subtotal' => 250,
+            'iva' => 37.5,
+            'total' => 287.5,
+            'estado' => 'Pendiente',
+        ]);
+
+        \App\Models\PedidoLinea::create([
+            'pedido_id' => $pedido->pedido_id,
+            'producto_id' => $this->producto->producto_id,
+            'variante_id' => $variante->variante_id,
+            'producto_nombre' => $this->producto->nombre,
+            'talla' => $variante->talla,
+            'color' => $variante->color,
+            'cantidad' => 1,
+            'precio_unitario' => 250,
+            'subtotal' => 250,
+        ]);
+
+        $this->actingAs($this->admin)
+            ->delete(route('admin.productos.variantes.destroy', [
+                $this->producto->producto_id,
+                $variante->variante_id,
+            ]))
+            ->assertSessionHas('error');
+
+        $this->assertDatabaseHas('producto_variante', [
+            'variante_id' => $variante->variante_id,
+            'activo' => false,
+        ]);
+    }
+
     public function test_el_slug_se_genera_y_no_se_repite(): void
     {
         $otro = Producto::create([
             'nombre' => 'Terno Slim Fit Azul Noche',
             'precio' => 250,
-            'stock' => 0,
             'categoria_id' => 1,
         ]);
 

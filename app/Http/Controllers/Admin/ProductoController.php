@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Categoria;
-use App\Models\PedidoProducto;
+use App\Models\PedidoLinea;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -67,7 +67,7 @@ class ProductoController extends Controller
 
     public function destroy(Producto $producto)
     {
-        if (PedidoProducto::where('producto_id', $producto->producto_id)->exists()) {
+        if (PedidoLinea::where('producto_id', $producto->producto_id)->exists()) {
             return redirect()->route('admin.productos.index')
                 ->with('error', 'No se puede eliminar un producto que ya forma parte de un pedido. Edita su stock o descártalo del catálogo.');
         }

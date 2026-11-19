@@ -54,9 +54,8 @@ class Pedido extends Model
         return $this->belongsTo(Usuario::class, 'usuario_id', 'usuario_id');
     }
 
-    public function productos(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function lineas(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->belongsToMany(Producto::class, 'pedidoproducto', 'pedido_id', 'producto_id')
-                    ->withPivot(['cantidad', 'precio_unitario', 'subtotal']);
+        return $this->hasMany(PedidoLinea::class, 'pedido_id', 'pedido_id');
     }
 }

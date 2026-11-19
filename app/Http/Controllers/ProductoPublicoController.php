@@ -6,9 +6,15 @@ use App\Models\Producto;
 
 class ProductoPublicoController extends Controller
 {
-    public function show($id)
+    public function show(Producto $producto)
     {
-        $producto = Producto::with(['categoria'])->findOrFail($id);
-        return view('productos.show', compact('producto'));
+        $variantes = $producto->variantes()
+            ->where('activo', true)
+            ->where('stock', '>', 0)
+            ->orderBy('talla')
+            ->orderBy('color')
+            ->get();
+
+        return view('productos.show', compact('producto', 'variantes'));
     }
 }

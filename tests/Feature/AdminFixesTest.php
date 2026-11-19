@@ -58,49 +58,58 @@ class AdminFixesTest extends TestCase
     private function productoConPedido(int $cantidad = 2): array
     {
         $producto = Producto::create([
-            'nombre' => 'Albacora',
+            'nombre' => 'Terno de prueba',
             'precio' => 10,
-            'stock' => 100,
             'categoria_id' => 1,
+        ]);
+
+        $variante = \App\Models\ProductoVariante::create([
+            'producto_id' => $producto->producto_id,
+            'talla' => '40',
+            'color' => 'Azul noche',
+            'sku' => 'SKU-TEST',
+            'stock' => 100,
+            'activo' => true,
         ]);
 
         Carrito::create([
             'usuario_id' => $this->cliente->usuario_id,
             'producto_id' => $producto->producto_id,
+            'variante_id' => $variante->variante_id,
             'cantidad' => $cantidad,
         ]);
 
         $pedido = app(OrderService::class)->processOrder($this->cliente);
 
-        return [$producto->fresh(), $pedido];
+        return [$producto->fresh(), $variante->fresh(), $pedido];
     }
 
     public function test_cancelling_an_order_restores_stock(): void
     {
-        [$producto, $pedido] = $this->productoConPedido(2);
-        $this->assertEquals(98.0, (float) $producto->stock);
+        [$producto, $variante, $pedido] = $this->productoConPedido(2);
+        $this->assertEquals(98, $variante->stock);
 
         $this->actingAs($this->admin)
             ->put(route('admin.pedidos.update', $pedido->pedido_id), ['estado' => 'Cancelado'])
             ->assertSessionHas('success');
 
         $this->assertEquals('Cancelado', $pedido->fresh()->estado);
-        $this->assertEquals(100.0, (float) $producto->fresh()->stock);
+        $this->assertEquals(100, $variante->fresh()->stock);
     }
 
     public function test_cancelling_twice_does_not_duplicate_the_restock(): void
     {
-        [$producto, $pedido] = $this->productoConPedido(2);
+        [$producto, $variante, $pedido] = $this->productoConPedido(2);
 
         $this->actingAs($this->admin)->put(route('admin.pedidos.update', $pedido->pedido_id), ['estado' => 'Cancelado']);
         $this->actingAs($this->admin)->put(route('admin.pedidos.update', $pedido->pedido_id), ['estado' => 'Cancelado']);
 
-        $this->assertEquals(100.0, (float) $producto->fresh()->stock);
+        $this->assertEquals(100, $variante->fresh()->stock);
     }
 
     public function test_cancelled_order_cannot_be_reactivated(): void
     {
-        [$producto, $pedido] = $this->productoConPedido(2);
+        [$producto, $variante, $pedido] = $this->productoConPedido(2);
 
         $this->actingAs($this->admin)->put(route('admin.pedidos.update', $pedido->pedido_id), ['estado' => 'Cancelado']);
 
@@ -113,14 +122,14 @@ class AdminFixesTest extends TestCase
 
     public function test_product_with_order_lines_cannot_be_deleted(): void
     {
-        [$producto, $pedido] = $this->productoConPedido(2);
+        [$producto, $variante, $pedido] = $this->productoConPedido(2);
 
         $this->actingAs($this->admin)
             ->delete(route('admin.productos.destroy', $producto->producto_id))
             ->assertSessionHas('error');
 
         $this->assertDatabaseHas('producto', ['producto_id' => $producto->producto_id]);
-        $this->assertDatabaseHas('pedidoproducto', ['pedido_id' => $pedido->pedido_id]);
+        $this->assertDatabaseHas('pedido_linea', ['pedido_id' => $pedido->pedido_id]);
     }
 
     public function test_username_change_logs_the_admin_out(): void
@@ -188,7 +197,6 @@ class AdminFixesTest extends TestCase
         $producto = Producto::create([
             'nombre' => 'Albacora',
             'precio' => 10,
-            'stock' => 100,
             'categoria_id' => 1,
         ]);
 
@@ -352,36 +360,53 @@ class AdminFixesTest extends TestCase
 
     public function test_low_stock_threshold_is_configurable(): void
     {
-        Producto::create([
-            'nombre' => 'Albacora',
+        $producto = Producto::create([
+            'nombre' => 'Terno de prueba',
             'precio' => 10,
-            'stock' => 1,
             'categoria_id' => 1,
+        ]);
+
+        \App\Models\ProductoVariante::create([
+            'producto_id' => $producto->producto_id,
+            'talla' => '40',
+            'color' => null,
+            'sku' => 'SKU-BAJO',
+            'stock' => 1,
+            'activo' => true,
         ]);
 
         Configuracion::updateOrCreate(['clave' => 'umbral_bajo_stock'], ['valor' => '100']);
 
         $response = $this->actingAs($this->admin)->get(route('admin.reportes.bajo-stock'));
-        $this->assertCount(1, $response->viewData('productos'));
+        $this->assertCount(1, $response->viewData('variantes'));
 
         Configuracion::updateOrCreate(['clave' => 'umbral_bajo_stock'], ['valor' => '0']);
 
         $response = $this->actingAs($this->admin)->get(route('admin.reportes.bajo-stock'));
-        $this->assertCount(0, $response->viewData('productos'));
+        $this->assertCount(0, $response->viewData('variantes'));
     }
 
     public function test_receipt_uses_the_tax_rate_stored_on_the_order(): void
     {
         $producto = Producto::create([
-            'nombre' => 'Albacora',
+            'nombre' => 'Terno de prueba',
             'precio' => 10,
-            'stock' => 10,
             'categoria_id' => 1,
+        ]);
+
+        $variante = \App\Models\ProductoVariante::create([
+            'producto_id' => $producto->producto_id,
+            'talla' => '40',
+            'color' => null,
+            'sku' => 'SKU-IVA',
+            'stock' => 10,
+            'activo' => true,
         ]);
 
         Carrito::create([
             'usuario_id' => $this->cliente->usuario_id,
             'producto_id' => $producto->producto_id,
+            'variante_id' => $variante->variante_id,
             'cantidad' => 2,
         ]);
 

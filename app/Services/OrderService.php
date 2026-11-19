@@ -5,8 +5,8 @@ namespace App\Services;
 use App\Models\Carrito;
 use App\Models\Configuracion;
 use App\Models\Pedido;
-use App\Models\PedidoProducto;
-use App\Models\Producto;
+use App\Models\PedidoLinea;
+use App\Models\ProductoVariante;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
@@ -28,30 +28,37 @@ class OrderService
     public function processOrder(Usuario $usuario): Pedido
     {
         return DB::transaction(function () use ($usuario) {
-            $items = Carrito::where('usuario_id', $usuario->usuario_id)->get();
+            $items = Carrito::with('producto')->where('usuario_id', $usuario->usuario_id)->get();
 
             if ($items->isEmpty()) {
                 throw new RuntimeException('El carrito está vacío.');
             }
 
-            // Bloquea las filas para que dos checkouts simultáneos no sobrevendan.
-            $productos = Producto::whereIn('producto_id', $items->pluck('producto_id'))
+            $ids = $items->pluck('variante_id')->filter()->unique();
+
+            if ($ids->count() !== $items->count()) {
+                throw new RuntimeException('Una de las tallas del carrito ya no está disponible. Vuelve a elegirla.');
+            }
+
+            // Bloquea las variantes para que dos checkouts simultáneos no sobrevendan.
+            $variantes = ProductoVariante::whereIn('variante_id', $ids)
                 ->lockForUpdate()
                 ->get()
-                ->keyBy('producto_id');
+                ->keyBy('variante_id');
 
             $subtotal = 0.0;
 
             foreach ($items as $item) {
-                $producto = $productos->get($item->producto_id);
+                $variante = $variantes->get($item->variante_id);
+                $producto = $item->producto;
 
-                if (!$producto) {
-                    throw new RuntimeException('Uno de los productos del carrito ya no está disponible.');
+                if (! $variante || ! $producto || ! $variante->activo) {
+                    throw new RuntimeException('Una de las tallas del carrito ya no está disponible. Vuelve a elegirla.');
                 }
 
-                if ($item->cantidad > $producto->stock) {
+                if ($item->cantidad > $variante->stock) {
                     throw new RuntimeException(
-                        "Stock insuficiente para {$producto->nombre}: disponible {$producto->stock}, solicitado {$item->cantidad}."
+                        "Stock insuficiente para {$producto->nombre} talla {$variante->talla}: disponible {$variante->stock}, solicitado {$item->cantidad}."
                     );
                 }
 
@@ -75,18 +82,23 @@ class OrderService
             $pedido->save();
 
             foreach ($items as $item) {
-                $producto = $productos->get($item->producto_id);
+                $variante = $variantes->get($item->variante_id);
+                $producto = $item->producto;
                 $precio = (float) $producto->precio;
 
-                PedidoProducto::create([
+                PedidoLinea::create([
                     'pedido_id' => $pedido->pedido_id,
                     'producto_id' => $producto->producto_id,
+                    'variante_id' => $variante->variante_id,
+                    'producto_nombre' => $producto->nombre,
+                    'talla' => $variante->talla,
+                    'color' => $variante->color,
                     'cantidad' => $item->cantidad,
                     'precio_unitario' => $precio,
                     'subtotal' => round($item->cantidad * $precio, 2),
                 ]);
 
-                $producto->descontarStock((int) $item->cantidad);
+                $variante->descontarStock((int) $item->cantidad);
             }
 
             Carrito::where('usuario_id', $usuario->usuario_id)->delete();
@@ -113,20 +125,20 @@ class OrderService
                 throw new RuntimeException("No se puede cancelar un pedido en estado {$bloqueado->estado}.");
             }
 
-            $lineas = PedidoProducto::where('pedido_id', $bloqueado->pedido_id)->get();
+            $lineas = PedidoLinea::where('pedido_id', $bloqueado->pedido_id)->get();
 
             // Mismo bloqueo que processOrder: evita que un checkout simultáneo pise la reposición.
-            $productos = Producto::whereIn('producto_id', $lineas->pluck('producto_id'))
+            $variantes = ProductoVariante::whereIn('variante_id', $lineas->pluck('variante_id')->filter()->unique())
                 ->lockForUpdate()
                 ->get()
-                ->keyBy('producto_id');
+                ->keyBy('variante_id');
 
             foreach ($lineas as $linea) {
-                $producto = $productos->get($linea->producto_id);
+                $variante = $linea->variante_id ? $variantes->get($linea->variante_id) : null;
 
-                // El producto pudo borrarse; la cancelación no debe fallar por eso.
-                if ($producto) {
-                    $producto->reponerStock((int) $linea->cantidad);
+                // La variante pudo borrarse; la cancelación no debe fallar por eso.
+                if ($variante) {
+                    $variante->reponerStock((int) $linea->cantidad);
                 }
             }
 

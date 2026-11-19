@@ -43,7 +43,7 @@ class PedidoController extends Controller
 
     public function show($id)
     {
-        $pedido = Pedido::with(['usuario', 'productos'])->findOrFail($id);
+        $pedido = Pedido::with(['usuario', 'lineas'])->findOrFail($id);
         return view('admin.pedidos.show', compact('pedido'));
     }
 

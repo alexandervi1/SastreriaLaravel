@@ -67,7 +67,7 @@ class PagesSmokeTest extends TestCase
         $producto = Producto::firstOrFail();
 
         $this->get(route('home'))->assertOk();
-        $this->get(route('productos.show', $producto->producto_id))->assertOk();
+        $this->get(route('productos.show', $producto->slug))->assertOk();
         $this->get(route('categorias.show', $producto->categoria_id))->assertOk();
 
         $this->actingAs($this->cliente)->get(route('carrito.index'))->assertOk();
@@ -77,11 +77,20 @@ class PagesSmokeTest extends TestCase
     public function test_receipt_shows_persisted_totals(): void
     {
         $producto = Producto::firstOrFail();
-        $producto->update(['stock' => 10]);
+
+        $variante = \App\Models\ProductoVariante::create([
+            'producto_id' => $producto->producto_id,
+            'talla' => '40',
+            'color' => null,
+            'sku' => 'SKU-SMOKE',
+            'stock' => 10,
+            'activo' => true,
+        ]);
 
         Carrito::create([
             'usuario_id' => $this->cliente->usuario_id,
             'producto_id' => $producto->producto_id,
+            'variante_id' => $variante->variante_id,
             'cantidad' => 2,
         ]);
 

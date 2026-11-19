@@ -36,6 +36,14 @@ class VarianteController extends Controller
 
     public function destroy(Producto $producto, ProductoVariante $variante)
     {
+        if (\App\Models\PedidoLinea::where('variante_id', $variante->variante_id)->exists()) {
+            $variante->update(['activo' => false]);
+
+            return redirect()
+                ->route('admin.productos.edit', $producto->producto_id)
+                ->with('error', 'La talla ya forma parte de un pedido: se desactivó en lugar de borrarla.');
+        }
+
         $variante->delete();
 
         return redirect()

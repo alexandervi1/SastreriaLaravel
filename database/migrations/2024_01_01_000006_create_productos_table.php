@@ -13,7 +13,6 @@ return new class extends Migration
             $table->string('nombre', 255);
             $table->text('descripcion')->nullable();
             $table->decimal('precio', 10, 2);
-            $table->unsignedInteger('stock');
             $table->string('slug', 160)->unique();
             $table->boolean('activo')->default(true);
             $table->boolean('destacado')->default(false);
