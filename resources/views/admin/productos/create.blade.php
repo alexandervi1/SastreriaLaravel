@@ -89,4 +89,6 @@
         </form>
     </div>
 </div>
+
+@yield('variantes')
 @endsection

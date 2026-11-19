@@ -38,10 +38,16 @@ class ProductoController extends Controller
             ->with('success', 'Producto creado exitosamente.');
     }
 
+    /** Tallas sugeridas en el formulario (el campo no las restringe). */
+    private const TALLAS_SUGERIDAS = ['36', '38', '40', '42', '44', '46', '48'];
+
     public function edit(Producto $producto)
     {
         $categorias = Categoria::all();
-        return view('admin.productos.edit', compact('producto', 'categorias'));
+        $tallas = self::TALLAS_SUGERIDAS;
+        $variantes = $producto->variantes()->orderBy('talla')->orderBy('color')->get();
+
+        return view('admin.productos.edit', compact('producto', 'categorias', 'tallas', 'variantes'));
     }
 
     public function update(\App\Http\Requests\Admin\UpdateProductoRequest $request, Producto $producto)

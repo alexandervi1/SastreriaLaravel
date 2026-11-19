@@ -14,6 +14,9 @@ return new class extends Migration
             $table->text('descripcion')->nullable();
             $table->decimal('precio', 10, 2);
             $table->unsignedInteger('stock');
+            $table->string('slug', 160)->unique();
+            $table->boolean('activo')->default(true);
+            $table->boolean('destacado')->default(false);
             $table->string('imagen_url', 255)->nullable();
             $table->unsignedBigInteger('categoria_id')->nullable();
             $table->timestamps();

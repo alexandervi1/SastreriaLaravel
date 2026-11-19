@@ -51,6 +51,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // CRUD de Productos (Resource completo, sin show: el detalle público está en /productos/{id})
     Route::resource('productos', AdminProductoController::class)->except(['show']);
 
+    // Tallas y colores de cada modelo
+    Route::resource('productos.variantes', \App\Http\Controllers\Admin\VarianteController::class)
+        ->parameters(['variantes' => 'variante'])
+        ->only(['store', 'update', 'destroy']);
+
     // CRUD de Categorías
     Route::resource('categorias', \App\Http\Controllers\Admin\CategoriaController::class)->except(['create', 'show', 'edit']);
 
