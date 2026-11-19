@@ -160,8 +160,12 @@
                         <td class="py-3">
                             @if($pr->estado == 'Entregado')
                                 <span class="badge bg-success rounded-pill px-3 py-2 shadow-sm"><i class="fas fa-check me-1"></i>Entregado</span>
-                            @elseif($pr->estado == 'Enviado')
-                                <span class="badge bg-info rounded-pill px-3 py-2 text-dark shadow-sm"><i class="fas fa-truck me-1"></i>Enviado</span>
+                            @elseif($pr->estado == 'Confirmado')
+                                <span class="badge bg-primary rounded-pill px-3 py-2 shadow-sm"><i class="fas fa-check me-1"></i>Confirmado</span>
+                            @elseif($pr->estado == 'En confección')
+                                <span class="badge bg-info rounded-pill px-3 py-2 text-dark shadow-sm"><i class="fas fa-scissors me-1"></i>En confección</span>
+                            @elseif($pr->estado == 'Listo para entrega')
+                                <span class="badge bg-success rounded-pill px-3 py-2 shadow-sm"><i class="fas fa-box me-1"></i>Listo</span>
                             @elseif($pr->estado == 'Cancelado')
                                 <span class="badge bg-danger rounded-pill px-3 py-2 shadow-sm"><i class="fas fa-times me-1"></i>Cancelado</span>
                             @else

@@ -6,6 +6,9 @@
 <a href="{{ route('admin.pedidos.index') }}" class="btn btn-outline-secondary rounded-pill">
     <i class="fas fa-arrow-left me-2"></i> Volver a la Lista
 </a>
+<a href="{{ route('admin.pedidos.orden-trabajo', $pedido->pedido_id) }}" class="btn btn-primary rounded-pill">
+    <i class="fas fa-print me-2"></i> Orden de trabajo
+</a>
 @endsection
 
 @section('content')
@@ -68,8 +71,12 @@
                 <div>
                     @if($pedido->estado == 'Entregado')
                         <span class="badge bg-success rounded-pill px-3 py-2">Entregado</span>
-                    @elseif($pedido->estado == 'Enviado')
-                        <span class="badge bg-info rounded-pill px-3 py-2 text-dark">Enviado</span>
+                    @elseif($pedido->estado == 'Confirmado')
+                        <span class="badge bg-primary rounded-pill px-3 py-2">Confirmado</span>
+                    @elseif($pedido->estado == 'En confección')
+                        <span class="badge bg-info rounded-pill px-3 py-2 text-dark">En confección</span>
+                    @elseif($pedido->estado == 'Listo para entrega')
+                        <span class="badge bg-success rounded-pill px-3 py-2">Listo para entrega</span>
                     @elseif($pedido->estado == 'Cancelado')
                         <span class="badge bg-danger rounded-pill px-3 py-2">Cancelado</span>
                     @else

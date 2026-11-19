@@ -25,9 +25,9 @@ class OrderService
      *
      * @throws \RuntimeException con un mensaje apto para el cliente.
      */
-    public function processOrder(Usuario $usuario): Pedido
+    public function processOrder(Usuario $usuario, string $metodoEntrega = 'retiro', ?string $direccionEnvio = null): Pedido
     {
-        return DB::transaction(function () use ($usuario) {
+        return DB::transaction(function () use ($usuario, $metodoEntrega, $direccionEnvio) {
             $items = Carrito::with(['producto', 'variante', 'tela', 'medida'])
                 ->where('usuario_id', $usuario->usuario_id)
                 ->get();
@@ -88,6 +88,8 @@ class OrderService
                 'iva_pct' => $totales['iva_pct'],
                 'total' => $totales['total'],
                 'estado' => 'Pendiente',
+                'metodo_entrega' => $metodoEntrega,
+                'direccion_envio' => $metodoEntrega === 'envio' ? $direccionEnvio : null,
             ]);
 
             // Secuencial a partir del ID insertado: seguro ante concurrencia.
@@ -221,6 +223,26 @@ class OrderService
 
             if (! $bloqueado->puedeCambiarA($estado)) {
                 throw new RuntimeException("No se puede pasar un pedido de {$bloqueado->estado} a {$estado}.");
+            }
+
+            $lineasMedida = PedidoLinea::where('pedido_id', $bloqueado->pedido_id)
+                ->where('tipo', 'medida')
+                ->count();
+
+            if ($estado === Pedido::ESTADO_LISTO && $bloqueado->estado === Pedido::ESTADO_CONFIRMADO && $lineasMedida > 0) {
+                throw new RuntimeException('Un pedido a medida debe pasar por «En confección» antes de estar listo.');
+            }
+
+            if ($estado === Pedido::ESTADO_CONFIRMADO && $bloqueado->fecha_entrega_estimada === null) {
+                $dias = PedidoLinea::with('producto')
+                    ->where('pedido_id', $bloqueado->pedido_id)
+                    ->where('tipo', 'medida')
+                    ->get()
+                    ->max(fn (PedidoLinea $linea) => (int) ($linea->producto->dias_confeccion ?? 0));
+
+                if ($dias > 0) {
+                    $bloqueado->fecha_entrega_estimada = now()->addWeekdays($dias);
+                }
             }
 
             $bloqueado->estado = $estado;

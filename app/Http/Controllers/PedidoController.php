@@ -21,8 +21,17 @@ class PedidoController extends Controller
 
     public function process(\App\Services\OrderService $orderService)
     {
+        $data = request()->validate([
+            'metodo_entrega'  => 'nullable|in:retiro,envio',
+            'direccion_envio' => 'nullable|required_if:metodo_entrega,envio|string|max:255',
+        ]);
+
         try {
-            $pedido = $orderService->processOrder(auth()->user());
+            $pedido = $orderService->processOrder(
+                auth()->user(),
+                $data['metodo_entrega'] ?? 'retiro',
+                $data['direccion_envio'] ?? null
+            );
 
             return redirect()->route('pedidos.show', $pedido->pedido_id)
                 ->with('success', 'Pedido procesado con éxito. Gracias por tu compra.');

@@ -123,9 +123,24 @@
 
                     <form action="{{ route('pedidos.procesar') }}" method="POST">
                         @csrf
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small" for="metodo_entrega">Entrega *</label>
+                            <select name="metodo_entrega" id="metodo_entrega" class="form-select" required>
+                                <option value="retiro" {{ old('metodo_entrega') === 'envio' ? '' : 'selected' }}>Retiro en el taller</option>
+                                <option value="envio" {{ old('metodo_entrega') === 'envio' ? 'selected' : '' }}>Envío a domicilio</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small" for="direccion_envio">Dirección de envío</label>
+                            <input type="text" name="direccion_envio" id="direccion_envio" class="form-control" value="{{ old('direccion_envio', auth()->user()->direccion) }}" maxlength="255">
+                            <div class="form-text">Obligatoria si eliges envío.</div>
+                        </div>
                         <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow">
                             <i class="fas fa-check-circle me-2"></i> Confirmar Pedido
                         </button>
+                        <p class="text-muted small text-center mt-3 mb-0">
+                            Al confirmar aceptas las <a href="{{ route('ayuda') }}">políticas de cambios y devoluciones</a>.
+                        </p>
                     </form>
                     
                     <p class="text-muted small text-center mt-3 mb-0">

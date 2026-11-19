@@ -85,6 +85,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Gestión de Pedidos
     Route::resource('pedidos', \App\Http\Controllers\Admin\PedidoController::class)->only(['index', 'show', 'update']);
+    Route::get('/pedidos/{pedido}/orden-trabajo', [\App\Http\Controllers\Admin\PedidoController::class, 'ordenTrabajo'])
+        ->name('pedidos.orden-trabajo');
 
     // Configuración (IVA)
     Route::get('/configuracion', [AdminConfiguracionController::class, 'edit'])->name('configuracion.edit');

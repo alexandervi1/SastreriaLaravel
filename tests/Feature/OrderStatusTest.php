@@ -113,11 +113,11 @@ class OrderStatusTest extends TestCase
         $this->assertEquals(100, $almeja->fresh()->stock);
     }
 
-    public function test_enviado_a_cancelado_repone_el_stock(): void
+    public function test_confirmado_a_cancelado_repone_el_stock(): void
     {
         $variante = $this->producto('Almeja', 5, 100);
         $pedido = $this->pedidoCon([[$variante, 4]]);
-        app(OrderService::class)->changeStatus($pedido, 'Enviado');
+        app(OrderService::class)->changeStatus($pedido, 'Confirmado');
 
         $this->cancelar($pedido->fresh())->assertSessionHas('success');
 
@@ -130,7 +130,9 @@ class OrderStatusTest extends TestCase
         $variante = $this->producto('Almeja', 5, 100);
         $pedido = $this->pedidoCon([[$variante, 4]]);
         $service = app(OrderService::class);
-        $service->changeStatus($pedido, 'Enviado');
+        $service->changeStatus($pedido, 'Confirmado');
+        $service->changeStatus($pedido->fresh(), 'En confección');
+        $service->changeStatus($pedido->fresh(), 'Listo para entrega');
         $service->changeStatus($pedido->fresh(), 'Entregado');
 
         $this->cancelar($pedido->fresh())->assertSessionHas('error');
@@ -157,7 +159,9 @@ class OrderStatusTest extends TestCase
         $variante = $this->producto('Almeja', 5, 100);
         $pedido = $this->pedidoCon([[$variante, 4]]);
         $service = app(OrderService::class);
-        $service->changeStatus($pedido, 'Enviado');
+        $service->changeStatus($pedido, 'Confirmado');
+        $service->changeStatus($pedido->fresh(), 'En confección');
+        $service->changeStatus($pedido->fresh(), 'Listo para entrega');
         $service->changeStatus($pedido->fresh(), 'Entregado');
 
         $this->actingAs($this->admin)

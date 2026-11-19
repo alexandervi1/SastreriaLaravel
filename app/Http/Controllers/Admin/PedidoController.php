@@ -47,6 +47,13 @@ class PedidoController extends Controller
         return view('admin.pedidos.show', compact('pedido'));
     }
 
+    public function ordenTrabajo($id)
+    {
+        $pedido = Pedido::with(['usuario', 'lineas'])->findOrFail($id);
+
+        return view('admin.pedidos.orden_trabajo', compact('pedido'));
+    }
+
     public function update(Request $request, $id, OrderService $orderService)
     {
         $data = $request->validate([
