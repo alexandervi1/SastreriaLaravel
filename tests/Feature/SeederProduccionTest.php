@@ -113,7 +113,12 @@ class SeederProduccionTest extends TestCase
     {
         $this->sembrar();
 
-        $this->assertSame(18, \App\Models\Producto::count());
+        $this->assertSame(6, \App\Models\Producto::count());
+        $this->assertDatabaseCount('tela', 5);
+        $this->assertGreaterThanOrEqual(20, \App\Models\ProductoVariante::count());
+        $this->assertTrue(\App\Models\Producto::where('vende_por_talla', false)->where('vende_a_medida', true)->exists());
+        $this->assertTrue(\App\Models\Producto::where('vende_por_talla', true)->where('vende_a_medida', false)->exists());
+        $this->assertTrue(is_file(public_path('img/productos/demo/demo-1.svg')));
     }
 
     public function test_seed_demo_false_omite_el_catalogo_demo(): void
@@ -124,7 +129,7 @@ class SeederProduccionTest extends TestCase
 
         $this->assertSame(0, \App\Models\Producto::count());
         $this->assertDatabaseCount('rol', 3);
-        $this->assertDatabaseCount('categoria', 3);
+        $this->assertDatabaseCount('categoria', 4);
         $this->assertDatabaseCount('configuracion', 14);
     }
 

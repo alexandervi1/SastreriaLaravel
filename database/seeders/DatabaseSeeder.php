@@ -44,9 +44,10 @@ class DatabaseSeeder extends Seeder
 
         // ── 3. Categorías ──
         Categoria::insert([
-            ['categoria_id' => 1, 'nombre' => 'Pescados'],
-            ['categoria_id' => 2, 'nombre' => 'Crustáceos y Moluscos'],
-            ['categoria_id' => 3, 'nombre' => 'Pulpos y Calamares'],
+            ['categoria_id' => 1, 'nombre' => 'Ternos'],
+            ['categoria_id' => 2, 'nombre' => 'Smokings'],
+            ['categoria_id' => 3, 'nombre' => 'Chalecos'],
+            ['categoria_id' => 4, 'nombre' => 'Accesorios'],
         ]);
 
         // ── 4. Usuario Admin ──
