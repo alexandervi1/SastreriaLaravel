@@ -36,6 +36,7 @@ class PedidoConfeccionTest extends TestCase
         ]);
         Categoria::insert([['categoria_id' => 1, 'nombre' => 'Ternos']]);
         Configuracion::create(['clave' => 'iva_actual', 'valor' => '15']);
+        $this->activarVentaPorTalla();
 
         $this->admin = Usuario::create([
             'nombre_usuario' => 'admin1',

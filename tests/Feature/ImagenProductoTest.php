@@ -53,6 +53,9 @@ class ImagenProductoTest extends TestCase
             'descripcion' => 'Descripción',
             'precio' => 10,
             'categoria_id' => 1,
+            'vende_a_medida' => 1,
+            'precio_medida' => 90,
+            'dias_confeccion' => 10,
         ], $overrides);
     }
 

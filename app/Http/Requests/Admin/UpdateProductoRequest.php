@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Configuracion;
 
 class UpdateProductoRequest extends FormRequest
 {
@@ -40,8 +41,9 @@ class UpdateProductoRequest extends FormRequest
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
-            $porTalla = $this->has('vende_por_talla') ? $this->boolean('vende_por_talla') : true;
-            $aMedida = $this->boolean('vende_a_medida');
+            $ventaPorTalla = Configuracion::ventaPorTallaActiva();
+            $porTalla = $ventaPorTalla && $this->boolean('vende_por_talla');
+            $aMedida = $ventaPorTalla ? $this->boolean('vende_a_medida') : true;
 
             if (! $porTalla && ! $aMedida) {
                 $validator->errors()->add('vende_por_talla', 'El modelo debe venderse al menos por talla o a medida.');

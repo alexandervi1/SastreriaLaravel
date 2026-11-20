@@ -22,8 +22,10 @@
                         <th scope="col" class="ps-4">Producto</th>
                         <th scope="col">Categoría</th>
                         <th scope="col" class="text-center">Precio Unit.</th>
+                        @if($ventaPorTalla)
                         <th scope="col" class="text-center">Stock</th>
                         <th scope="col" class="text-center d-none d-xl-table-cell">Unidades en bodega</th>
+                        @endif
                         <th scope="col" class="text-center pe-4">Acciones</th>
                     </tr>
                 </thead>
@@ -45,6 +47,7 @@
                             <td class="text-center fw-bold text-success">
                                 ${{ number_format($producto->precio, 2) }}
                             </td>
+                            @if($ventaPorTalla)
                             <td class="text-center">
                                 @if($producto->stock_total < 50)
                                     <span class="badge bg-danger rounded-pill px-2">{{ $producto->stock_total }} u</span>
@@ -55,6 +58,7 @@
                             <td class="text-center text-muted small d-none d-xl-table-cell">
                                 {{ $producto->stock_total }} u
                             </td>
+                            @endif
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center gap-2">
                                     <a href="{{ route('admin.productos.edit', $producto->producto_id) }}" class="btn btn-sm btn-outline-primary btn-action" title="Editar">
@@ -72,7 +76,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center py-5">
+                            <td colspan="{{ $ventaPorTalla ? 6 : 4 }}" class="text-center py-5">
                                 <i class="fas fa-shirt fa-3x text-muted mb-3 opacity-50"></i>
                                 <h5 class="text-muted">No se han encontrado productos.</h5>
                             </td>

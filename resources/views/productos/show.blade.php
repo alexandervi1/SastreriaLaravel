@@ -92,21 +92,22 @@
                 <div class="card-body p-4 d-flex flex-column">
                     <h5 class="fw-bold mb-3 text-dark">Panel de Compra</h5>
 
+                    @php($mostrarPestanas = $ventaPorTalla && $producto->vende_a_medida)
+
+                    @if($mostrarPestanas)
                     <ul class="nav nav-pills nav-fill mb-3 small" role="tablist">
-                        @if($producto->vende_por_talla)
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link {{ $producto->vende_a_medida ? '' : 'active' }}" data-bs-toggle="pill" data-bs-target="#tab-talla" type="button" role="tab">Por talla</button>
-                            </li>
-                        @endif
-                        @if($producto->vende_a_medida)
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link {{ $producto->vende_por_talla ? '' : 'active' }}" data-bs-toggle="pill" data-bs-target="#tab-medida" type="button" role="tab">A medida</button>
-                            </li>
-                        @endif
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-talla" type="button" role="tab">Por talla</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-medida" type="button" role="tab">A medida</button>
+                        </li>
                     </ul>
+                    @endif
 
                     <div class="tab-content">
-                    <div class="tab-pane fade {{ $producto->vende_por_talla ? 'show active' : '' }}" id="tab-talla" role="tabpanel">
+                    @if($ventaPorTalla)
+                    <div class="tab-pane fade {{ $mostrarPestanas ? '' : 'show active' }}" id="tab-talla" role="tabpanel">
                     
                     @if($variantes->isNotEmpty())
                         <div class="mb-3">
@@ -176,9 +177,10 @@
                         </div>
                     @endif
                     </div>{{-- /tab-talla --}}
+                    @endif
 
                     @if($producto->vende_a_medida)
-                        <div class="tab-pane fade {{ $producto->vende_por_talla ? '' : 'show active' }}" id="tab-medida" role="tabpanel">
+                        <div class="tab-pane fade {{ $mostrarPestanas ? '' : 'show active' }}" id="tab-medida" role="tabpanel">
                             @auth
                                 @if(auth()->user()->esCliente())
                                     <form action="{{ route('carrito.agregar') }}" method="POST" id="form-medida">

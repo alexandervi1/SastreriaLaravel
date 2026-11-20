@@ -1,7 +1,7 @@
 @extends('admin.productos.create')
 
 @section('variantes')
-@if(isset($producto))
+@if($ventaPorTalla && isset($producto))
 <div class="card border-0 shadow-sm rounded-4 max-w-4xl mx-auto mt-4">
     <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
         <h5 class="mb-0 fw-bold"><i class="fas fa-ruler-combined text-primary me-2"></i> Tallas y colores</h5>

@@ -36,6 +36,10 @@ class OrderService
                 throw new RuntimeException('El carrito está vacío.');
             }
 
+            if (! Configuracion::ventaPorTallaActiva() && $items->contains('tipo', 'talla')) {
+                throw new RuntimeException('La venta por talla no está disponible.');
+            }
+
             $idsTalla = $items->where('tipo', 'talla')->pluck('variante_id')->filter()->unique();
 
             if ($idsTalla->count() !== $items->where('tipo', 'talla')->count()) {

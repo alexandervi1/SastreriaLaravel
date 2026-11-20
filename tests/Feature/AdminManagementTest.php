@@ -33,6 +33,7 @@ class AdminManagementTest extends TestCase
 
         Categoria::insert([['categoria_id' => 1, 'nombre' => 'Pescados']]);
         Configuracion::create(['clave' => 'iva_actual', 'valor' => '15']);
+        $this->activarVentaPorTalla();
 
         $this->admin = Usuario::create([
             'nombre_usuario' => 'admin1',

@@ -26,6 +26,7 @@ class ProductoMedidaTest extends TestCase
             ['rol_id' => 2, 'nombre' => 'Cliente'],
         ]);
         Categoria::insert([['categoria_id' => 1, 'nombre' => 'Ternos']]);
+        $this->activarVentaPorTalla();
 
         $this->admin = Usuario::create([
             'nombre_usuario' => 'admin1',
@@ -102,7 +103,7 @@ class ProductoMedidaTest extends TestCase
         ]))->get(route('productos.show', $producto->slug));
 
         $response->assertOk();
-        $response->assertSee('A medida');
+        $response->assertSee('Encargar a medida');
         $response->assertSee('Lana merino azul');
         $response->assertSee('Recargo: $25.00');
         $response->assertSee('Entrega estimada:');

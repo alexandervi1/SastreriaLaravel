@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Categoria;
+use App\Models\Configuracion;
 use App\Models\PedidoLinea;
 use App\Models\Producto;
 use Illuminate\Http\Request;
@@ -15,20 +16,25 @@ class ProductoController extends Controller
     public function index()
     {
         $productos = Producto::with(['categoria'])->get();
-        return view('admin.productos.index', compact('productos'));
+        $ventaPorTalla = Configuracion::ventaPorTallaActiva();
+
+        return view('admin.productos.index', compact('productos', 'ventaPorTalla'));
     }
 
     public function create()
     {
         $categorias = Categoria::all();
-        return view('admin.productos.create', compact('categorias'));
+        $ventaPorTalla = Configuracion::ventaPorTallaActiva();
+
+        return view('admin.productos.create', compact('categorias', 'ventaPorTalla'));
     }
 
     public function store(\App\Http\Requests\Admin\StoreProductoRequest $request)
     {
         $data = Arr::except($request->validated(), ['imagen']);
-        $data['vende_por_talla'] = $request->has('vende_por_talla') ? $request->boolean('vende_por_talla') : true;
-        $data['vende_a_medida'] = $request->boolean('vende_a_medida');
+        $ventaPorTalla = Configuracion::ventaPorTallaActiva();
+        $data['vende_por_talla'] = $ventaPorTalla && $request->boolean('vende_por_talla');
+        $data['vende_a_medida'] = $ventaPorTalla ? $request->boolean('vende_a_medida') : true;
 
         if ($request->hasFile('imagen')) {
             $data['imagen_url'] = $this->guardarImagen($request);
@@ -49,15 +55,17 @@ class ProductoController extends Controller
         $tallas = self::TALLAS_SUGERIDAS;
         $variantes = $producto->variantes()->orderBy('talla')->orderBy('color')->get();
         $imagenes = $producto->imagenes()->get();
+        $ventaPorTalla = Configuracion::ventaPorTallaActiva();
 
-        return view('admin.productos.edit', compact('producto', 'categorias', 'tallas', 'variantes', 'imagenes'));
+        return view('admin.productos.edit', compact('producto', 'categorias', 'tallas', 'variantes', 'imagenes', 'ventaPorTalla'));
     }
 
     public function update(\App\Http\Requests\Admin\UpdateProductoRequest $request, Producto $producto)
     {
         $data = Arr::except($request->validated(), ['imagen']);
-        $data['vende_por_talla'] = $request->has('vende_por_talla') ? $request->boolean('vende_por_talla') : true;
-        $data['vende_a_medida'] = $request->boolean('vende_a_medida');
+        $ventaPorTalla = Configuracion::ventaPorTallaActiva();
+        $data['vende_por_talla'] = $ventaPorTalla && $request->boolean('vende_por_talla');
+        $data['vende_a_medida'] = $ventaPorTalla ? $request->boolean('vende_a_medida') : true;
 
         if ($request->hasFile('imagen')) {
             $this->borrarImagen($producto->imagen_url);

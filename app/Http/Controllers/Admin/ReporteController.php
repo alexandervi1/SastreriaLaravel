@@ -68,6 +68,8 @@ class ReporteController extends Controller
 
     public function bajoStock()
     {
+        abort_unless(Configuracion::ventaPorTallaActiva(), 404);
+
         $umbral = Configuracion::obtenerUmbralBajoStock();
 
         $variantes = \App\Models\ProductoVariante::with('producto.categoria')
@@ -80,6 +82,8 @@ class ReporteController extends Controller
 
     public function stockPorCategoria()
     {
+        abort_unless(Configuracion::ventaPorTallaActiva(), 404);
+
         $categorias = Categoria::withCount('productos')->get();
 
         $stockCategorias = DB::table('producto_variante')

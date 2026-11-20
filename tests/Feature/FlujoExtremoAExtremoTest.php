@@ -43,6 +43,8 @@ class FlujoExtremoAExtremoTest extends TestCase
             Configuracion::create(['clave' => $clave, 'valor' => $valor]);
         }
 
+        $this->activarVentaPorTalla();
+
         $this->admin = Usuario::create([
             'nombre_usuario' => 'admin1',
             'nombre_completo' => 'Admin Uno',

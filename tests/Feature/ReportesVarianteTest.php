@@ -27,6 +27,7 @@ class ReportesVarianteTest extends TestCase
 
         Rol::insert([['rol_id' => 1, 'nombre' => 'Administrador']]);
         Categoria::insert([['categoria_id' => 1, 'nombre' => 'Ternos']]);
+        $this->activarVentaPorTalla();
 
         $this->admin = Usuario::create([
             'nombre_usuario' => 'admin1',

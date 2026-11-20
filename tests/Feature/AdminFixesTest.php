@@ -35,6 +35,7 @@ class AdminFixesTest extends TestCase
 
         Categoria::insert([['categoria_id' => 1, 'nombre' => 'Pescados']]);
         Configuracion::create(['clave' => 'iva_actual', 'valor' => '15']);
+        $this->activarVentaPorTalla();
 
         $this->admin = Usuario::create([
             'nombre_usuario' => 'admin1',
@@ -61,6 +62,7 @@ class AdminFixesTest extends TestCase
             'nombre' => 'Terno de prueba',
             'precio' => 10,
             'categoria_id' => 1,
+            'vende_por_talla' => true,
         ]);
 
         $variante = \App\Models\ProductoVariante::create([
@@ -392,6 +394,7 @@ class AdminFixesTest extends TestCase
             'nombre' => 'Terno de prueba',
             'precio' => 10,
             'categoria_id' => 1,
+            'vende_por_talla' => true,
         ]);
 
         $variante = \App\Models\ProductoVariante::create([

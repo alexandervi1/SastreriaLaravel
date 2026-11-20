@@ -25,14 +25,17 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        // 3. Productos Críticos con Bajo Stock (umbral configurable)
+        // 3. Productos Críticos con Bajo Stock (solo si la venta por talla está activa)
+        $ventaPorTalla = Configuracion::ventaPorTallaActiva();
         $umbral = Configuracion::obtenerUmbralBajoStock();
 
-        $productosBajoStock = \App\Models\ProductoVariante::with('producto.categoria')
-            ->bajoStock()
-            ->orderBy('stock')
-            ->take(5)
-            ->get();
+        $productosBajoStock = $ventaPorTalla
+            ? \App\Models\ProductoVariante::with('producto.categoria')
+                ->bajoStock()
+                ->orderBy('stock')
+                ->take(5)
+                ->get()
+            : collect();
 
         // 4. Analítica Avanzada: Ingresos de los últimos 6 meses para Chart.js
         $desde = Carbon::now()->subMonths(5)->startOfMonth();
@@ -65,7 +68,7 @@ class DashboardController extends Controller
 
         return view('admin.dashboard', compact(
             'totalProductos', 'totalClientes', 'totalPedidos', 'ingresosTotales',
-            'pedidosRecientes', 'productosBajoStock', 'labelsGrafico', 'datosGrafico', 'umbral', 'citasHoy'
+            'pedidosRecientes', 'productosBajoStock', 'labelsGrafico', 'datosGrafico', 'umbral', 'citasHoy', 'ventaPorTalla'
         ));
     }
 }

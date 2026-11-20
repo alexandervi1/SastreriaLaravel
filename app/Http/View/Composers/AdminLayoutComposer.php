@@ -15,9 +15,12 @@ class AdminLayoutComposer
 {
     public function compose(View $view): void
     {
+        $ventaPorTalla = Configuracion::ventaPorTallaActiva();
+
         $view->with([
             'pendingOrders' => Pedido::where('estado', 'Pendiente')->count(),
-            'lowStockCount' => ProductoVariante::bajoStock()->count(),
+            'lowStockCount' => $ventaPorTalla ? ProductoVariante::bajoStock()->count() : 0,
+            'ventaPorTalla' => $ventaPorTalla,
             'citasHoy' => Cita::whereDate('inicio', now()->toDateString())
                 ->whereIn('estado', Cita::ESTADOS_ACTIVOS)
                 ->count(),

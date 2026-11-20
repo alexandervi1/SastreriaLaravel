@@ -81,6 +81,18 @@
                                 </div>
                             </div>
 
+                            <h6 class="fw-bold mb-4 text-primary"><i class="fas fa-ruler-combined me-2"></i> Modos de venta</h6>
+                            <div class="row g-4 mb-5">
+                                <div class="col-md-12">
+                                    <input type="hidden" name="venta_por_talla" value="0">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="venta_por_talla" name="venta_por_talla" value="1" {{ old('venta_por_talla', $configuraciones['venta_por_talla']) === '1' ? 'checked' : '' }}>
+                                        <label class="form-check-label fw-bold text-secondary" for="venta_por_talla">Permitir venta por talla</label>
+                                    </div>
+                                    <div class="form-text mt-2">Apagado, la tienda solo acepta encargos a medida. Al activarlo vuelven las tallas, el stock y sus reportes.</div>
+                                </div>
+                            </div>
+
                             <h6 class="fw-bold mb-4 text-primary"><i class="fas fa-calculator me-2"></i> Cálculos Comerciales</h6>
                             <div class="row g-4 mb-5">
                                 <div class="col-md-3">

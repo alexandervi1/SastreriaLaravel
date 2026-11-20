@@ -23,6 +23,7 @@ class PagesSmokeTest extends TestCase
         parent::setUp();
 
         $this->seed();
+        $this->activarVentaPorTalla();
 
         $this->admin = Usuario::where('nombre_usuario', 'admin123')->firstOrFail();
 

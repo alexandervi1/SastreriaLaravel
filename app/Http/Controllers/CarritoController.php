@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Carrito;
+use App\Models\Configuracion;
 use App\Models\MedidaCliente;
 use App\Models\Producto;
 use App\Models\ProductoVariante;
@@ -44,6 +45,12 @@ class CarritoController extends Controller
         ]);
 
         $tipo = $data['tipo'] ?? 'talla';
+
+        if (! Configuracion::ventaPorTallaActiva() && ($tipo === 'talla' || ! empty($data['variante_id']))) {
+            return back()
+                ->withErrors(['variante_id' => 'La venta por talla no está disponible.'])
+                ->with('error', 'La venta por talla no está disponible.');
+        }
 
         if ($tipo === 'medida') {
             $producto = Producto::find($data['producto_id'] ?? null);

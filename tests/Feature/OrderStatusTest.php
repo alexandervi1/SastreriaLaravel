@@ -35,6 +35,7 @@ class OrderStatusTest extends TestCase
 
         Categoria::insert([['categoria_id' => 1, 'nombre' => 'Ternos']]);
         Configuracion::create(['clave' => 'iva_actual', 'valor' => '15']);
+        $this->activarVentaPorTalla();
 
         $this->admin = Usuario::create([
             'nombre_usuario' => 'admin1',
@@ -61,6 +62,7 @@ class OrderStatusTest extends TestCase
             'nombre' => $nombre,
             'precio' => $precio,
             'categoria_id' => 1,
+            'vende_por_talla' => true,
         ]);
 
         return ProductoVariante::create([

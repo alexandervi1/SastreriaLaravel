@@ -91,6 +91,11 @@ class Configuracion extends Model
         return (string) self::obtenerValor('negocio_logo', 'img/placeholder.svg');
     }
 
+    public static function ventaPorTallaActiva(): bool
+    {
+        return (string) self::obtenerValor('venta_por_talla', '0') === '1';
+    }
+
     /**
      * Días ISO en que abre el taller.
      *

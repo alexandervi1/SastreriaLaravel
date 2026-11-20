@@ -33,6 +33,7 @@ class OrderFlowTest extends TestCase
         Categoria::insert([['categoria_id' => 1, 'nombre' => 'Ternos']]);
 
         Configuracion::create(['clave' => 'iva_actual', 'valor' => '15']);
+        $this->activarVentaPorTalla();
 
         $this->cliente = Usuario::create([
             'nombre_usuario' => 'cliente1',
@@ -54,6 +55,7 @@ class OrderFlowTest extends TestCase
             'descripcion' => 'Terno de prueba',
             'precio' => 10,
             'categoria_id' => 1,
+            'vende_por_talla' => true,
         ], $overrides));
 
         $variante = ProductoVariante::create([

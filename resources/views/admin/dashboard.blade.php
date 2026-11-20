@@ -87,7 +87,7 @@
 
 <div class="row g-4 mb-4">
     <!-- Gráfico de Ventas Mensuales Analíticas -->
-    <div class="col-12 col-xl-8">
+    <div class="col-12 {{ $ventaPorTalla ? 'col-xl-8' : '' }}">
         <div class="card border-0 shadow-sm rounded-4 h-100">
             <div class="card-header bg-white py-3 border-bottom d-flex align-items-center">
                 <i class="fas fa-chart-area text-primary fs-5 me-2"></i>
@@ -101,6 +101,7 @@
     </div>
 
     <!-- Alertas Activas de Stock -->
+    @if($ventaPorTalla)
     <div class="col-12 col-xl-4">
         <div class="card border-0 shadow-sm rounded-4 h-100">
             <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
@@ -136,6 +137,7 @@
             </div>
         </div>
     </div>
+    @endif
 </div>
 
 <!-- Cola Prioritaria: Últimos 5 Pedidos -->

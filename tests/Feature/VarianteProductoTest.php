@@ -29,6 +29,7 @@ class VarianteProductoTest extends TestCase
         ]);
 
         Categoria::insert([['categoria_id' => 1, 'nombre' => 'Ternos']]);
+        $this->activarVentaPorTalla();
 
         $this->admin = Usuario::create([
             'nombre_usuario' => 'admin1',

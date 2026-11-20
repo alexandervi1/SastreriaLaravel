@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Configuracion;
 use App\Models\MedidaCliente;
 use App\Models\Producto;
 use App\Models\Tela;
@@ -11,12 +12,16 @@ class ProductoPublicoController extends Controller
 {
     public function show(Producto $producto)
     {
-        $variantes = $producto->variantes()
-            ->where('activo', true)
-            ->where('stock', '>', 0)
-            ->orderBy('talla')
-            ->orderBy('color')
-            ->get();
+        $ventaPorTalla = Configuracion::ventaPorTallaActiva() && $producto->vende_por_talla;
+
+        $variantes = $ventaPorTalla
+            ? $producto->variantes()
+                ->where('activo', true)
+                ->where('stock', '>', 0)
+                ->orderBy('talla')
+                ->orderBy('color')
+                ->get()
+            : collect();
 
         $imagenes = $producto->imagenes()->get();
 
@@ -32,6 +37,6 @@ class ProductoPublicoController extends Controller
             ? Carbon::now()->addWeekdays((int) $producto->dias_confeccion)
             : null;
 
-        return view('productos.show', compact('producto', 'variantes', 'telas', 'medidas', 'fechaEstimada', 'imagenes'));
+        return view('productos.show', compact('producto', 'variantes', 'telas', 'medidas', 'fechaEstimada', 'imagenes', 'ventaPorTalla'));
     }
 }

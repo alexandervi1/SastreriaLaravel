@@ -54,7 +54,7 @@
                         <li class="nav-item">
                             <a class="nav-link rounded d-flex align-items-center justify-content-between {{ request()->routeIs('admin.productos.*') ? 'active' : 'text-dark' }}" href="{{ route('admin.productos.index') }}">
                                 <span><i class="fas fa-shirt fa-fw me-2"></i> Productos</span>
-                                @if($lowStockCount > 0)
+                                @if($ventaPorTalla && $lowStockCount > 0)
                                     <span class="badge badge-menu" title="{{ $lowStockCount }} {{ $lowStockCount === 1 ? 'producto bajo el umbral' : 'productos bajo el umbral' }}">{{ $lowStockCount }}</span>
                                 @endif
                             </a>
@@ -107,8 +107,10 @@
                                 <ul class="nav flex-column ms-3 mt-1 pb-2">
                                     <li class="nav-item"><a class="nav-link rounded py-1 {{ request()->routeIs('admin.reportes.ventas') ? 'active' : 'text-secondary' }}" href="{{ route('admin.reportes.ventas') }}"><i class="fas fa-angle-right me-2"></i>Ventas Totales</a></li>
                                     <li class="nav-item"><a class="nav-link rounded py-1 {{ request()->routeIs('admin.reportes.mas-vendidos') ? 'active' : 'text-secondary' }}" href="{{ route('admin.reportes.mas-vendidos') }}"><i class="fas fa-angle-right me-2"></i>Más Vendidos</a></li>
+                                    @if($ventaPorTalla)
                                     <li class="nav-item"><a class="nav-link rounded py-1 {{ request()->routeIs('admin.reportes.bajo-stock') ? 'active' : 'text-secondary' }}" href="{{ route('admin.reportes.bajo-stock') }}"><i class="fas fa-angle-right me-2"></i>Alerta Bajo Stock</a></li>
                                     <li class="nav-item"><a class="nav-link rounded py-1 {{ request()->routeIs('admin.reportes.stock-categoria') ? 'active' : 'text-secondary' }}" href="{{ route('admin.reportes.stock-categoria') }}"><i class="fas fa-angle-right me-2"></i>Stock Categoría</a></li>
+                                    @endif
                                 </ul>
                             </div>
                         </li>

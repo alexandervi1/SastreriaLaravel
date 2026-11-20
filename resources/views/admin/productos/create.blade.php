@@ -66,20 +66,28 @@
             <h6 class="fw-bold border-bottom pb-2 mb-4 text-primary mt-5"><i class="fas fa-ruler-combined me-2"></i> Modos de venta</h6>
 
             <div class="row g-4 mb-4 bg-light p-3 rounded-4">
+                @if($ventaPorTalla)
                 <div class="col-md-3 d-flex align-items-center">
                     <div class="form-check">
                         <input type="hidden" name="vende_por_talla" value="0">
-                        <input class="form-check-input" type="checkbox" id="vende_por_talla" name="vende_por_talla" value="1" {{ old('vende_por_talla', $producto->vende_por_talla ?? true) ? 'checked' : '' }}>
+                        <input class="form-check-input" type="checkbox" id="vende_por_talla" name="vende_por_talla" value="1" {{ old('vende_por_talla', $producto->vende_por_talla ?? false) ? 'checked' : '' }}>
                         <label class="form-check-label fw-bold" for="vende_por_talla">Vender por talla</label>
                     </div>
                 </div>
                 <div class="col-md-3 d-flex align-items-center">
                     <div class="form-check">
                         <input type="hidden" name="vende_a_medida" value="0">
-                        <input class="form-check-input" type="checkbox" id="vende_a_medida" name="vende_a_medida" value="1" {{ old('vende_a_medida', $producto->vende_a_medida ?? false) ? 'checked' : '' }}>
+                        <input class="form-check-input" type="checkbox" id="vende_a_medida" name="vende_a_medida" value="1" {{ old('vende_a_medida', $producto->vende_a_medida ?? true) ? 'checked' : '' }}>
                         <label class="form-check-label fw-bold" for="vende_a_medida">Vender a medida</label>
                     </div>
                 </div>
+                @else
+                <div class="col-12">
+                    <input type="hidden" name="vende_por_talla" value="0">
+                    <input type="hidden" name="vende_a_medida" value="1">
+                    <p class="mb-0 small text-muted"><i class="fas fa-info-circle me-1"></i> La tienda está en modo solo a medida. Para vender por talla, activa el interruptor en Configuración → Negocio.</p>
+                </div>
+                @endif
                 <div class="col-md-3">
                     <label for="precio_medida" class="form-label fw-bold d-block text-secondary">Precio a medida</label>
                     <div class="input-group">

@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
         Configuracion::create(['clave' => 'negocio_telefono', 'valor' => '']);
         Configuracion::create(['clave' => 'negocio_leyenda', 'valor' => '']);
         Configuracion::create(['clave' => 'negocio_logo', 'valor' => 'img/negocio/logo-placeholder.svg']);
+        Configuracion::create(['clave' => 'venta_por_talla', 'valor' => '0']);
 
         // Taller y citas
         Configuracion::create(['clave' => 'taller_dias', 'valor' => '1,2,3,4,5,6']);
