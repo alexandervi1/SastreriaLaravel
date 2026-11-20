@@ -53,6 +53,8 @@
                     <span class="badge bg-primary px-3 py-2 rounded-1 fw-bold">
                         <i class="fas fa-tag me-1"></i> {{ $producto->categoria->nombre ?? 'General' }}
                     </span>
+                    <span class="badge bg-light text-dark px-3 py-2 rounded-1">{{ $producto->tipo_prenda_label }}</span>
+                    <span class="badge bg-light text-dark px-3 py-2 rounded-1">{{ $producto->publico_label }}</span>
                     <span class="text-muted small">
                         <i class="fas fa-star text-warning"></i> 
                         <i class="fas fa-star text-warning"></i> 

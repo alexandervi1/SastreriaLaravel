@@ -4,6 +4,8 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\Configuracion;
+use App\Models\Producto;
+use Illuminate\Validation\Rule;
 
 class StoreProductoRequest extends FormRequest
 {
@@ -27,6 +29,8 @@ class StoreProductoRequest extends FormRequest
     {
         return [
             'nombre'            => 'required|string|max:255',
+            'tipo_prenda'       => ['sometimes', 'required', Rule::in(array_keys(Producto::TIPOS_PRENDA))],
+            'publico'           => ['sometimes', 'required', Rule::in(array_keys(Producto::PUBLICOS))],
             'descripcion'       => 'nullable|string',
             'precio'            => 'required|numeric|min:0',
             'categoria_id'      => 'required|exists:categoria,categoria_id',

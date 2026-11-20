@@ -58,6 +58,21 @@
 @endif
 
 <section class="mb-5" id="catalogo">
+    <div class="mb-4">
+        <h2 class="fw-bold mb-3">Encuentra tu prenda</h2>
+        <div class="row g-3">
+            @foreach(\App\Models\Producto::PUBLICOS as $clave => $etiqueta)
+                <div class="col-md-4">
+                    <a href="{{ route('home', ['publico' => $clave]) }}#catalogo"
+                       class="d-flex align-items-center justify-content-between text-decoration-none rounded-4 border bg-white p-4 h-100 shadow-sm">
+                        <span class="fw-bold text-dark">{{ $etiqueta }}</span>
+                        <i class="fas fa-arrow-right text-primary"></i>
+                    </a>
+                </div>
+            @endforeach
+        </div>
+    </div>
+
     <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
         <h2 class="fw-bold mb-0">
             @if(request()->has('buscar'))
@@ -69,9 +84,26 @@
             @endif
         </h2>
         <div class="d-flex flex-wrap gap-2">
-            <a href="{{ route('home') }}#catalogo" class="btn btn-sm rounded-pill {{ !isset($categoria_actual) && !request()->has('buscar') ? 'btn-primary' : 'btn-outline-primary' }}">Todos</a>
+            <a href="{{ route('home', array_filter(['publico' => $publicoActual, 'tipo_prenda' => $tipoActual])) }}#catalogo" class="btn btn-sm rounded-pill {{ !isset($categoria_actual) && !request()->has('buscar') ? 'btn-primary' : 'btn-outline-primary' }}">Todos</a>
             @foreach($categorias as $cat)
-                <a href="{{ route('home', ['categoria' => $cat->categoria_id]) }}#catalogo" class="btn btn-sm rounded-pill {{ isset($categoria_actual) && $categoria_actual->categoria_id === $cat->categoria_id ? 'btn-primary' : 'btn-outline-primary' }}">{{ $cat->nombre }}</a>
+                <a href="{{ route('home', array_filter(['categoria' => $cat->categoria_id, 'publico' => $publicoActual, 'tipo_prenda' => $tipoActual])) }}#catalogo" class="btn btn-sm rounded-pill {{ isset($categoria_actual) && $categoria_actual->categoria_id === $cat->categoria_id ? 'btn-primary' : 'btn-outline-primary' }}">{{ $cat->nombre }}</a>
+            @endforeach
+        </div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-3 align-items-center mb-4 small">
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="text-muted fw-bold">Público:</span>
+            <a href="{{ route('home', array_filter(['categoria' => request('categoria'), 'buscar' => request('buscar'), 'tipo_prenda' => $tipoActual])) }}#catalogo" class="btn btn-sm rounded-pill {{ $publicoActual ? 'btn-outline-secondary' : 'btn-secondary' }}">Todos</a>
+            @foreach(\App\Models\Producto::PUBLICOS as $clave => $etiqueta)
+                <a href="{{ route('home', array_filter(['categoria' => request('categoria'), 'buscar' => request('buscar'), 'publico' => $clave, 'tipo_prenda' => $tipoActual])) }}#catalogo" class="btn btn-sm rounded-pill {{ $publicoActual === $clave ? 'btn-secondary' : 'btn-outline-secondary' }}">{{ $etiqueta }}</a>
+            @endforeach
+        </div>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="text-muted fw-bold">Prenda:</span>
+            <a href="{{ route('home', array_filter(['categoria' => request('categoria'), 'buscar' => request('buscar'), 'publico' => $publicoActual])) }}#catalogo" class="btn btn-sm rounded-pill {{ $tipoActual ? 'btn-outline-secondary' : 'btn-secondary' }}">Todas</a>
+            @foreach(\App\Models\Producto::TIPOS_PRENDA as $clave => $etiqueta)
+                <a href="{{ route('home', array_filter(['categoria' => request('categoria'), 'buscar' => request('buscar'), 'publico' => $publicoActual, 'tipo_prenda' => $clave])) }}#catalogo" class="btn btn-sm rounded-pill {{ $tipoActual === $clave ? 'btn-secondary' : 'btn-outline-secondary' }}">{{ $etiqueta }}</a>
             @endforeach
         </div>
     </div>
@@ -92,7 +124,7 @@
                     </div>
                     <div class="card-body d-flex flex-column">
                         <h3 class="h6 fw-bold mb-1">{{ $producto->nombre }}</h3>
-                        <p class="small text-muted mb-3">{{ $producto->descripcion }}</p>
+                        <p class="small text-muted mb-3">{{ $producto->tipo_prenda_label }} · {{ $producto->publico_label }}</p>
                         <div class="mt-auto d-flex justify-content-between align-items-center gap-2">
                             <span class="fw-bold">${{ number_format((float) $producto->precio, 2) }}</span>
                             <a href="{{ route('productos.show', $producto->slug) }}" class="btn btn-sm btn-primary">

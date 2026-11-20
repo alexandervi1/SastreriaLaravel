@@ -27,8 +27,24 @@ class HomeController extends Controller
                   ->orWhere('descripcion', 'like', "%{$buscar}%");
             });
         }
+
+        $publicoActual = array_key_exists((string) $request->query('publico'), Producto::PUBLICOS)
+            ? (string) $request->query('publico')
+            : null;
+
+        $tipoActual = array_key_exists((string) $request->query('tipo_prenda'), Producto::TIPOS_PRENDA)
+            ? (string) $request->query('tipo_prenda')
+            : null;
+
+        if ($publicoActual) {
+            $query->where('publico', $publicoActual);
+        }
+
+        if ($tipoActual) {
+            $query->where('tipo_prenda', $tipoActual);
+        }
         
-        if (!$request->has('categoria') && !$request->has('buscar')) {
+        if (!$request->has('categoria') && !$request->has('buscar') && !$publicoActual && !$tipoActual) {
             // Si no hay filtros, mostrar solo hasta 8 productos como antes
             $query->orderBy('nombre')->take(8);
         }
@@ -42,7 +58,7 @@ class HomeController extends Controller
             ->take(4)
             ->get();
 
-        return view('home', compact('productos', 'categorias', 'categoria_actual', 'destacados'));
+        return view('home', compact('productos', 'categorias', 'categoria_actual', 'destacados', 'publicoActual', 'tipoActual'));
     }
 
     public function quienesSomos()

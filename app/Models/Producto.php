@@ -6,11 +6,30 @@ use Illuminate\Database\Eloquent\Model;
 
 class Producto extends Model
 {
+    public const TIPOS_PRENDA = [
+        'terno_2p' => 'Terno de 2 piezas',
+        'terno_3p' => 'Terno de 3 piezas',
+        'saco' => 'Saco',
+        'chaqueta' => 'Chaqueta',
+        'abrigo' => 'Abrigo',
+        'chaleco' => 'Chaleco',
+        'pantalon' => 'Pantalón',
+        'falda' => 'Falda',
+    ];
+
+    public const PUBLICOS = [
+        'caballero' => 'Caballero',
+        'dama' => 'Dama',
+        'nino' => 'Niño',
+    ];
+
     protected $table = 'producto';
     protected $primaryKey = 'producto_id';
 
     protected $fillable = [
         'nombre',
+        'tipo_prenda',
+        'publico',
         'descripcion',
         'precio',
         'slug',
@@ -53,6 +72,16 @@ class Producto extends Model
     }
 
     // ── Helpers ──
+
+    public function getTipoPrendaLabelAttribute(): string
+    {
+        return self::TIPOS_PRENDA[$this->tipo_prenda] ?? $this->tipo_prenda;
+    }
+
+    public function getPublicoLabelAttribute(): string
+    {
+        return self::PUBLICOS[$this->publico] ?? $this->publico;
+    }
 
     /**
      * Stock sumado de las variantes activas.

@@ -42,6 +42,24 @@
                     <label for="descripcion" class="form-label fw-bold">Descripción Corta</label>
                     <textarea class="form-control" id="descripcion" name="descripcion" rows="2" placeholder="Breve detalle del producto que verá el cliente...">{{ old('descripcion', $producto->descripcion ?? '') }}</textarea>
                 </div>
+
+                <div class="col-md-6">
+                    <label for="tipo_prenda" class="form-label fw-bold">Tipo de prenda *</label>
+                    <select class="form-select" id="tipo_prenda" name="tipo_prenda" required>
+                        @foreach(\App\Models\Producto::TIPOS_PRENDA as $clave => $etiqueta)
+                            <option value="{{ $clave }}" {{ old('tipo_prenda', $producto->tipo_prenda ?? 'terno_2p') === $clave ? 'selected' : '' }}>{{ $etiqueta }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="publico" class="form-label fw-bold">Público *</label>
+                    <select class="form-select" id="publico" name="publico" required>
+                        @foreach(\App\Models\Producto::PUBLICOS as $clave => $etiqueta)
+                            <option value="{{ $clave }}" {{ old('publico', $producto->publico ?? 'caballero') === $clave ? 'selected' : '' }}>{{ $etiqueta }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
             <h6 class="fw-bold border-bottom pb-2 mb-4 text-primary mt-5"><i class="fas fa-boxes me-2"></i> Inventario y Precios</h6>
