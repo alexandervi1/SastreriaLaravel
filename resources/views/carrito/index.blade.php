@@ -32,9 +32,9 @@
                             <thead class="table-light">
                                 <tr>
                                     <th scope="col" class="ps-4">Producto</th>
-                                    <th scope="col" class="text-center">Precio</th>
-                                    <th scope="col" class="text-center" style="width: 150px;">Cantidad</th>
-                                    <th scope="col" class="text-end">Subtotal</th>
+                                    <th scope="col" class="text-center d-none d-md-table-cell">Precio</th>
+                                    <th scope="col" class="text-center" style="width: 110px;">Cantidad</th>
+                                    <th scope="col" class="text-end d-none d-md-table-cell">Subtotal</th>
                                     <th scope="col" class="text-center pe-4">Acción</th>
                                 </tr>
                             </thead>
@@ -58,7 +58,7 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center d-none d-md-table-cell">
                                             ${{ number_format($precios[$item->carrito_id], 2) }}
                                         </td>
                                         <td>
@@ -75,7 +75,7 @@
                                                 </form>
                                             @endif
                                         </td>
-                                        <td class="text-end fw-bold text-success">
+                                        <td class="text-end fw-bold text-success d-none d-md-table-cell">
                                             ${{ number_format($subtotales[$item->carrito_id], 2) }}
                                         </td>
                                         <td class="text-center pe-4">
