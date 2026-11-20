@@ -113,11 +113,16 @@ class SeederProduccionTest extends TestCase
     {
         $this->sembrar();
 
-        $this->assertSame(6, \App\Models\Producto::count());
+        $this->assertSame(9, \App\Models\Producto::count());
         $this->assertDatabaseCount('tela', 5);
-        $this->assertGreaterThanOrEqual(20, \App\Models\ProductoVariante::count());
-        $this->assertTrue(\App\Models\Producto::where('vende_por_talla', false)->where('vende_a_medida', true)->exists());
-        $this->assertTrue(\App\Models\Producto::where('vende_por_talla', true)->where('vende_a_medida', false)->exists());
+        $this->assertDatabaseCount('producto_variante', 0);
+        $this->assertSame(0, \App\Models\Producto::where('vende_por_talla', true)->count());
+        $this->assertSame(9, \App\Models\Producto::where('vende_a_medida', true)->count());
+        $this->assertSame(3, \App\Models\Producto::distinct()->count('publico'));
+        $this->assertTrue(\App\Models\Producto::where('tipo_prenda', 'terno_2p')->where('publico', 'caballero')->exists());
+        $this->assertTrue(\App\Models\Producto::where('tipo_prenda', 'terno_3p')->where('publico', 'caballero')->exists());
+        $this->assertTrue(\App\Models\Producto::where('publico', 'dama')->where('tipo_prenda', 'abrigo')->exists());
+        $this->assertTrue(\App\Models\Producto::where('publico', 'nino')->exists());
         $this->assertTrue(is_file(public_path('img/productos/demo/demo-1.svg')));
     }
 
