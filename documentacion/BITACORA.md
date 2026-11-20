@@ -7,59 +7,59 @@ con el hash real del commit de la subfase.
 ## Progreso
 
 <!-- F0 -->
-- [x] F0.1 — `d2070c7` — plan y bitácora en el repo — pruebas: 88 passed
-- [x] F0.2 — `a9fb0b9` — identidad técnica de la sastrería — pruebas: 88 passed
-- [x] F0.3 — `2ce186e` — retira Caddy, imágenes y seeders de la pescadería — pruebas: 88 passed
-- [x] F0.4 — `5805bb6` — README de la sastrería — pruebas: 88 passed
+- [x] F0.1 — `bd5e0dd` — plan y bitácora en el repo — pruebas: 88 passed
+- [x] F0.2 — `ac5232e` — identidad técnica de la sastrería — pruebas: 88 passed
+- [x] F0.3 — `57246cb` — retira Caddy, imágenes y seeders de la pescadería — pruebas: 88 passed
+- [x] F0.4 — `8d9f4d1` — README de la sastrería — pruebas: 88 passed
 
 <!-- F1 -->
-- [x] F1.1 — `e204890` — elimina unidades de medida y la venta por peso — pruebas: 83 passed
-- [x] F1.2 — `ac75a29` — variantes por talla y color con stock propio — pruebas: 90 passed
-- [x] F1.3 — `b233a3c` — compra por talla y líneas de pedido propias — pruebas: 94 passed
-- [x] F1.4 — `cfb7f5b` — reportes de inventario por variante — pruebas: 97 passed
+- [x] F1.1 — `6841d8f` — elimina unidades de medida y la venta por peso — pruebas: 83 passed
+- [x] F1.2 — `e609f39` — variantes por talla y color con stock propio — pruebas: 90 passed
+- [x] F1.3 — `62170ca` — compra por talla y líneas de pedido propias — pruebas: 94 passed
+- [x] F1.4 — `46a4d59` — reportes de inventario por variante — pruebas: 97 passed
 
 <!-- F2 -->
-- [x] F2.1 — `24db689` — catálogo de telas — pruebas: 101 passed
-- [x] F2.2 — `fa6d665` — perfiles de medidas del cliente — pruebas: 108 passed
-- [x] F2.3 — `47d7ed4` — encargo a medida desde la ficha — pruebas: 112 passed
-- [x] F2.4 — `1ad47c8` — líneas a medida con medidas y tela congeladas — pruebas: 118 passed
-- [x] F2.5 — `8e61ba3` — flujo de confección y orden de trabajo — pruebas: 124 passed
+- [x] F2.1 — `f5046e5` — catálogo de telas — pruebas: 101 passed
+- [x] F2.2 — `0c173e8` — perfiles de medidas del cliente — pruebas: 108 passed
+- [x] F2.3 — `62c3ea9` — encargo a medida desde la ficha — pruebas: 112 passed
+- [x] F2.4 — `dd50cd3` — líneas a medida con medidas y tela congeladas — pruebas: 118 passed
+- [x] F2.5 — `25afed7` — flujo de confección y orden de trabajo — pruebas: 124 passed
 
 <!-- F3 -->
-- [x] F3.1 — `0f0ce23` — horario del taller y bloqueos configurables — pruebas: 127 passed
-- [x] F3.2 — `a3cdccc` — disponibilidad y reserva transaccional — pruebas: 135 passed
-- [x] F3.3 — `09e4dec` — reserva y cancelación para clientes — pruebas: 141 passed
-- [x] F3.4 — `dc293a7` — agenda del taller en el panel — pruebas: 146 passed
-- [x] F3.5 — `3ccf209` — enlaces de WhatsApp para pagos y citas — pruebas: 149 passed
-- [x] F3.5b — `e208a5a` — corrige la compilación de los enlaces de WhatsApp — pruebas: 149 passed
+- [x] F3.1 — `f5147db` — horario del taller y bloqueos configurables — pruebas: 127 passed
+- [x] F3.2 — `95dd927` — disponibilidad y reserva transaccional — pruebas: 135 passed
+- [x] F3.3 — `e225e7d` — reserva y cancelación para clientes — pruebas: 141 passed
+- [x] F3.4 — `956079c` — agenda del taller en el panel — pruebas: 146 passed
+- [x] F3.5 — `79d752c` — enlaces de WhatsApp para pagos y citas — pruebas: 149 passed
+- [x] F3.5b — `ac65184` — corrige la compilación de los enlaces de WhatsApp — pruebas: 149 passed
 
 <!-- F4 -->
-- [x] F4.1 — `10d1c8c` — paleta y tipografía de sastrería — pruebas: 158 passed
-- [x] F4.2 — `590f8c4` — nombre, logo y favicon configurables — pruebas: 158 passed
-- [x] F4.3 — `2f9af71` — home, guía de tallas, medidas y políticas — pruebas: 158 passed
-- [x] F4.4 — `ec28086` — galería de imágenes por modelo — pruebas: 158 passed
-- [x] F4.5 — `4bd2a42` — metadatos y Open Graph — pruebas: 158 passed
+- [x] F4.1 — `d5e9f13` — paleta y tipografía de sastrería — pruebas: 158 passed
+- [x] F4.2 — `17bee84` — nombre, logo y favicon configurables — pruebas: 158 passed
+- [x] F4.3 — `c7a2c2b` — home, guía de tallas, medidas y políticas — pruebas: 158 passed
+- [x] F4.4 — `a1ec21b` — galería de imágenes por modelo — pruebas: 158 passed
+- [x] F4.5 — `d4ea97f` — metadatos y Open Graph — pruebas: 158 passed
 
 <!-- F5 -->
-- [x] F5.1 — `66528a4` — catálogo demo de ternos y telas — pruebas: 158 passed
-- [x] F5.2 — `c054d06` — cobertura de extremo a extremo de los tres flujos — pruebas: 160 passed
-- [x] F5.3 — `577c051` + `bb1776b` — ajustes responsive y de accesibilidad — pruebas: 160 passed
+- [x] F5.1 — `ae9115c` — catálogo demo de ternos y telas — pruebas: 158 passed
+- [x] F5.2 — `86b8dfc` — cobertura de extremo a extremo de los tres flujos — pruebas: 160 passed
+- [x] F5.3 — `99fdc89` + `6e315b7` — ajustes responsive y de accesibilidad — pruebas: 160 passed
 
 <!-- F6 -->
-- [x] F6.1 — `3127b85` — notas de despliegue — pruebas: 160 passed
+- [x] F6.1 — `e775f58` — notas de despliegue — pruebas: 160 passed
 - [ ] F6.2 — prompt para el agente del servidor (lo hace la persona)
 
 <!-- Adenda A -->
-- [x] A1 — `94b96f5` — venta por talla tras interruptor, apagada por defecto — pruebas: 164 passed
-- [x] A2 — `9101b9d` — tipo de prenda y público — pruebas: 169 passed
-- [x] A3 — `c0b5370` — patrones de caballero, dama y niño — pruebas: 176 passed
-- [x] A4 — `fcc216d` — privacidad del taller y citas a domicilio — pruebas: 183 passed
-- [x] A5 — `09328ce` — fecha de entrega según capacidad del taller — pruebas: 186 passed
-- [x] A6 — `1733630` — precio desglosado en hechura y tela — pruebas: 189 passed
-- [x] A7 — `89f92fb` — identidad Entretela, tema de gala y colibrí — pruebas: 194 passed
-- [x] F4.3 — `bcdf622` — contenido y políticas solo a medida — pruebas: 199 passed
-- [x] F5.1 — `ec4f63b` — catálogo demo solo a medida — pruebas: 199 passed
-- [x] A8 — `b60ee97` — documentación heredada y pendientes — pruebas: 199 passed
+- [x] A1 — `a1ba7b6` — venta por talla tras interruptor, apagada por defecto — pruebas: 164 passed
+- [x] A2 — `7e8be0a` — tipo de prenda y público — pruebas: 169 passed
+- [x] A3 — `db1b510` — patrones de caballero, dama y niño — pruebas: 176 passed
+- [x] A4 — `3e3d6cf` — privacidad del taller y citas a domicilio — pruebas: 183 passed
+- [x] A5 — `53ae875` — fecha de entrega según capacidad del taller — pruebas: 186 passed
+- [x] A6 — `4486475` — precio desglosado en hechura y tela — pruebas: 189 passed
+- [x] A7 — `241c2af` — identidad Entretela, tema de gala y colibrí — pruebas: 194 passed
+- [x] F4.3 — `28db7b1` — contenido y políticas solo a medida — pruebas: 199 passed
+- [x] F5.1 — `f55d96b` — catálogo demo solo a medida — pruebas: 199 passed
+- [x] A8 — `45ef630` — documentación heredada y pendientes — pruebas: 199 passed
 - [x] A9 — puerta Docker final — pruebas: 199 passed; `production.ERROR` = 0
 - [x] A10 — push de `mejora/ternos` a `origin` (revisión y PR pendientes de la persona)
 
