@@ -1,6 +1,6 @@
-# Bitácora — tienda de ternos
+# Bitácora — Entretela
 
-Plan: [`PLAN_TIENDA_TERNOS.md`](PLAN_TIENDA_TERNOS.md).
+Plan: [`PLAN_TIENDA_TERNOS.md`](PLAN_TIENDA_TERNOS.md) · Adenda: [`ADENDA_A.md`](ADENDA_A.md).
 Una línea por subfase. La línea se añade en un commit `docs(bitacora)` posterior,
 con el hash real del commit de la subfase.
 
@@ -59,8 +59,8 @@ con el hash real del commit de la subfase.
 - [x] A7 — `89f92fb` — identidad Entretela, tema de gala y colibrí — pruebas: 194 passed
 - [x] F4.3 — `bcdf622` — contenido y políticas solo a medida — pruebas: 199 passed
 - [x] F5.1 — `ec4f63b` — catálogo demo solo a medida — pruebas: 199 passed
-- [x] A8 — `pendiente` — documentación heredada y pendientes — pruebas: 199 passed
-- [ ] A9 — puerta Docker final
+- [x] A8 — `b60ee97` — documentación heredada y pendientes — pruebas: 199 passed
+- [x] A9 — puerta Docker final — pruebas: 199 passed; `production.ERROR` = 0
 - [ ] A10 — push a origin
 
 ## Puertas Docker
