@@ -26,13 +26,13 @@ class DatabaseSeeder extends Seeder
 
         // ── 2. Configuración ──
         Configuracion::create(['clave' => 'iva_actual', 'valor' => '15']);
-        Configuracion::create(['clave' => 'negocio_nombre', 'valor' => '<NOMBRE_NEGOCIO>']);
+        Configuracion::create(['clave' => 'negocio_nombre', 'valor' => 'Entretela']);
         Configuracion::create(['clave' => 'negocio_ruc', 'valor' => '']);
         Configuracion::create(['clave' => 'negocio_direccion', 'valor' => '']);
         Configuracion::create(['clave' => 'negocio_direccion_publica', 'valor' => 'Riobamba, sector [COMPLETAR]']);
         Configuracion::create(['clave' => 'negocio_telefono', 'valor' => '']);
-        Configuracion::create(['clave' => 'negocio_leyenda', 'valor' => '']);
-        Configuracion::create(['clave' => 'negocio_logo', 'valor' => 'img/negocio/logo-placeholder.svg']);
+        Configuracion::create(['clave' => 'negocio_leyenda', 'valor' => 'Lo que no se ve es lo que da forma.']);
+        Configuracion::create(['clave' => 'negocio_logo', 'valor' => 'img/negocio/colibri-oro.svg']);
         Configuracion::create(['clave' => 'venta_por_talla', 'valor' => '0']);
 
         // Taller y citas

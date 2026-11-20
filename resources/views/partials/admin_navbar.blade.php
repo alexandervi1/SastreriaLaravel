@@ -1,6 +1,6 @@
 <nav class="navbar navbar-dark sticky-top admin-topbar px-3 shadow">
     <a class="navbar-brand d-flex align-items-center col-lg-2 me-0" href="{{ route('admin.dashboard') }}">
-        <img src="{{ asset($negocio['logo']) }}" alt="Logo {{ $negocio['nombre'] }}" class="me-2">
+        <img src="{{ asset($negocio['logo_tinta']) }}" alt="Logo {{ $negocio['nombre'] }}" class="me-2">
         <span class="fs-5 fw-bold text-white">Panel Control</span>
     </a>
     <div class="navbar-nav ms-auto d-none d-md-block">

@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('body_class', 'recibo-page')
+
 @section('title', 'Recibo de Compra - ' . $pedido->numero_comprobante)
 
 @section('content')
@@ -20,7 +22,7 @@
             </div>
         </div>
         <div class="col-4 text-center">
-            <img src="{{ asset($negocio['logo']) }}" alt="Logo" class="receipt-logo">
+            <img src="{{ asset($negocio['logo_tinta']) }}" alt="Logo" class="receipt-logo">
         </div>
     </div>
 

@@ -38,6 +38,14 @@ class PagesSmokeTest extends TestCase
         ]);
     }
 
+    public function test_home_publica_la_marca_entretela(): void
+    {
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('Entretela')
+            ->assertDontSee('<NOMBRE_NEGOCIO>', false);
+    }
+
     public function test_admin_pages_render(): void
     {
         $rutas = [

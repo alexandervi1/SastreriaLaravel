@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Inicio') · {{ $negocio['nombre'] }}</title>
-    <meta name="description" content="@yield('meta_description', $negocio['leyenda'] ?: 'Ternos de gala por talla y a medida en el taller.')">
+    <meta name="description" content="@yield('meta_description', $negocio['leyenda'] ?: 'Sastrería de gala a medida en Riobamba.')">
     <link rel="canonical" href="{{ url()->current() }}">
     <meta property="og:site_name" content="{{ $negocio['nombre'] }}">
     <meta property="og:title" content="@yield('og_title', $negocio['nombre'])">
-    <meta property="og:description" content="@yield('meta_description', $negocio['leyenda'] ?: 'Ternos de gala por talla y a medida en el taller.')">
+    <meta property="og:description" content="@yield('meta_description', $negocio['leyenda'] ?: 'Sastrería de gala a medida en Riobamba.')">
     <meta property="og:image" content="@yield('og_image', asset($negocio['logo']))">
     <meta property="og:type" content="website">
-    <link rel="icon" href="{{ asset($negocio['logo']) }}" type="image/svg+xml">
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
@@ -22,7 +22,7 @@
     
     @stack('styles')
 </head>
-<body class="bg-body-tertiary">
+<body class="@yield('body_class', 'tienda')">
     
     @include('partials.navbar')
 

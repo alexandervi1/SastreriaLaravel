@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Inicio')
-@section('meta_description', 'Ternos de gala por talla y a medida. Elige modelo, tela y agenda tu cita en el taller.')
+@section('title', 'Sastrería de gala a medida')
+@section('meta_description', 'Sastrería de gala a medida en Riobamba. Elige la prenda y la tela, toma tus medidas y recibe una pieza hecha para ti.')
 @section('og_title', $negocio['nombre'])
 
 @section('content')
@@ -11,24 +11,29 @@
     $horario = \App\Models\Configuracion::obtenerHoraInicio() . ' a ' . \App\Models\Configuracion::obtenerHoraFin();
 @endphp
 
-<section class="row align-items-center g-0 mb-5 bg-white rounded-4 shadow-sm overflow-hidden">
-    <div class="col-lg-6 p-5 p-lg-5">
-        <h1 class="display-4 fw-bold mb-3">Trajes que se ajustan a la persona, no al contrario.</h1>
-        <p class="lead text-muted mb-4">
-            Ternos de gala por talla o confeccionados a medida en nuestro taller. Elige tela, toma tus medidas y recíbelo listo para la ocasión.
+<section class="hero-entretela row align-items-center g-0 mb-5 overflow-hidden">
+    <div class="col-lg-6 p-4 p-lg-5">
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <img src="{{ asset('img/negocio/colibri-icono-oro.svg') }}" alt="" class="hero-bird" aria-hidden="true">
+            <span class="eyebrow">Sastrería de gala · Riobamba</span>
+        </div>
+        <h1 class="hero-title mb-3">Tu noche, <em>a medida.</em></h1>
+        <p class="hero-lead mb-4">
+            Lo que no se ve es lo que da forma. Elegimos contigo la prenda y la tela,
+            tomamos tus medidas y cosemos una pieza que solo te pertenece.
         </p>
-        <div class="d-flex flex-wrap gap-2">
-            <a href="{{ route('citas.create') }}" class="btn btn-primary btn-lg fw-bold px-4">
-                <i class="fas fa-calendar-check me-2"></i> Agenda tu cita
+        <div class="d-flex flex-wrap gap-3">
+            <a href="{{ route('citas.create') }}" class="btn btn-primary btn-lg px-4">
+                Reservar cita de medidas
             </a>
-            <a href="#catalogo" class="btn btn-outline-primary btn-lg fw-bold px-4">Ver el catálogo</a>
+            <a href="#catalogo" class="btn btn-outline-gold btn-lg px-4">Ver modelos</a>
         </div>
     </div>
-    <div class="col-lg-6">
+    <div class="col-lg-6 hero-image-wrap">
         @php
             $hero = is_file(public_path('img/productos/demo/demo-1.svg')) ? 'img/productos/demo/demo-1.svg' : 'img/placeholder.svg';
         @endphp
-        <img src="{{ asset($hero) }}" alt="Terno de gala" class="w-100 h-100 object-fit-cover" style="min-height: 380px;">
+        <img src="{{ asset($hero) }}" alt="Terno de gala confeccionado a medida" class="w-100 h-100 object-fit-cover">
     </div>
 </section>
 
@@ -50,7 +55,7 @@
                                     <span class="fw-bold text-primary">${{ number_format((float) $producto->precio, 2) }}</span>
                                 @endif
                                 <a href="{{ route('productos.show', $producto->slug) }}" class="btn btn-sm btn-outline-primary">
-                                    @if($producto->vende_por_talla) Ver tallas @elseif($producto->vende_a_medida) Encargar @else Ver @endif
+                                    @if($producto->vende_por_talla && \App\Models\Configuracion::ventaPorTallaActiva()) Ver tallas @elseif($producto->vende_a_medida) Encargar @else Ver @endif
                                 </a>
                             </div>
                         </div>
@@ -62,6 +67,10 @@
 @endif
 
 <section class="mb-5" id="catalogo">
+    <form action="{{ route('home') }}" method="GET" class="d-flex gap-2 mb-4" style="max-width: 480px;">
+        <input type="search" name="buscar" value="{{ request('buscar') }}" class="form-control" placeholder="Buscar un modelo…" aria-label="Buscar un modelo">
+        <button class="btn btn-outline-gold px-3" type="submit" aria-label="Buscar"><i class="fas fa-search"></i></button>
+    </form>
     <div class="mb-4">
         <h2 class="fw-bold mb-3">Encuentra tu prenda</h2>
         <div class="row g-3">
@@ -136,7 +145,7 @@
                                 <span class="fw-bold">${{ number_format((float) $producto->precio, 2) }}</span>
                             @endif
                             <a href="{{ route('productos.show', $producto->slug) }}" class="btn btn-sm btn-primary">
-                                @if($producto->vende_por_talla)
+                                @if($producto->vende_por_talla && \App\Models\Configuracion::ventaPorTallaActiva())
                                     Elegir talla
                                 @elseif($producto->vende_a_medida)
                                     Encargar a medida
@@ -157,7 +166,30 @@
     </div>
 </section>
 
-<section class="mb-5">
+<section class="mb-5" id="telas">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4">
+        <div>
+            <span class="eyebrow">Materia prima</span>
+            <h2 class="fw-bold mb-0 mt-1">Telas</h2>
+        </div>
+        <a href="{{ route('ayuda') }}" class="text-gold small">Cómo elegir una tela <i class="fas fa-arrow-right ms-1"></i></a>
+    </div>
+    <div class="row g-3">
+        @forelse($telas as $tela)
+            <div class="col-sm-6 col-lg-4">
+                <div class="tela-card h-100 p-4">
+                    <h3 class="h6 fw-bold mb-1">{{ $tela->nombre }}</h3>
+                    <p class="small text-muted mb-2">{{ $tela->composicion ?: 'Composición a consultar' }}@if($tela->color) · {{ $tela->color }}@endif</p>
+                    <p class="small mb-0 text-gold">Tela +${{ number_format((float) $tela->recargo, 2) }}</p>
+                </div>
+            </div>
+        @empty
+            <div class="col-12"><p class="text-muted">Las telas se muestran al elegir un modelo.</p></div>
+        @endforelse
+    </div>
+</section>
+
+<section class="mb-5" id="a-medida">
     <h2 class="fw-bold mb-4">Así funciona tu terno a medida</h2>
     <div class="row g-4">
         @foreach([

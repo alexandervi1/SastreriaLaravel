@@ -93,7 +93,21 @@ class Configuracion extends Model
 
     public static function obtenerLogo(): string
     {
-        return (string) self::obtenerValor('negocio_logo', 'img/placeholder.svg');
+        return (string) self::obtenerValor('negocio_logo', 'img/negocio/colibri-oro.svg');
+    }
+
+    /**
+     * Versión para fondos claros (panel, recibo y orden de trabajo).
+     */
+    public static function obtenerLogoTinta(): string
+    {
+        $logo = self::obtenerLogo();
+
+        return in_array($logo, [
+            'img/negocio/colibri-oro.svg',
+            'img/negocio/logo-placeholder.svg',
+            'img/placeholder.svg',
+        ], true) ? 'img/negocio/colibri-tinta.svg' : $logo;
     }
 
     public static function ventaPorTallaActiva(): bool

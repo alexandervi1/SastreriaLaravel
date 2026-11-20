@@ -32,7 +32,7 @@ class SeoMetadataTest extends TestCase
             'correo' => 'admin1@example.com',
         ]);
 
-        config(['app.name' => '<NOMBRE_NEGOCIO>']);
+        config(['app.name' => 'Entretela']);
 
         $this->producto = Producto::create([
             'nombre' => 'Terno Slim Fit',

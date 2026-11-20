@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', '<NOMBRE_NEGOCIO>'),
+    'name' => env('APP_NAME', 'Entretela'),
 
     /*
     |--------------------------------------------------------------------------

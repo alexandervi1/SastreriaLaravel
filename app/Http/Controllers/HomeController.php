@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use App\Models\Categoria;
+use App\Models\Tela;
 
 class HomeController extends Controller
 {
@@ -58,7 +59,9 @@ class HomeController extends Controller
             ->take(4)
             ->get();
 
-        return view('home', compact('productos', 'categorias', 'categoria_actual', 'destacados', 'publicoActual', 'tipoActual'));
+        $telas = Tela::where('activo', true)->orderBy('nombre')->get();
+
+        return view('home', compact('productos', 'categorias', 'categoria_actual', 'destacados', 'publicoActual', 'tipoActual', 'telas'));
     }
 
     public function quienesSomos()

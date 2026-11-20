@@ -66,23 +66,25 @@ class AppServiceProvider extends ServiceProvider
     {
         try {
             return [
-                'nombre' => (string) Configuracion::obtenerValor('negocio_nombre', '<NOMBRE_NEGOCIO>'),
+                'nombre' => (string) Configuracion::obtenerValor('negocio_nombre', 'Entretela'),
                 'ruc' => (string) Configuracion::obtenerValor('negocio_ruc', ''),
                 'direccion' => Configuracion::obtenerDireccionPublica(),
                 'direccion_publica' => Configuracion::obtenerDireccionPublica(),
                 'telefono' => (string) Configuracion::obtenerValor('negocio_telefono', ''),
                 'leyenda' => (string) Configuracion::obtenerValor('negocio_leyenda', ''),
                 'logo' => Configuracion::obtenerLogo(),
+                'logo_tinta' => Configuracion::obtenerLogoTinta(),
             ];
         } catch (QueryException) {
             return [
-                'nombre' => '<NOMBRE_NEGOCIO>',
+                'nombre' => 'Entretela',
                 'ruc' => '',
                 'direccion' => '',
                 'direccion_publica' => '',
                 'telefono' => '',
                 'leyenda' => '',
-                'logo' => 'img/placeholder.svg',
+                'logo' => 'img/negocio/colibri-oro.svg',
+                'logo_tinta' => 'img/negocio/colibri-tinta.svg',
             ];
         }
     }
