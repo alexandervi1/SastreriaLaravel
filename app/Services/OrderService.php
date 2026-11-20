@@ -106,6 +106,8 @@ class OrderService
                 $precio = $precios[$item->carrito_id];
                 $variante = $item->tipo === 'talla' ? $variantes->get($item->variante_id) : null;
 
+                $desglose = $this->pricing->desglosarLinea($producto, $item->tela, $item->tipo);
+
                 PedidoLinea::create([
                     'pedido_id' => $pedido->pedido_id,
                     'producto_id' => $producto->producto_id,
@@ -121,6 +123,8 @@ class OrderService
                     'color' => $variante?->color,
                     'cantidad' => $item->cantidad,
                     'precio_unitario' => $precio,
+                    'precio_hechura' => $desglose['hechura'],
+                    'precio_tela' => $desglose['tela'],
                     'subtotal' => round($item->cantidad * $precio, 2),
                 ]);
 

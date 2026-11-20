@@ -69,10 +69,18 @@
             <hr class="text-muted opacity-25 my-1">
             
             <div class="my-4">
-                <div class="d-flex align-items-baseline mb-2">
-                    <span class="display-5 fw-bold text-dark">${{ number_format($producto->precio, 2) }}</span>
-                </div>
-                <p class="text-secondary small mb-0"><i class="fas fa-info-circle me-1"></i> Impuestos calculados en el checkout.</p>
+                @if($producto->vende_a_medida)
+                    <div class="small text-uppercase text-muted fw-bold mb-1">Hechura desde</div>
+                    <div class="d-flex align-items-baseline mb-2">
+                        <span class="display-5 fw-bold text-dark">${{ number_format((float) ($producto->precio_medida ?? $producto->precio), 2) }}</span>
+                    </div>
+                    <p class="text-secondary small mb-0"><i class="fas fa-info-circle me-1"></i> La tela se suma aparte; el IVA se calcula en el checkout.</p>
+                @else
+                    <div class="d-flex align-items-baseline mb-2">
+                        <span class="display-5 fw-bold text-dark">${{ number_format($producto->precio, 2) }}</span>
+                    </div>
+                    <p class="text-secondary small mb-0"><i class="fas fa-info-circle me-1"></i> Impuestos calculados en el checkout.</p>
+                @endif
             </div>
 
             <div class="mb-4 flex-grow-1">
@@ -220,12 +228,21 @@
                                         <textarea name="notas" class="form-control mb-3" rows="2" maxlength="500" placeholder="Solapa de pico, forro bordó…"></textarea>
 
                                         <div class="border rounded-3 p-3 mb-3 bg-light">
-                                            <div class="d-flex justify-content-between">
-                                                <span class="small text-muted">Precio estimado</span>
+                                            <div class="d-flex justify-content-between small">
+                                                <span class="text-muted">Hechura</span>
+                                                <span>$<span id="hechura-medida">{{ number_format((float) ($producto->precio_medida ?? 0), 2) }}</span></span>
+                                            </div>
+                                            <div class="d-flex justify-content-between small">
+                                                <span class="text-muted">Tela</span>
+                                                <span>+ $<span id="tela-medida">0.00</span></span>
+                                            </div>
+                                            <div class="d-flex justify-content-between border-top mt-2 pt-2">
+                                                <span class="small text-muted">Subtotal</span>
                                                 <strong>$<span id="precio-medida">0.00</span></strong>
                                             </div>
+                                            <div class="small text-muted mt-1">Antes de IVA. El IVA se calcula al confirmar.</div>
                                             @if($fechaEstimada)
-                                                <div class="small text-muted mt-1">Entrega estimada: {{ $fechaEstimada->format('d/m/Y') }}</div>
+                                                <div class="small text-muted mt-1">Entrega estimada: desde el {{ $fechaEstimada->format('d/m/Y') }}</div>
                                             @endif
                                         </div>
 
@@ -261,10 +278,12 @@
     const base = {{ (float) ($producto->precio_medida ?? 0) }};
     const salida = document.getElementById('precio-medida');
     if (!salida) return;
+    const salidaTela = document.getElementById('tela-medida');
     const radios = document.querySelectorAll('.tela-radio');
     const pintar = () => {
         let recargo = 0;
         radios.forEach(r => { if (r.checked) recargo = parseFloat(r.dataset.recargo || '0'); });
+        if (salidaTela) salidaTela.textContent = recargo.toFixed(2);
         salida.textContent = (base + recargo).toFixed(2);
     };
     radios.forEach(r => r.addEventListener('change', pintar));

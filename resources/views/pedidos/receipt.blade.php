@@ -59,7 +59,16 @@
             @foreach($pedido->lineas as $linea)
             <tr>
                 <td>{{ $linea->cantidad }}</td>
-                <td>{{ $linea->producto_nombre }}@if($linea->talla) Talla {{ $linea->talla }}@endif @if($linea->color) · {{ $linea->color }}@endif @if($linea->tela_nombre) · {{ $linea->tela_nombre }}@endif</td>
+                <td>
+                    {{ $linea->producto_nombre }}@if($linea->talla) Talla {{ $linea->talla }}@endif @if($linea->color) · {{ $linea->color }}@endif @if($linea->tela_nombre) · {{ $linea->tela_nombre }}@endif
+                    @if($linea->tipo === 'medida' && $linea->precio_hechura !== null)
+                        <div class="text-muted" style="font-size: .8em;">
+                            Hechura ${{ number_format($linea->precio_hechura, 2) }}
+                            + tela ${{ number_format($linea->precio_tela ?? 0, 2) }}
+                            = ${{ number_format($linea->precio_unitario, 2) }} (sin IVA)
+                        </div>
+                    @endif
+                </td>
                 <td class="text-end">${{ number_format($linea->precio_unitario, 2) }}</td>
                 <td class="text-end">${{ number_format($linea->subtotal, 2) }}</td>
             </tr>

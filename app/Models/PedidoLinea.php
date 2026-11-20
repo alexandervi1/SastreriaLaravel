@@ -24,12 +24,16 @@ class PedidoLinea extends Model
         'color',
         'cantidad',
         'precio_unitario',
+        'precio_hechura',
+        'precio_tela',
         'subtotal',
     ];
 
     protected $casts = [
         'cantidad' => 'integer',
         'precio_unitario' => 'decimal:2',
+        'precio_hechura' => 'decimal:2',
+        'precio_tela' => 'decimal:2',
         'subtotal' => 'decimal:2',
         'medidas' => 'array',
         'requiere_cita' => 'boolean',

@@ -44,7 +44,11 @@
                             <h3 class="h6 fw-bold mb-1">{{ $producto->nombre }}</h3>
                             <p class="small text-muted mb-3">{{ $producto->categoria->nombre ?? '' }}</p>
                             <div class="mt-auto d-flex justify-content-between align-items-center">
-                                <span class="fw-bold text-primary">${{ number_format((float) $producto->precio, 2) }}</span>
+                                @if($producto->vende_a_medida)
+                                    <span class="fw-bold text-primary">Hechura desde ${{ number_format((float) ($producto->precio_medida ?? $producto->precio), 2) }}</span>
+                                @else
+                                    <span class="fw-bold text-primary">${{ number_format((float) $producto->precio, 2) }}</span>
+                                @endif
                                 <a href="{{ route('productos.show', $producto->slug) }}" class="btn btn-sm btn-outline-primary">
                                     @if($producto->vende_por_talla) Ver tallas @elseif($producto->vende_a_medida) Encargar @else Ver @endif
                                 </a>
@@ -126,7 +130,11 @@
                         <h3 class="h6 fw-bold mb-1">{{ $producto->nombre }}</h3>
                         <p class="small text-muted mb-3">{{ $producto->tipo_prenda_label }} · {{ $producto->publico_label }}</p>
                         <div class="mt-auto d-flex justify-content-between align-items-center gap-2">
-                            <span class="fw-bold">${{ number_format((float) $producto->precio, 2) }}</span>
+                            @if($producto->vende_a_medida)
+                                <span class="fw-bold">Hechura desde ${{ number_format((float) ($producto->precio_medida ?? $producto->precio), 2) }}</span>
+                            @else
+                                <span class="fw-bold">${{ number_format((float) $producto->precio, 2) }}</span>
+                            @endif
                             <a href="{{ route('productos.show', $producto->slug) }}" class="btn btn-sm btn-primary">
                                 @if($producto->vende_por_talla)
                                     Elegir talla

@@ -58,6 +58,11 @@
                     <div class="small"><strong>Color:</strong> {{ $linea->color ?? '—' }}</div>
                     <div class="small"><strong>Patrón:</strong> {{ isset($linea->medidas['patron']) ? (\App\Models\MedidaCliente::PATRONES[$linea->medidas['patron']] ?? 'Caballero') : '—' }}</div>
                     <div class="small"><strong>Prenda:</strong> {{ $linea->producto?->tipo_prenda_label ?? '—' }}</div>
+                    <div class="small mt-2">
+                        <strong>Hechura:</strong> ${{ number_format((float) ($linea->precio_hechura ?? $linea->precio_unitario), 2) }}
+                        · <strong>Tela:</strong> ${{ number_format((float) ($linea->precio_tela ?? 0), 2) }}
+                        · <strong>Total línea:</strong> ${{ number_format((float) $linea->precio_unitario, 2) }} (sin IVA)
+                    </div>
                 </div>
             </div>
             <div class="col-md-6">

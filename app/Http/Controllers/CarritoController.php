@@ -23,13 +23,17 @@ class CarritoController extends Controller
             $item->carrito_id => $pricing->precioLinea($item->producto, $item->tela, $item->tipo),
         ]);
 
+        $desgloses = $items->mapWithKeys(fn (Carrito $item) => [
+            $item->carrito_id => $pricing->desglosarLinea($item->producto, $item->tela, $item->tipo),
+        ]);
+
         $subtotales = $items->mapWithKeys(fn (Carrito $item) => [
             $item->carrito_id => round($item->cantidad * (float) $precios[$item->carrito_id], 2),
         ]);
 
         $totales = $pricing->desglosar((float) $subtotales->sum());
 
-        return view('carrito.index', compact('items', 'precios', 'subtotales', 'totales'));
+        return view('carrito.index', compact('items', 'precios', 'subtotales', 'totales', 'desgloses'));
     }
 
     public function agregar(Request $request)

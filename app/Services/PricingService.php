@@ -16,14 +16,27 @@ class PricingService
      */
     public function precioLinea(Producto $producto, ?Tela $tela, string $tipo): float
     {
-        if ($tipo === 'medida') {
-            $base = (float) ($producto->precio_medida ?? $producto->precio);
-            $recargo = $tela ? (float) $tela->recargo : 0.0;
+        return $this->desglosarLinea($producto, $tela, $tipo)['total'];
+    }
 
-            return round($base + $recargo, 2);
-        }
+    /**
+     * Desglose de una línea en hechura y tela, antes de IVA.
+     *
+     * @return array{hechura: float, tela: float, total: float}
+     */
+    public function desglosarLinea(Producto $producto, ?Tela $tela, string $tipo): array
+    {
+        $hechura = $tipo === 'medida'
+            ? (float) ($producto->precio_medida ?? $producto->precio)
+            : (float) $producto->precio;
 
-        return (float) $producto->precio;
+        $recargo = $tipo === 'medida' && $tela ? (float) $tela->recargo : 0.0;
+
+        return [
+            'hechura' => round($hechura, 2),
+            'tela' => round($recargo, 2),
+            'total' => round($hechura + $recargo, 2),
+        ];
     }
 
     /**

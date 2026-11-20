@@ -55,6 +55,13 @@
                                                             · Talla {{ $item->variante->talla }}@if($item->variante->color) · {{ $item->variante->color }}@endif
                                                         @endif
                                                     </small>
+                                                    @if($item->tipo === 'medida')
+                                                        <div class="small text-muted mt-1">
+                                                            Hechura ${{ number_format($desgloses[$item->carrito_id]['hechura'], 2) }}
+                                                            + tela ${{ number_format($desgloses[$item->carrito_id]['tela'], 2) }}
+                                                            = <span class="fw-bold">${{ number_format($desgloses[$item->carrito_id]['total'], 2) }}</span>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </td>
