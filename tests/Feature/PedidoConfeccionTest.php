@@ -80,8 +80,11 @@ class PedidoConfeccionTest extends TestCase
         $medida = MedidaCliente::create([
             'usuario_id' => $this->cliente->usuario_id,
             'nombre' => 'Mis medidas',
+            'patron' => 'caballero',
             'pecho' => 101.5,
             'cintura' => 90,
+            'hombros' => 45,
+            'largo_saco' => 75,
             'largo_manga' => 62,
             'entrepierna' => 80,
             'largo_pantalon' => 105,

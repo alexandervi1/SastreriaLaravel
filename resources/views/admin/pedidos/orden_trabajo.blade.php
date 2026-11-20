@@ -17,10 +17,11 @@
 @section('content')
 @php
     $etiquetas = [
-        'pecho' => 'Pecho', 'cintura' => 'Cintura', 'cadera' => 'Cadera', 'hombros' => 'Hombros',
-        'espalda' => 'Espalda', 'largo_saco' => 'Largo del saco', 'largo_manga' => 'Largo de manga', 'cuello' => 'Cuello',
+        'pecho' => 'Pecho', 'busto' => 'Busto', 'cintura' => 'Cintura', 'cadera' => 'Cadera', 'hombros' => 'Hombros',
+        'espalda' => 'Espalda', 'talle_delantero' => 'Talle delantero', 'talle_espalda' => 'Talle espalda',
+        'largo_saco' => 'Largo del saco', 'largo_manga' => 'Largo de manga', 'cuello' => 'Cuello',
         'cintura_pantalon' => 'Cintura pantalón', 'cadera_pantalon' => 'Cadera pantalón', 'tiro' => 'Tiro',
-        'muslo' => 'Muslo', 'entrepierna' => 'Entrepierna', 'largo_pantalon' => 'Largo pantalón', 'bota' => 'Bota',
+        'muslo' => 'Muslo', 'entrepierna' => 'Entrepierna', 'largo_pantalon' => 'Largo pantalón', 'largo_falda' => 'Largo de falda', 'bota' => 'Bota',
         'estatura' => 'Estatura',
     ];
 @endphp
@@ -55,6 +56,8 @@
                     <div class="fs-5 fw-bold">{{ $linea->producto_nombre }}</div>
                     <div class="small mt-2"><strong>Tela:</strong> {{ $linea->tela_nombre ?? '—' }}</div>
                     <div class="small"><strong>Color:</strong> {{ $linea->color ?? '—' }}</div>
+                    <div class="small"><strong>Patrón:</strong> {{ isset($linea->medidas['patron']) ? (\App\Models\MedidaCliente::PATRONES[$linea->medidas['patron']] ?? 'Caballero') : '—' }}</div>
+                    <div class="small"><strong>Prenda:</strong> {{ $linea->producto?->tipo_prenda_label ?? '—' }}</div>
                 </div>
             </div>
             <div class="col-md-6">
@@ -70,10 +73,12 @@
 
         <h6 class="fw-bold border-bottom pb-2 mb-2">Medidas (cm)</h6>
         @if(is_array($linea->medidas))
+            @php($patron = $linea->medidas['patron'] ?? 'caballero')
+            @php($camposPatron = \App\Models\MedidaCliente::CAMPOS_PATRON[$patron] ?? \App\Models\MedidaCliente::CAMPOS_PATRON['caballero'])
             <table class="table table-sm medidas mb-0">
                 <tbody>
                     @foreach($etiquetas as $campo => $etiqueta)
-                        @if(isset($linea->medidas[$campo]) && $linea->medidas[$campo] !== null)
+                        @if(in_array($campo, $camposPatron, true) && isset($linea->medidas[$campo]) && $linea->medidas[$campo] !== null)
                             <tr>
                                 <th class="text-muted fw-normal" style="width: 40%;">{{ $etiqueta }}</th>
                                 <td class="fw-bold">{{ $linea->medidas[$campo] }}</td>

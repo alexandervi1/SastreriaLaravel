@@ -49,8 +49,11 @@ class MedidaClienteTest extends TestCase
     {
         return array_merge([
             'nombre' => 'Mis medidas',
+            'patron' => 'caballero',
             'pecho' => 100.5,
             'cintura' => 90,
+            'hombros' => 45,
+            'largo_saco' => 75,
             'largo_manga' => 62,
             'entrepierna' => 80,
             'largo_pantalon' => 105,

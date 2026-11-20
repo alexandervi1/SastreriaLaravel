@@ -49,7 +49,7 @@ class PedidoController extends Controller
 
     public function ordenTrabajo($id)
     {
-        $pedido = Pedido::with(['usuario', 'lineas'])->findOrFail($id);
+        $pedido = Pedido::with(['usuario', 'lineas.producto'])->findOrFail($id);
 
         return view('admin.pedidos.orden_trabajo', compact('pedido'));
     }

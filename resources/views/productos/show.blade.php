@@ -209,8 +209,8 @@
                                         <select name="medida_id" class="form-select mb-3" required>
                                             <option value="">Elige un perfil…</option>
                                             @foreach($medidas as $medida)
-                                                <option value="{{ $medida->medida_id }}" {{ $medida->tieneMedidasMinimas() ? '' : 'disabled' }}>
-                                                    {{ $medida->nombre }}{{ $medida->tieneMedidasMinimas() ? '' : ' (incompleto)' }}
+                                                <option value="{{ $medida->medida_id }}" {{ $medida->tieneMedidasMinimas($producto->tipo_prenda) ? '' : 'disabled' }}>
+                                                    {{ $medida->nombre }}{{ $medida->tieneMedidasMinimas($producto->tipo_prenda) ? '' : ' (incompleto)' }}
                                                 </option>
                                             @endforeach
                                             <option value="taller">Tomar mis medidas en el taller</option>

@@ -24,7 +24,10 @@
                 <div class="card h-100 border-0 shadow-sm rounded-4">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-3">
-                            <h5 class="fw-bold mb-0">{{ $medida->nombre }}</h5>
+                            <div>
+                                <h5 class="fw-bold mb-1">{{ $medida->nombre }}</h5>
+                                <span class="badge bg-light text-dark">{{ $medida->patron_label }}</span>
+                            </div>
                             @if($medida->tieneMedidasMinimas())
                                 <span class="badge bg-success rounded-pill">Completo</span>
                             @else
@@ -32,11 +35,14 @@
                             @endif
                         </div>
                         <dl class="row small mb-0">
-                            <dt class="col-5 text-muted">Pecho</dt><dd class="col-7">{{ $medida->pecho !== null ? $medida->pecho . ' cm' : '—' }}</dd>
+                            @if($medida->patron === 'dama')
+                                <dt class="col-5 text-muted">Busto</dt><dd class="col-7">{{ $medida->busto !== null ? $medida->busto . ' cm' : '—' }}</dd>
+                            @else
+                                <dt class="col-5 text-muted">Pecho</dt><dd class="col-7">{{ $medida->pecho !== null ? $medida->pecho . ' cm' : '—' }}</dd>
+                            @endif
                             <dt class="col-5 text-muted">Cintura</dt><dd class="col-7">{{ $medida->cintura !== null ? $medida->cintura . ' cm' : '—' }}</dd>
                             <dt class="col-5 text-muted">Largo de manga</dt><dd class="col-7">{{ $medida->largo_manga !== null ? $medida->largo_manga . ' cm' : '—' }}</dd>
-                            <dt class="col-5 text-muted">Entrepierna</dt><dd class="col-7">{{ $medida->entrepierna !== null ? $medida->entrepierna . ' cm' : '—' }}</dd>
-                            <dt class="col-5 text-muted">Largo de pantalón</dt><dd class="col-7">{{ $medida->largo_pantalon !== null ? $medida->largo_pantalon . ' cm' : '—' }}</dd>
+                            <dt class="col-5 text-muted">Largo del saco</dt><dd class="col-7">{{ $medida->largo_saco !== null ? $medida->largo_saco . ' cm' : '—' }}</dd>
                         </dl>
                     </div>
                     <div class="card-footer bg-transparent border-top-0 pb-4 d-flex gap-2">

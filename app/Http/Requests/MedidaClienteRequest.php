@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\MedidaCliente;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class MedidaClienteRequest extends FormRequest
 {
@@ -19,6 +20,7 @@ class MedidaClienteRequest extends FormRequest
     {
         $reglas = [
             'nombre' => 'required|string|max:60',
+            'patron' => ['sometimes', 'required', Rule::in(array_keys(MedidaCliente::PATRONES))],
             'notas' => 'nullable|string|max:1000',
             'tomadas_en_taller' => 'boolean',
         ];

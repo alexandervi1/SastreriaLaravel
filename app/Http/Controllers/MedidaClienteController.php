@@ -27,6 +27,7 @@ class MedidaClienteController extends Controller
         $data = Arr::except($request->validated(), ['tomadas_en_taller']);
         $data['usuario_id'] = auth()->id();
         $data['tomadas_en_taller'] = $request->boolean('tomadas_en_taller');
+        $data['patron'] = $data['patron'] ?? 'caballero';
 
         MedidaCliente::create($data);
 

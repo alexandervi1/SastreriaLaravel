@@ -158,8 +158,8 @@ class OrderService
             throw new RuntimeException('El perfil de medidas elegido ya no está disponible.');
         }
 
-        if (! $item->medida->tieneMedidasMinimas()) {
-            throw new RuntimeException('El perfil de medidas está incompleto. Completa las medidas o pide tomarlas en el taller.');
+        if (! $item->medida->tieneMedidasMinimas($item->producto->tipo_prenda)) {
+            throw new RuntimeException('El perfil de medidas está incompleto para esta prenda. Completa las medidas o pide tomarlas en el taller.');
         }
     }
 
