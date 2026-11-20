@@ -50,6 +50,7 @@ class ConfiguracionController extends Controller
             'cita_domicilio_activa' => Configuracion::citaDomicilioActiva() ? '1' : '0',
             'cita_domicilio_zona' => Configuracion::obtenerZonaDomicilio(),
             'negocio_whatsapp' => Configuracion::obtenerWhatsapp(),
+            'capacidad_semanal' => Configuracion::obtenerCapacidadSemanal(),
         ];
 
         $zonas = self::ZONAS;
@@ -87,6 +88,7 @@ class ConfiguracionController extends Controller
             'cita_cancelacion_min_horas' => 'nullable|integer|between:0,168',
             'cita_domicilio_activa' => 'sometimes|boolean',
             'cita_domicilio_zona' => 'nullable|string|max:255',
+            'capacidad_semanal' => 'sometimes|required|integer|between:1,100',
             'negocio_whatsapp' => ['nullable', 'string', 'regex:/^[0-9]{8,15}$/'],
         ], [
             'comprobante_serie.regex' => 'La serie debe tener el formato 000-000 (por ejemplo 001-001).',

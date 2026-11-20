@@ -6,11 +6,11 @@ use App\Models\Configuracion;
 use App\Models\MedidaCliente;
 use App\Models\Producto;
 use App\Models\Tela;
-use Carbon\Carbon;
+use App\Services\OrderService;
 
 class ProductoPublicoController extends Controller
 {
-    public function show(Producto $producto)
+    public function show(Producto $producto, OrderService $orders)
     {
         $ventaPorTalla = Configuracion::ventaPorTallaActiva() && $producto->vende_por_talla;
 
@@ -34,7 +34,7 @@ class ProductoPublicoController extends Controller
             : collect();
 
         $fechaEstimada = $producto->vende_a_medida && $producto->dias_confeccion
-            ? Carbon::now()->addWeekdays((int) $producto->dias_confeccion)
+            ? $orders->fechaEntregaEstimada((int) $producto->dias_confeccion)
             : null;
 
         return view('productos.show', compact('producto', 'variantes', 'telas', 'medidas', 'fechaEstimada', 'imagenes', 'ventaPorTalla'));

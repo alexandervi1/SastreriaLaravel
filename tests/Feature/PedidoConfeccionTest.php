@@ -6,6 +6,8 @@ use App\Models\Carrito;
 use App\Models\Categoria;
 use App\Models\Configuracion;
 use App\Models\MedidaCliente;
+use App\Models\Pedido;
+use App\Models\PedidoLinea;
 use App\Models\Producto;
 use App\Models\Rol;
 use App\Models\Tela;
@@ -102,6 +104,31 @@ class PedidoConfeccionTest extends TestCase
         return app(OrderService::class)->processOrder($this->cliente);
     }
 
+    private function pedidoEnCola(int $lineas): void
+    {
+        $pedido = Pedido::create([
+            'usuario_id' => $this->cliente->usuario_id,
+            'fecha_pedido' => now(),
+            'subtotal' => 90 * $lineas,
+            'iva' => 0,
+            'iva_pct' => 0,
+            'total' => 90 * $lineas,
+            'estado' => Pedido::ESTADO_CONFIRMADO,
+        ]);
+
+        for ($i = 0; $i < $lineas; $i++) {
+            PedidoLinea::create([
+                'pedido_id' => $pedido->pedido_id,
+                'producto_id' => $this->producto->producto_id,
+                'tipo' => 'medida',
+                'producto_nombre' => $this->producto->nombre,
+                'cantidad' => 1,
+                'precio_unitario' => 90,
+                'subtotal' => 90,
+            ]);
+        }
+    }
+
     public function test_un_pedido_a_medida_no_puede_saltar_de_confirmado_a_listo(): void
     {
         $pedido = $this->pedidoAMedida();
@@ -133,6 +160,44 @@ class PedidoConfeccionTest extends TestCase
 
         $this->assertNotNull($confirmado->fecha_entrega_estimada);
         $this->assertSame('2026-11-30', $confirmado->fecha_entrega_estimada->toDateString());
+
+        Carbon::setTestNow();
+    }
+
+    public function test_la_cola_igual_a_la_capacidad_agrega_una_semana(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-11-16 10:00:00')); // lunes
+
+        $this->pedidoEnCola(3);
+        $pedido = $this->pedidoAMedida();
+        $confirmado = app(OrderService::class)->changeStatus($pedido, 'Confirmado');
+
+        $this->assertSame('2026-12-07', $confirmado->fecha_entrega_estimada->toDateString());
+
+        Carbon::setTestNow();
+    }
+
+    public function test_la_cola_menor_a_la_capacidad_no_agrega_semana(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-11-16 10:00:00')); // lunes
+
+        $this->pedidoEnCola(2);
+        $pedido = $this->pedidoAMedida();
+        $confirmado = app(OrderService::class)->changeStatus($pedido, 'Confirmado');
+
+        $this->assertSame('2026-11-30', $confirmado->fecha_entrega_estimada->toDateString());
+
+        Carbon::setTestNow();
+    }
+
+    public function test_el_fin_de_semana_intermedio_no_cuenta_como_dia_habil(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-11-13 10:00:00')); // viernes
+
+        $pedido = $this->pedidoAMedida();
+        $confirmado = app(OrderService::class)->changeStatus($pedido, 'Confirmado');
+
+        $this->assertSame('2026-11-27', $confirmado->fecha_entrega_estimada->toDateString());
 
         Carbon::setTestNow();
     }

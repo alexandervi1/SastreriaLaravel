@@ -76,6 +76,11 @@ class Configuracion extends Model
         return (int) self::obtenerValor('password_rotacion_dias', 90);
     }
 
+    public static function obtenerCapacidadSemanal(): int
+    {
+        return max(1, (int) self::obtenerValor('capacidad_semanal', 3));
+    }
+
     public static function obtenerZonaHoraria(): string
     {
         return (string) self::obtenerValor('zona_horaria', 'America/Guayaquil');

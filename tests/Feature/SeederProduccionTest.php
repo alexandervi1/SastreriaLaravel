@@ -130,7 +130,7 @@ class SeederProduccionTest extends TestCase
         $this->assertSame(0, \App\Models\Producto::count());
         $this->assertDatabaseCount('rol', 3);
         $this->assertDatabaseCount('categoria', 4);
-        $this->assertDatabaseCount('configuracion', 18);
+        $this->assertDatabaseCount('configuracion', 19);
     }
 
     public function test_produccion_siembra_admin_sin_datos_personales_ni_catalogo(): void

@@ -44,6 +44,7 @@ class DatabaseSeeder extends Seeder
         Configuracion::create(['clave' => 'cita_cancelacion_min_horas', 'valor' => '24']);
         Configuracion::create(['clave' => 'cita_domicilio_activa', 'valor' => '1']);
         Configuracion::create(['clave' => 'cita_domicilio_zona', 'valor' => 'Solo dentro de Riobamba urbano']);
+        Configuracion::create(['clave' => 'capacidad_semanal', 'valor' => '3']);
         Configuracion::create(['clave' => 'negocio_whatsapp', 'valor' => '']);
 
         // ── 3. Categorías ──

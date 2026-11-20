@@ -208,6 +208,27 @@ class OrderService
     }
 
     /**
+     * Fecha de entrega: días hábiles de confección más las semanas de cola.
+     *
+     * La cola son las líneas a medida de pedidos confirmados o en confección.
+     */
+    public function fechaEntregaEstimada(int $diasConfeccion): \Carbon\Carbon
+    {
+        $fecha = now()->addWeekdays(max(0, $diasConfeccion));
+
+        $cola = PedidoLinea::where('tipo', 'medida')
+            ->whereHas('pedido', fn ($query) => $query->whereIn('estado', [
+                Pedido::ESTADO_CONFIRMADO,
+                Pedido::ESTADO_EN_CONFECCION,
+            ]))
+            ->count();
+
+        $semanas = intdiv($cola, Configuracion::obtenerCapacidadSemanal());
+
+        return $fecha->addWeeks($semanas)->startOfDay();
+    }
+
+    /**
      * Cambia el estado de un pedido a otra transición distinta de la cancelación.
      *
      * @throws \RuntimeException con un mensaje apto para el cliente.
@@ -245,7 +266,7 @@ class OrderService
                     ->max(fn (PedidoLinea $linea) => (int) ($linea->producto->dias_confeccion ?? 0));
 
                 if ($dias > 0) {
-                    $bloqueado->fecha_entrega_estimada = now()->addWeekdays($dias);
+                    $bloqueado->fecha_entrega_estimada = $this->fechaEntregaEstimada($dias);
                 }
             }
 

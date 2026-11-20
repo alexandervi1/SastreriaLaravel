@@ -131,6 +131,14 @@
                                     </div>
                                     <div class="form-text mt-2">Días antes de avisar que la clave venció.</div>
                                 </div>
+                                <div class="col-md-3">
+                                    <label for="capacidad_semanal" class="form-label fw-bold text-secondary">Prendas a medida por semana</label>
+                                    <div class="input-group border rounded">
+                                        <span class="input-group-text bg-light border-0"><i class="fas fa-scissors text-primary"></i></span>
+                                        <input type="number" min="1" max="100" class="form-control" id="capacidad_semanal" name="capacidad_semanal" value="{{ old('capacidad_semanal', $configuraciones['capacidad_semanal']) }}" required>
+                                    </div>
+                                    <div class="form-text mt-2">Agrega una semana de espera por cada bloque completo en la cola.</div>
+                                </div>
                             </div>
 
                             <h6 class="fw-bold mb-4 text-primary"><i class="fas fa-globe me-2"></i> Sistema</h6>
