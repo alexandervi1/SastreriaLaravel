@@ -188,10 +188,27 @@
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('.datatable').DataTable({
-                language: {
-                    url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+            $('.datatable').each(function() {
+                var $table = $(this);
+                // El estado vacío se renderiza como una fila con un solo <td colspan="N">.
+                // DataTables exige N celdas y avisa "Incorrect column count"; se extrae su
+                // HTML y se pasa como mensaje vacío antes de inicializar.
+                var $empty = $table.find('tbody tr').filter(function() {
+                    return this.cells.length === 1 && this.cells[0].colSpan > 1;
+                });
+                var emptyHtml = 'No hay datos disponibles en la tabla.';
+
+                if ($empty.length) {
+                    emptyHtml = $empty.find('td').html();
+                    $empty.remove();
                 }
+
+                $table.DataTable({
+                    language: {
+                        url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
+                        emptyTable: emptyHtml
+                    }
+                });
             });
         });
     </script>
