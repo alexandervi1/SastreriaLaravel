@@ -53,6 +53,8 @@ class DatabaseSeeder extends Seeder
             ['categoria_id' => 2, 'nombre' => 'Smokings'],
             ['categoria_id' => 3, 'nombre' => 'Chalecos'],
             ['categoria_id' => 4, 'nombre' => 'Accesorios'],
+            ['categoria_id' => 5, 'nombre' => 'Sacos y abrigos'],
+            ['categoria_id' => 6, 'nombre' => 'Pantalones y faldas'],
         ]);
 
         // ── 4. Usuario Admin ──
