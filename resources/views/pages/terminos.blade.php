@@ -11,12 +11,11 @@
         <div class="bg-white rounded-4 shadow-sm p-4 p-md-5">
             <h2 class="h5 fw-bold">Pedidos</h2>
             <p class="text-muted">El pedido queda registrado al confirmarlo desde el carrito. El pago se coordina por WhatsApp o transferencia; el pedido se considera confirmado cuando el taller lo valida.</p>
-
-            <h2 class="h5 fw-bold mt-4">Precios e impuestos</h2>
-            <p class="text-muted">Los precios se muestran en dólares e incluyen el IVA configurado al momento de la compra. El valor queda congelado en el pedido.</p>
+            <h2 class="h5 fw-bold mt-4">Precios, IVA y anticipo</h2>
+            <p class="text-muted">La hechura y la tela se muestran por separado. Los valores no incluyen IVA: el impuesto se calcula al confirmar el pedido y queda congelado en él. Para comenzar la confección se pide un anticipo del [COMPLETAR %].</p>
 
             <h2 class="h5 fw-bold mt-4">Confección a medida</h2>
-            <p class="text-muted">Las medidas se toman en el taller o se cargan desde un perfil del cliente. El tiempo de entrega estimado se calcula en días hábiles y puede variar por disponibilidad de tela.</p>
+            <p class="text-muted">Las medidas se toman en el taller o a domicilio, o se cargan desde un perfil del cliente. La fecha de entrega estimada se calcula en días hábiles y suma la cola semanal del taller; puede variar por disponibilidad de tela.</p>
 
             <h2 class="h5 fw-bold mt-4">Datos personales</h2>
             <p class="text-muted mb-0">Usamos los datos de contacto y las medidas únicamente para gestionar pedidos y citas. No compartimos esa información con terceros.</p>

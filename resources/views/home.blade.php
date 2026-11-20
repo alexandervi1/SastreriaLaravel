@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Sastrería de gala a medida')
-@section('meta_description', 'Sastrería de gala a medida en Riobamba. Elige la prenda y la tela, toma tus medidas y recibe una pieza hecha para ti.')
+@section('meta_description', 'Sastrería de gala a medida en Riobamba para caballero, dama y niño. Elige la prenda y la tela, toma tus medidas y recibe una pieza hecha para ti.')
 @section('og_title', $negocio['nombre'])
 
 @section('content')
@@ -39,7 +39,7 @@
 
 @if($destacados->isNotEmpty())
     <section class="mb-5">
-        <h2 class="fw-bold mb-4">Ternos destacados</h2>
+        <h2 class="fw-bold mb-4">Piezas destacadas</h2>
         <div class="row g-4">
             @foreach($destacados as $producto)
                 <div class="col-sm-6 col-lg-3">
@@ -190,13 +190,13 @@
 </section>
 
 <section class="mb-5" id="a-medida">
-    <h2 class="fw-bold mb-4">Así funciona tu terno a medida</h2>
+    <h2 class="fw-bold mb-4">Así funciona tu prenda a medida</h2>
     <div class="row g-4">
         @foreach([
-            ['Eliges modelo y tela', 'Escoge el corte y la tela en la ficha del terno.'],
-            ['Tomamos tus medidas', 'En el taller o con un perfil guardado en tu cuenta.'],
-            ['Prueba', 'Ajustamos el terno contigo antes de la entrega.'],
-            ['Entrega', 'Retiras en el taller o lo enviamos a tu dirección.'],
+            ['Eliges la prenda y la tela', 'Escoge el corte, el público y la tela en la ficha.'],
+            ['Tomamos tus medidas', 'En el taller o en tu casa, con cita previa.'],
+            ['Prueba con hilvanes', 'Ajustamos la prenda contigo antes de la costura final.'],
+            ['Entrega', 'Retiras en el taller o coordinamos la entrega.'],
         ] as $i => $paso)
             <div class="col-sm-6 col-lg-3">
                 <div class="h-100 border rounded-4 p-4 bg-white">

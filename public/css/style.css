@@ -1220,6 +1220,27 @@ body.tienda .modal-content {
     color: var(--color-text);
 }
 
+body.tienda .accordion-item {
+    background-color: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-text);
+}
+
+body.tienda .accordion-button {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+}
+
+body.tienda .accordion-button:not(.collapsed) {
+    background-color: var(--color-surface-alt);
+    color: var(--color-primary-strong);
+    box-shadow: none;
+}
+
+body.tienda .accordion-button::after {
+    filter: invert(0.85);
+}
+
 body.tienda .navbar {
     background-color: var(--color-page) !important;
     border-bottom: 1px solid var(--color-border);
