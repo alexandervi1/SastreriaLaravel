@@ -47,17 +47,16 @@
                         <img src="{{ asset($producto->imagen_url ?? 'img/placeholder.svg') }}" class="card-img-top object-fit-cover" style="height: 220px;" alt="{{ $producto->nombre }}">
                         <div class="card-body d-flex flex-column">
                             <h3 class="h6 fw-bold mb-1">{{ $producto->nombre }}</h3>
-                            <p class="small text-muted mb-3">{{ $producto->categoria->nombre ?? '' }}</p>
-                            <div class="mt-auto d-flex justify-content-between align-items-center">
+                            <p class="small text-muted mb-3">{{ $producto->tipo_prenda_label }} · {{ $producto->publico_label }}</p>
+                            <a href="{{ route('productos.show', $producto->slug) }}" class="btn btn-sm btn-outline-primary mt-auto">
                                 @if($producto->vende_a_medida)
-                                    <span class="fw-bold text-primary">Hechura desde ${{ number_format((float) ($producto->precio_medida ?? $producto->precio), 2) }}</span>
+                                    Encargar a medida
+                                @elseif($producto->vende_por_talla && \App\Models\Configuracion::ventaPorTallaActiva())
+                                    Ver tallas
                                 @else
-                                    <span class="fw-bold text-primary">${{ number_format((float) $producto->precio, 2) }}</span>
+                                    Ver modelo
                                 @endif
-                                <a href="{{ route('productos.show', $producto->slug) }}" class="btn btn-sm btn-outline-primary">
-                                    @if($producto->vende_por_talla && \App\Models\Configuracion::ventaPorTallaActiva()) Ver tallas @elseif($producto->vende_a_medida) Encargar @else Ver @endif
-                                </a>
-                            </div>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -138,22 +137,15 @@
                     <div class="card-body d-flex flex-column">
                         <h3 class="h6 fw-bold mb-1">{{ $producto->nombre }}</h3>
                         <p class="small text-muted mb-3">{{ $producto->tipo_prenda_label }} · {{ $producto->publico_label }}</p>
-                        <div class="mt-auto d-flex justify-content-between align-items-center gap-2">
+                        <a href="{{ route('productos.show', $producto->slug) }}" class="btn btn-sm btn-primary mt-auto">
                             @if($producto->vende_a_medida)
-                                <span class="fw-bold">Hechura desde ${{ number_format((float) ($producto->precio_medida ?? $producto->precio), 2) }}</span>
+                                Encargar a medida
+                            @elseif($producto->vende_por_talla && \App\Models\Configuracion::ventaPorTallaActiva())
+                                Elegir talla
                             @else
-                                <span class="fw-bold">${{ number_format((float) $producto->precio, 2) }}</span>
+                                Ver modelo
                             @endif
-                            <a href="{{ route('productos.show', $producto->slug) }}" class="btn btn-sm btn-primary">
-                                @if($producto->vende_por_talla && \App\Models\Configuracion::ventaPorTallaActiva())
-                                    Elegir talla
-                                @elseif($producto->vende_a_medida)
-                                    Encargar a medida
-                                @else
-                                    Ver modelo
-                                @endif
-                            </a>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -180,7 +172,6 @@
                 <div class="tela-card h-100 p-4">
                     <h3 class="h6 fw-bold mb-1">{{ $tela->nombre }}</h3>
                     <p class="small text-muted mb-2">{{ $tela->composicion ?: 'Composición a consultar' }}@if($tela->color) · {{ $tela->color }}@endif</p>
-                    <p class="small mb-0 text-gold">Tela +${{ number_format((float) $tela->recargo, 2) }}</p>
                 </div>
             </div>
         @empty

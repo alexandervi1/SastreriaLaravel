@@ -16,6 +16,14 @@ class ContenidoSoloMedidaTest extends TestCase
         $this->seed();
     }
 
+    public function test_la_portada_no_muestra_precios(): void
+    {
+        $response = $this->get(route('home'));
+
+        $response->assertOk();
+        $response->assertDontSee('$');
+    }
+
     public function test_la_home_explica_el_proceso_a_medida(): void
     {
         $response = $this->get(route('home'));
