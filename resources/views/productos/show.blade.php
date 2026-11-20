@@ -79,9 +79,9 @@
                     {{ $producto->descripcion }}
                 </p>
                 <ul class="list-unstyled mt-3 text-muted" style="font-size: 0.9rem;">
-                    <li class="mb-2 d-flex align-items-start"><i class="fas fa-check text-success mt-1 me-2"></i> <span><strong>Garantía de Frescura:</strong> Cadenas de frío monitoreadas.</span></li>
-                    <li class="mb-2 d-flex align-items-start"><i class="fas fa-check text-success mt-1 me-2"></i> <span><strong>Calidad Premium:</strong> Selección manual rigurosa en puerto.</span></li>
-                    <li class="mb-2 d-flex align-items-start"><i class="fas fa-check text-success mt-1 me-2"></i> <span><strong>Listo para Cocinar:</strong> Empacado al vacío.</span></li>
+                    <li class="mb-2 d-flex align-items-start"><i class="fas fa-check text-success mt-1 me-2"></i> <span><strong>Corte y ajuste:</strong> pensado para la caída del terno.</span></li>
+                    <li class="mb-2 d-flex align-items-start"><i class="fas fa-check text-success mt-1 me-2"></i> <span><strong>Telas seleccionadas:</strong> lana, mezclas y lino para cada ocasión.</span></li>
+                    <li class="mb-2 d-flex align-items-start"><i class="fas fa-check text-success mt-1 me-2"></i> <span><strong>Confección en el taller:</strong> seguimiento y prueba antes de la entrega.</span></li>
                 </ul>
             </div>
         </div>

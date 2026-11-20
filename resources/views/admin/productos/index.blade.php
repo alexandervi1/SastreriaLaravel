@@ -11,7 +11,7 @@
 @section('content')
 <div class="card border-0 shadow-sm rounded-4">
     <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-        <h5 class="mb-0 fw-bold"><i class="fas fa-fish text-primary me-2"></i> Catálogo de Productos</h5>
+        <h5 class="mb-0 fw-bold"><i class="fas fa-shirt text-primary me-2"></i> Catálogo de Productos</h5>
         <span class="badge bg-light text-muted fw-normal">{{ $productos->count() }} {{ \Illuminate\Support\Str::plural('registro', $productos->count()) }}</span>
     </div>
     <div class="card-body p-4">
@@ -73,7 +73,7 @@
                     @empty
                         <tr>
                             <td colspan="6" class="text-center py-5">
-                                <i class="fas fa-fish fa-3x text-muted mb-3 opacity-50"></i>
+                                <i class="fas fa-shirt fa-3x text-muted mb-3 opacity-50"></i>
                                 <h5 class="text-muted">No se han encontrado productos.</h5>
                             </td>
                         </tr>

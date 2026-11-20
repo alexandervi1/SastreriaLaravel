@@ -11,7 +11,7 @@
 @section('content')
 <div class="card border-0 shadow-sm rounded-4 max-w-4xl mx-auto">
     <div class="card-header bg-white py-3 border-bottom">
-        <h5 class="mb-0 fw-bold"><i class="fas fa-fish text-primary me-2"></i> {{ isset($producto) ? 'Modificar Información del Producto' : 'Registro de Nuevo Producto' }}</h5>
+        <h5 class="mb-0 fw-bold"><i class="fas fa-shirt text-primary me-2"></i> {{ isset($producto) ? 'Modificar Información del Producto' : 'Registro de Nuevo Producto' }}</h5>
     </div>
     <div class="card-body p-4 p-md-5">
         <form action="{{ isset($producto) ? route('admin.productos.update', $producto->producto_id) : route('admin.productos.store') }}" method="POST" enctype="multipart/form-data">

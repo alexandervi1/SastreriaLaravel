@@ -53,7 +53,7 @@
                         <li class="nav-section">Catálogo</li>
                         <li class="nav-item">
                             <a class="nav-link rounded d-flex align-items-center justify-content-between {{ request()->routeIs('admin.productos.*') ? 'active' : 'text-dark' }}" href="{{ route('admin.productos.index') }}">
-                                <span><i class="fas fa-fish fa-fw me-2"></i> Productos</span>
+                                <span><i class="fas fa-shirt fa-fw me-2"></i> Productos</span>
                                 @if($lowStockCount > 0)
                                     <span class="badge badge-menu" title="{{ $lowStockCount }} {{ $lowStockCount === 1 ? 'producto bajo el umbral' : 'productos bajo el umbral' }}">{{ $lowStockCount }}</span>
                                 @endif

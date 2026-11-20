@@ -788,6 +788,15 @@ div.dataTables_wrapper .paginate_button.current {
         white-space: normal;
     }
 
+    .sidebar .nav-link {
+        font-size: 0.82rem;
+        padding: 0.55rem 0.6rem;
+    }
+
+    .sidebar .nav-section {
+        padding-left: 0.6rem;
+    }
+
     .product-desc {
         max-width: 170px;
     }
@@ -898,12 +907,8 @@ div.dataTables_wrapper .paginate_button.current {
 
 /* Áreas táctiles mínimas (WCAG 2.5.8) */
 .site-footer ul a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: var(--radius-sm);
+    display: inline-block;
+    padding: 0.25rem 0;
 }
 
 .stat-card .card-footer a {

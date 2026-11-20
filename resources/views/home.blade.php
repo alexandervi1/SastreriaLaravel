@@ -25,7 +25,10 @@
         </div>
     </div>
     <div class="col-lg-6">
-        <img src="{{ asset('img/placeholder.svg') }}" alt="Terno de gala" class="w-100 h-100 object-fit-cover" style="min-height: 380px;">
+        @php
+            $hero = is_file(public_path('img/productos/demo/demo-1.svg')) ? 'img/productos/demo/demo-1.svg' : 'img/placeholder.svg';
+        @endphp
+        <img src="{{ asset($hero) }}" alt="Terno de gala" class="w-100 h-100 object-fit-cover" style="min-height: 380px;">
     </div>
 </section>
 
@@ -42,7 +45,9 @@
                             <p class="small text-muted mb-3">{{ $producto->categoria->nombre ?? '' }}</p>
                             <div class="mt-auto d-flex justify-content-between align-items-center">
                                 <span class="fw-bold text-primary">${{ number_format((float) $producto->precio, 2) }}</span>
-                                <a href="{{ route('productos.show', $producto->slug) }}" class="btn btn-sm btn-outline-primary">Ver tallas</a>
+                                <a href="{{ route('productos.show', $producto->slug) }}" class="btn btn-sm btn-outline-primary">
+                                    @if($producto->vende_por_talla) Ver tallas @elseif($producto->vende_a_medida) Encargar @else Ver @endif
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -90,7 +95,15 @@
                         <p class="small text-muted mb-3">{{ $producto->descripcion }}</p>
                         <div class="mt-auto d-flex justify-content-between align-items-center gap-2">
                             <span class="fw-bold">${{ number_format((float) $producto->precio, 2) }}</span>
-                            <a href="{{ route('productos.show', $producto->slug) }}" class="btn btn-sm btn-primary">Elegir talla</a>
+                            <a href="{{ route('productos.show', $producto->slug) }}" class="btn btn-sm btn-primary">
+                                @if($producto->vende_por_talla)
+                                    Elegir talla
+                                @elseif($producto->vende_a_medida)
+                                    Encargar a medida
+                                @else
+                                    Ver modelo
+                                @endif
+                            </a>
                         </div>
                     </div>
                 </div>

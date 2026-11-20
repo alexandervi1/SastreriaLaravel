@@ -117,10 +117,10 @@ class DatabaseSeeder extends Seeder
         return [
             'usuario'             => $usuario !== '' ? $usuario : 'admin123',
             'password'            => $password !== '' ? $password : 'admin123',
-            'correo'              => $correo !== '' ? $correo : 'maritza@gmail.com',
-            'nombre_completo'     => 'Maritza Rosero',
-            'direccion'           => 'Av. Canónigo Ramos y 11 de Noviembre',
-            'telefono'            => '0992470053',
+            'correo'              => $correo !== '' ? $correo : 'admin@example.com',
+            'nombre_completo'     => 'Administrador',
+            'direccion'           => '',
+            'telefono'            => null,
             'password_changed_at' => null,
         ];
     }

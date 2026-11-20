@@ -10,7 +10,7 @@
             <div class="card-body p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h6 class="text-uppercase fw-bold stat-label mb-0">Total Productos</h6>
-                    <i class="fas fa-fish fa-2x opacity-75"></i>
+                    <i class="fas fa-shirt fa-2x opacity-75"></i>
                 </div>
                 <h2 class="display-5 fw-bold mb-0">{{ $totalProductos }}</h2>
             </div>
