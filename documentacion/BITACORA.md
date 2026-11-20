@@ -61,7 +61,7 @@ con el hash real del commit de la subfase.
 - [x] F5.1 — `ec4f63b` — catálogo demo solo a medida — pruebas: 199 passed
 - [x] A8 — `b60ee97` — documentación heredada y pendientes — pruebas: 199 passed
 - [x] A9 — puerta Docker final — pruebas: 199 passed; `production.ERROR` = 0
-- [ ] A10 — push a origin
+- [x] A10 — push de `mejora/ternos` a `origin` (revisión y PR pendientes de la persona)
 
 ## Puertas Docker
 
