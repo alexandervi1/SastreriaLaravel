@@ -49,6 +49,20 @@ con el hash real del commit de la subfase.
 - [x] F6.1 — `3127b85` — notas de despliegue — pruebas: 160 passed
 - [ ] F6.2 — prompt para el agente del servidor (lo hace la persona)
 
+<!-- Adenda A -->
+- [x] A1 — `94b96f5` — venta por talla tras interruptor, apagada por defecto — pruebas: 164 passed
+- [x] A2 — `9101b9d` — tipo de prenda y público — pruebas: 169 passed
+- [x] A3 — `c0b5370` — patrones de caballero, dama y niño — pruebas: 176 passed
+- [x] A4 — `fcc216d` — privacidad del taller y citas a domicilio — pruebas: 183 passed
+- [x] A5 — `09328ce` — fecha de entrega según capacidad del taller — pruebas: 186 passed
+- [x] A6 — `1733630` — precio desglosado en hechura y tela — pruebas: 189 passed
+- [x] A7 — `89f92fb` — identidad Entretela, tema de gala y colibrí — pruebas: 194 passed
+- [x] F4.3 — `bcdf622` — contenido y políticas solo a medida — pruebas: 199 passed
+- [x] F5.1 — `ec4f63b` — catálogo demo solo a medida — pruebas: 199 passed
+- [x] A8 — `pendiente` — documentación heredada y pendientes — pruebas: 199 passed
+- [ ] A9 — puerta Docker final
+- [ ] A10 — push a origin
+
 ## Puertas Docker
 
 | Fase | Resultado |
@@ -57,20 +71,29 @@ con el hash real del commit de la subfase.
 | F2 | **OK.** Build `sastreria:verif`; `/api/salud` 200. Flujo talla cubierto en F1. Flujo medida: admin crea tela y modelo a medida → cliente se registra, crea perfil (pecho 101.5) → agrega encargo con tela → checkout → `pedido_linea.medidas` contiene la copia (pecho 101.5) → admin pasa a `Confirmado` y `En confección` → `fecha_entrega_estimada` = 2026-12-03 → orden de trabajo 200 y muestra 101.5 y la tela. Permisos en `public/img/telas` OK; `production.ERROR` = 0. |
 | F3 | **OK.** Build `sastreria:verif`. Flujo talla: stock 10→8. Flujo medida: pedido con copia de medidas (101.5), admin lo confirma y pasa a `En confección`; orden de trabajo 200 con las medidas. Flujo cita: 12 huecos para el viernes; cliente A reserva 09:00; cliente B intenta el mismo hueco y queda 1 sola cita; el admin la confirma y la agenda del día la muestra. `production.ERROR` = 0. |
 | F5 | **OK.** Build `sastreria:verif` con el catálogo demo. Básico: `/`, `/login`, `/registro`, `/ayuda`, `/politicas`, `/terminos` y ficha por slug → 200; `/admin` sin sesión → 302. Talla: variante 1 con cantidad 2 → stock 4→2; el admin cancela → 4. Medida: perfil con pecho 101.5 → encargo con tela → `pedido_linea.medidas` conserva la copia; confirmado y en confección, fecha 2026-12-17; orden de trabajo 200 con 101.5. Cita: 12 huecos; cliente A reserva 09:00; otro cliente no puede repetir el hueco; el admin la confirma y aparece en la agenda. Permisos en `public/img/productos`, `public/img/telas` y caché OK; `production.ERROR` = 0. |
+| A9 | **OK.** Build `sastreria-laravel:local` con volumen nuevo. `/api/salud` 200; básicos `/`, `/login`, `/registro`, `/ayuda`, `/politicas`, `/terminos`, ficha y `/favicon.svg` → 200. Solo medida (defecto): la ficha no muestra «Por talla»; el carrito rechaza una variante y el checkout rechaza una línea de talla. Medida: hechura 340 + tela 60 = 400; pedido 460 con IVA; medidas y desglose congelados. Talla con `venta_por_talla=1` por SQL y caché limpiada: cantidad 2 → stock 5→3. Citas: taller 09:00–09:45; domicilio 10:30–12:00 (dos huecos). Privacidad: «Calle Secreta 123» no aparece en home, ayuda, políticas, términos, quiénes somos, cita solicitada ni cita de otra cliente; sí aparece para la dueña con cita confirmada y en la agenda del admin; el recibo usa la dirección pública. `production.ERROR` = 0. |
 
 ## Contrastes medidos (WCAG)
 
-| Combinación | Ratio | Uso |
+Tema oscuro de la tienda:
+
+| Fondo / texto | Ratio | Uso |
 |---|---|---|
-| Carbón `#1C1C1E` / marfil `#F7F4EE` | 15.50 | texto principal |
-| Atenuado `#5C5F66` / marfil | 5.83 | texto secundario |
-| Blanco / azul noche `#1F2A44` | 14.26 | botones y sidebar |
-| Blanco / carbón | 17.01 | botón oscuro |
-| Éxito `#146C43` / marfil | 5.88 | estados |
-| Peligro `#B02A37` / marfil | 5.92 | errores |
-| Aviso `#B45309` / marfil | 4.57 | avisos |
-| Dorado `#B08D57` / azul noche | 4.61 | acento sobre fondo oscuro |
-| Dorado / marfil | 2.82 | **solo bordes e iconos**, nunca texto |
+| `#121110` / `#F3EFE6` | 16.44 | texto principal |
+| `#121110` / `#9A948A` | 6.27 | texto secundario |
+| `#121110` / `#CDB991` | 9.83 | texto dorado pequeño |
+| `#A88E5C` / `#121110` | 6.01 | botón principal |
+| `#1C1A18` / `#F3EFE6` | 15.12 | tarjetas |
+| `#1C1A18` / `#A88E5C` | 5.53 | acento sobre superficie |
+
+Panel, recibo y orden de trabajo en claro:
+
+| Fondo / texto | Ratio | Uso |
+|---|---|---|
+| `#F3EFE6` / `#2A2622` | 13.08 | texto principal |
+| `#F3EFE6` / `#5C564D` | 6.32 | texto secundario |
+| `#F3EFE6` / `#7A6438` | 4.94 | detalles y enlaces |
+| `#7A6438` / `#FFFDF9` | 5.58 | botón sobre superficie |
 
 ## Revisión visual (F5.3)
 
@@ -90,15 +113,30 @@ precio/subtotal ocultas en el carrito móvil, acciones del catálogo según el m
 iconos de sastre y textos de producto. La orden de trabajo se validó por HTTP en la puerta
 Docker, no con captura visual.
 
+### Revisión A7/A9 (Entretela)
+
+* Home: 1440 y 390 px.
+* Ficha de producto: 1344 px.
+* Carrito: 1365 px.
+* Panel y agenda: 1365 px.
+* Recibo: 1259 px.
+
+Corregido: duplicado del título, acciones de tarjeta que aún decían «Ver tallas» con el
+interruptor apagado, cabecera del panel en marfil con colibrí en tinta, tarjeta de ingresos
+con texto oscuro y recibo sin el marco oscuro del sitio. Los contrastes de los dos temas
+quedaron medidos arriba.
+
 ## Datos pendientes de la dueña (`PENDIENTE DATO`)
 
-| Marcador | Qué falta | Fase |
+Resueltos: `<NOMBRE_NEGOCIO>` = **Entretela**; `<PALETA>` = negro gala y oro viejo.
+`<TALLAS>` ya no aplica: la tienda es solo a medida.
+
+| Marcador | Qué falta | Dónde se usa |
 |---|---|---|
-| `<REPO_NUEVO>` | Nombre del repositorio (creado como `SastreriaLaravel`) | F0.1 |
-| `<NOMBRE_NEGOCIO>` | Nombre comercial | F0.2 |
-| `<TALLAS>` | Tallas que maneja el negocio | F1.2 |
-| `<PALETA>` | Confirmación o cambio de la paleta propuesta | F4.1 |
+| RUC, teléfono, WhatsApp, dirección pública y exacta | Datos fiscales, de contacto y privacidad del taller | Configuración → Negocio y Taller |
 | `<HOSTNAME_TERNOS>` | Dominio de la tienda | F6 |
+| `[COMPLETAR %]` | Porcentaje del anticipo | Políticas y términos |
+| Historia y fotos | Texto y fotos reales del taller | Quiénes somos y catálogo |
 
 ## Decisiones
 
@@ -166,3 +204,28 @@ Docker, no con captura visual.
   pantallas pequeñas.
 - **2026-11-19 — F6.1:** el despliegue se documenta como patrón (`~/infra/apps/<app>`),
   sin rutas, IPs ni subredes del servidor.
+- **2026-11-19 — A1:** la venta por talla queda apagada por defecto. Las pruebas que
+  ejercitan talla, variantes y stock la encienden en su `setUp`; las nuevas cubren el
+  rechazo de ficha, carrito, checkout y reportes. Coste si es erróneo: una función
+  latente que no se ve en la tienda.
+- **2026-11-19 — A2:** `tipo_prenda` y `publico` viven en el producto y filtran el
+  catálogo; las filas heredadas quedan como terno de 2 piezas de caballero.
+- **2026-11-19 — A3:** los mínimos se calculan por patrón y por prenda. Un abrigo no
+  exige pierna; un terno sí. El patrón se congela en la copia de medidas.
+- **2026-11-19 — A4:** la dirección exacta se separa de la pública. Solo se renderiza
+  para el dueño de una cita confirmada en el taller y para el admin; una visita a
+  domicilio ocupa dos bloques consecutivos con bloqueo transaccional.
+- **2026-11-19 — A5:** la fecha de entrega usa días hábiles más `floor(cola /
+  capacidad_semanal)` semanas. La cola son líneas a medida en pedidos confirmados o
+  en confección; la misma función alimenta la ficha.
+- **2026-11-19 — A6:** `precio_hechura` y `precio_tela` se congelan en la línea del
+  pedido para que recibo y orden de trabajo no dependan de precios futuros.
+- **2026-11-19 — A7:** Inter y Cormorant se sustituyen por Jost y EB Garamond; Cinzel
+  queda reservada al sello. La tienda usa negro gala y oro viejo; el panel, recibo y
+  orden de trabajo siguen en marfil y tinta. Coste si es erróneo: dos temas que hay
+  que mantener, con contraste medido en ambos.
+- **2026-11-19 — F5.1:** el catálogo demo deja de tener variantes con stock; siembra
+  nueve piezas a medida para los tres públicos. Las pruebas de talla crean sus propias
+  variantes.
+- **2026-11-19 — A8:** se retiran los tres documentos de la pescadería; siguen en el
+  historial de git. La bitácora conserva el plan y la adenda como fuente.
