@@ -11,7 +11,7 @@
 @section('content')
 <div class="card border-0 shadow-sm rounded-4">
     <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-        <h5 class="mb-0 fw-bold"><i class="fas fa-fish text-primary me-2"></i> Catálogo de Productos</h5>
+        <h5 class="mb-0 fw-bold"><i class="fas fa-shirt text-primary me-2"></i> Catálogo de Productos</h5>
         <span class="badge bg-light text-muted fw-normal">{{ $productos->count() }} {{ \Illuminate\Support\Str::plural('registro', $productos->count()) }}</span>
     </div>
     <div class="card-body p-4">
@@ -22,8 +22,10 @@
                         <th scope="col" class="ps-4">Producto</th>
                         <th scope="col">Categoría</th>
                         <th scope="col" class="text-center">Precio Unit.</th>
-                        <th scope="col" class="text-center">Stock Venta</th>
-                        <th scope="col" class="text-center d-none d-xl-table-cell">Inventario General</th>
+                        @if($ventaPorTalla)
+                        <th scope="col" class="text-center">Stock</th>
+                        <th scope="col" class="text-center d-none d-xl-table-cell">Unidades en bodega</th>
+                        @endif
                         <th scope="col" class="text-center pe-4">Acciones</th>
                     </tr>
                 </thead>
@@ -32,7 +34,7 @@
                         <tr>
                             <td class="ps-4 py-3">
                                 <div class="d-flex align-items-center">
-                                    <img src="{{ asset($producto->imagen_url ?? 'img/placeholder.jpg') }}" class="rounded-3 me-3 object-fit-cover shadow-sm border" style="width: 50px; height: 50px;" alt="{{ $producto->nombre }}">
+                                    <img src="{{ asset($producto->imagen_url ?? 'img/placeholder.svg') }}" class="rounded-3 me-3 object-fit-cover shadow-sm border" style="width: 50px; height: 50px;" alt="{{ $producto->nombre }}">
                                     <div>
                                         <h6 class="mb-0 fw-bold">{{ $producto->nombre }}</h6>
                                         <div class="small text-muted text-truncate product-desc">{{ $producto->descripcion }}</div>
@@ -45,17 +47,18 @@
                             <td class="text-center fw-bold text-success">
                                 ${{ number_format($producto->precio, 2) }}
                             </td>
+                            @if($ventaPorTalla)
                             <td class="text-center">
-                                @php $stockVenta = floor($producto->stockVenta); @endphp
-                                @if($stockVenta < 50)
-                                    <span class="badge bg-danger rounded-pill px-2">{{ $stockVenta }} {{ $producto->unidadVenta->abreviatura ?? 'u' }}</span>
+                                @if($producto->stock_total < 50)
+                                    <span class="badge bg-danger rounded-pill px-2">{{ $producto->stock_total }} u</span>
                                 @else
-                                    <span class="px-2">{{ $stockVenta }} {{ $producto->unidadVenta->abreviatura ?? 'u' }}</span>
+                                    <span class="px-2">{{ $producto->stock_total }} u</span>
                                 @endif
                             </td>
                             <td class="text-center text-muted small d-none d-xl-table-cell">
-                                {{ number_format($producto->stock, 4) }} {{ $producto->unidadCompra->abreviatura ?? '?' }}
+                                {{ $producto->stock_total }} u
                             </td>
+                            @endif
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center gap-2">
                                     <a href="{{ route('admin.productos.edit', $producto->producto_id) }}" class="btn btn-sm btn-outline-primary btn-action" title="Editar">
@@ -73,8 +76,8 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center py-5">
-                                <i class="fas fa-fish fa-3x text-muted mb-3 opacity-50"></i>
+                            <td colspan="{{ $ventaPorTalla ? 6 : 4 }}" class="text-center py-5">
+                                <i class="fas fa-shirt fa-3x text-muted mb-3 opacity-50"></i>
                                 <h5 class="text-muted">No se han encontrado productos.</h5>
                             </td>
                         </tr>

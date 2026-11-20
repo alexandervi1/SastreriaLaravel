@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=EB+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@300;400;500&display=swap');
+
 /* ==========================================================================
-   Pescadería Don Walter — sistema visual único
+   Sastrería — sistema visual único
    --------------------------------------------------------------------------
    Una sola fuente de verdad para color, tipografía, radios, sombras y
    espaciado. Ningún otro archivo CSS ni vista debe declarar hex propios:
@@ -9,21 +11,21 @@
 /* ── 1. Primitivos ───────────────────────────────────────────────────────── */
 :root {
     /* Marca */
-    --brand-900: #002E5D;
-    --brand-800: #0B3F75;
-    --brand-700: #1A519D;
-    --brand-600: #2A6DC3;
-    --brand-300: #7CCCED;
-    --brand-100: #D6E9F8;
-    --brand-50:  #EEF5FC;
+    --brand-900: #2A2622; /* tinta */
+    --brand-800: #121110; /* negro gala */
+    --brand-700: #7A6438; /* oro oscuro para fondos claros */
+    --brand-600: #8E7544;
+    --brand-300: #A88E5C; /* oro viejo */
+    --brand-100: #E8DFC9;
+    --brand-50:  #F3EFE6; /* marfil */
 
     /* Neutros */
-    --ink-900: #1F2933;
-    --ink-700: #3E4C59;
-    --ink-500: #616E7C;
-    --ink-300: #9AA5B1;
-    --ink-100: #E4E7EB;
-    --ink-50:  #F5F7FA;
+    --ink-900: #2A2622;
+    --ink-700: #3A362F;
+    --ink-500: #5C564D;
+    --ink-300: #7B7469;
+    --ink-100: #DED5C4;
+    --ink-50:  #F3EFE6;
     --white:   #FFFFFF;
 
     /* Semánticos de estado */
@@ -32,7 +34,7 @@
     --green-50:  #E7F4EC;
     --amber-700: #B45309;
     --amber-50:  #FFF4E5;
-    --red-600:   #DC3545;
+    --red-600:   #B02A37;
     --red-50:    #FDECEA;
     --teal-600:  #0E7C86;
     --teal-50:   #E6F4F5;
@@ -40,17 +42,17 @@
     /* ── 2. Tokens semánticos ──────────────────────────────────────────── */
     --color-primary:        var(--brand-700);
     --color-primary-strong: var(--brand-900);
-    --color-primary-hover:  var(--brand-800);
+    --color-primary-hover:  #5E4C2A;
     --color-primary-soft:   var(--brand-100);
     --color-primary-tint:   var(--brand-50);
-    --color-on-primary:     var(--white);
+    --color-on-primary:     #FFFDF9;
     --color-on-primary-muted: var(--brand-100);
 
     --color-page:        var(--ink-50);
-    --color-surface:     var(--white);
-    --color-surface-alt: var(--ink-50);
+    --color-surface:     #FFFDF9;
+    --color-surface-alt: #EDE6D7;
     --color-border:      var(--ink-100);
-    --color-border-strong: #CBD2D9;
+    --color-border-strong: #C9BEA9;
 
     --color-text:       var(--ink-900);
     --color-text-muted: var(--ink-500);
@@ -68,13 +70,15 @@
     --color-info: var(--teal-600);
     --color-info-soft: var(--teal-50);
     --color-info-text: #0B4F56;
-    --color-medal-bronze: #B08D57;
+    --color-medal-bronze: var(--brand-300);
 
-    --color-focus: var(--brand-600);
-    --color-focus-ring: rgba(42, 109, 195, 0.35);
+    --color-focus: var(--brand-700);
+    --color-focus-ring: rgba(122, 100, 56, 0.28);
 
     /* Tipografía */
-    --font-sans: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-sans: 'Jost', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'EB Garamond', Georgia, 'Times New Roman', serif;
+    --font-seal: 'Cinzel', 'EB Garamond', serif;
     --font-mono: 'Courier New', Courier, monospace;
     --text-xs: 0.75rem;
     --text-sm: 0.875rem;
@@ -106,22 +110,22 @@
     --bs-body-bg: var(--color-page);
     --bs-border-color: var(--color-border);
     --bs-secondary-color: var(--color-text-muted);
-    --bs-secondary-rgb: 97, 110, 124;
+    --bs-secondary-rgb: 92, 86, 77;
     --bs-secondary-bg: var(--color-surface-alt);
     --bs-tertiary-bg: var(--color-surface-alt);
     --bs-heading-color: var(--color-text);
     --bs-primary: var(--color-primary);
-    --bs-primary-rgb: 26, 81, 157;
+    --bs-primary-rgb: 122, 100, 56;
     --bs-link-color: var(--color-primary);
-    --bs-link-color-rgb: 26, 81, 157;
+    --bs-link-color-rgb: 122, 100, 56;
     --bs-link-hover-color: var(--color-primary-strong);
-    --bs-link-hover-color-rgb: 0, 46, 93;
+    --bs-link-hover-color-rgb: 42, 38, 34;
     --bs-info: var(--color-info);
     --bs-info-rgb: 14, 124, 134;
     --bs-success: var(--color-success);
     --bs-success-rgb: 20, 108, 67;
     --bs-danger: var(--color-danger);
-    --bs-danger-rgb: 220, 53, 69;
+    --bs-danger-rgb: 176, 42, 55;
     --bs-warning: var(--color-warning);
     --bs-warning-rgb: 180, 83, 9;
     --bs-border-radius: var(--radius-sm);
@@ -133,12 +137,13 @@ body {
     background-color: var(--color-page);
     color: var(--color-text);
     font-family: var(--font-sans);
-    line-height: 1.55;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, h5, h6 {
     color: var(--color-text);
+    font-family: var(--font-display);
     font-weight: 600;
     letter-spacing: -0.01em;
 }
@@ -493,7 +498,8 @@ hr {
 .stat-card-sky   { background: linear-gradient(135deg, var(--brand-300) 0%, var(--brand-100) 100%); color: var(--brand-900); }
 
 .stat-card .stat-label { color: rgba(255, 255, 255, 0.95); }
-.stat-card-sky .stat-label { color: var(--brand-800); }
+.stat-card-sky .stat-label { color: #2A2622 !important; }
+.stat-card-sky .card-footer a { color: #2A2622 !important; }
 
 /* Los números heredan el color de la tarjeta, no el color global de encabezados */
 .stat-card h1,
@@ -784,6 +790,15 @@ div.dataTables_wrapper .paginate_button.current {
         white-space: normal;
     }
 
+    .sidebar .nav-link {
+        font-size: 0.82rem;
+        padding: 0.55rem 0.6rem;
+    }
+
+    .sidebar .nav-section {
+        padding-left: 0.6rem;
+    }
+
     .product-desc {
         max-width: 170px;
     }
@@ -836,6 +851,23 @@ div.dataTables_wrapper .paginate_button.current {
 /* ── 19. Ajustes de componente ───────────────────────────────────────────── */
 .admin-topbar {
     height: 80px;
+    background-color: var(--brand-50) !important;
+    border-bottom: 1px solid var(--brand-700);
+}
+
+.admin-topbar .navbar-brand span,
+.admin-topbar .text-white,
+.admin-topbar .text-light,
+.admin-topbar .navbar-nav .nav-link {
+    color: var(--brand-900) !important;
+}
+
+.admin-topbar .navbar-toggler {
+    border-color: var(--brand-700);
+}
+
+.admin-topbar .navbar-toggler-icon {
+    filter: invert(1) brightness(0.2);
 }
 
 /* Tablets y pantallas táctiles: objetivos de 44px */
@@ -867,6 +899,13 @@ div.dataTables_wrapper .paginate_button.current {
     height: 36px;
 }
 
+.admin-topbar .navbar-brand img {
+    height: 44px;
+    width: auto;
+    background: transparent;
+    padding: 0;
+}
+
 /* El offcanvas del panel no debe recortar los dropdowns */
 #sidebarMenu {
     overflow: visible;
@@ -894,12 +933,8 @@ div.dataTables_wrapper .paginate_button.current {
 
 /* Áreas táctiles mínimas (WCAG 2.5.8) */
 .site-footer ul a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: var(--radius-sm);
+    display: inline-block;
+    padding: 0.25rem 0;
 }
 
 .stat-card .card-footer a {
@@ -926,6 +961,471 @@ div.dataTables_wrapper .paginate_button.current {
 .receipt-container .receipt-logo {
     max-width: 150px;
     width: 100%;
+}
+
+/* ── 20. Entretela: tienda pública en negro gala ─────────────────────────── */
+body.tienda {
+    --color-page: #121110;
+    --color-surface: #1C1A18;
+    --color-surface-alt: #24211D;
+    --color-border: #3B352C;
+    --color-border-strong: #6B5C45;
+    --color-text: #F3EFE6;
+    --color-text-muted: #9A948A;
+    --color-text-subtle: #B5AD9F;
+    --color-primary: #A88E5C;
+    --color-primary-strong: #CDB991;
+    --color-primary-hover: #B9A06E;
+    --color-primary-soft: #2C261B;
+    --color-primary-tint: #241F18;
+    --color-on-primary: #121110;
+    --color-on-primary-muted: #CDB991;
+    --color-focus: #CDB991;
+    --color-focus-ring: rgba(205, 185, 145, 0.35);
+    --bs-body-bg: var(--color-page);
+    --bs-body-color: var(--color-text);
+    --bs-secondary-color: var(--color-text-muted);
+    --bs-secondary-bg: var(--color-surface-alt);
+    --bs-tertiary-bg: var(--color-surface-alt);
+    --bs-heading-color: var(--color-text);
+    --bs-border-color: var(--color-border);
+    --bs-link-color: #CDB991;
+    --bs-link-hover-color: #F3EFE6;
+    --bs-emphasis-color: #F3EFE6;
+    background-color: var(--color-page);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-weight: 300;
+}
+
+body.tienda h1,
+body.tienda h2,
+body.tienda h3,
+body.tienda h4,
+body.tienda h5,
+body.tienda h6 {
+    color: var(--color-text);
+    font-weight: 500;
+}
+
+body.tienda .text-dark,
+body.tienda .text-black {
+    color: var(--color-text) !important;
+}
+
+body.tienda .text-muted,
+body.tienda .text-secondary {
+    color: var(--color-text-muted) !important;
+}
+
+body.tienda .text-primary {
+    color: var(--color-primary-strong) !important;
+}
+
+body.tienda .text-success { color: #9ED3AF !important; }
+body.tienda .text-danger { color: #E6A3A0 !important; }
+body.tienda .text-warning { color: #DDB37A !important; }
+
+body.tienda .bg-white,
+body.tienda .bg-body-tertiary {
+    background-color: var(--color-surface) !important;
+}
+
+body.tienda .bg-light {
+    background-color: var(--color-surface-alt) !important;
+}
+
+body.tienda .border,
+body.tienda .border-top,
+body.tienda .border-bottom,
+body.tienda .border-start,
+body.tienda .border-end {
+    border-color: var(--color-border) !important;
+}
+
+body.tienda .card,
+body.tienda .card-header,
+body.tienda .card-footer {
+    background-color: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-text);
+}
+
+body.tienda .list-group-item {
+    background-color: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-text);
+}
+
+body.tienda .table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--color-text);
+    --bs-table-border-color: var(--color-border);
+    --bs-table-hover-bg: var(--color-surface-alt);
+    --bs-table-hover-color: var(--color-text);
+}
+
+body.tienda .table-light {
+    --bs-table-bg: var(--color-surface-alt);
+    --bs-table-color: var(--color-text);
+}
+
+body.tienda .table > thead th {
+    background-color: var(--color-surface-alt);
+    color: var(--color-text-muted);
+}
+
+body.tienda .table > tbody > tr:nth-of-type(odd) > *,
+body.tienda .table > tbody > tr:hover > * {
+    background-color: transparent;
+    color: var(--color-text);
+}
+
+body.tienda .table-hover > tbody > tr:hover > * {
+    background-color: var(--color-surface-alt);
+}
+
+body.tienda .form-control,
+body.tienda .form-select {
+    background-color: var(--color-surface);
+    border-color: var(--color-border-strong);
+    color: var(--color-text);
+}
+
+body.tienda .form-control::placeholder {
+    color: var(--color-text-muted);
+}
+
+body.tienda .input-group-text {
+    background-color: var(--color-surface-alt);
+    border-color: var(--color-border-strong);
+    color: var(--color-text-muted);
+}
+
+body.tienda .btn-outline-primary,
+body.tienda .btn-outline-secondary {
+    --bs-btn-color: var(--color-primary-strong);
+    --bs-btn-border-color: var(--color-border-strong);
+    --bs-btn-hover-bg: var(--color-primary);
+    --bs-btn-hover-border-color: var(--color-primary);
+    --bs-btn-hover-color: var(--color-on-primary);
+    --bs-btn-active-bg: var(--color-primary);
+    --bs-btn-active-border-color: var(--color-primary);
+    --bs-btn-active-color: var(--color-on-primary);
+    color: var(--color-primary-strong);
+    border-color: var(--color-border-strong);
+}
+
+body.tienda .btn-primary {
+    --bs-btn-color: var(--color-on-primary);
+    --bs-btn-hover-color: var(--color-on-primary);
+    --bs-btn-active-color: var(--color-on-primary);
+    color: var(--color-on-primary);
+}
+
+body.tienda .btn-outline-gold {
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary-strong);
+    background: transparent;
+}
+
+body.tienda .btn-outline-gold:hover,
+body.tienda .btn-outline-gold:focus-visible {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-on-primary);
+}
+
+body.tienda .alert-info {
+    background-color: #1E2A28;
+    color: #B9D8D2;
+}
+
+body.tienda .alert-success {
+    background-color: #1B2A20;
+    color: #B8DCC4;
+}
+
+body.tienda .alert-warning {
+    background-color: #2B2417;
+    color: #E8C98F;
+}
+
+body.tienda .alert-danger {
+    background-color: #2C1B1A;
+    color: #E9B4AF;
+}
+
+body.tienda .alert {
+    border: 1px solid var(--color-border);
+}
+
+body.tienda .dropdown-menu {
+    background-color: var(--color-surface);
+    border-color: var(--color-border);
+}
+
+body.tienda .dropdown-item {
+    color: var(--color-text);
+}
+
+body.tienda .dropdown-item:hover,
+body.tienda .dropdown-item:focus {
+    background-color: var(--color-surface-alt);
+    color: var(--color-primary-strong);
+}
+
+body.tienda .breadcrumb-item + .breadcrumb-item::before,
+body.tienda .breadcrumb-item.active {
+    color: var(--color-text-muted);
+}
+
+body.tienda .nav-pills .nav-link {
+    color: var(--color-text-muted);
+}
+
+body.tienda .nav-pills .nav-link.active {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+}
+
+body.tienda .badge.bg-light {
+    background-color: var(--color-surface-alt) !important;
+    color: var(--color-text) !important;
+}
+
+body.tienda .badge.bg-primary {
+    background-color: var(--color-primary) !important;
+    color: var(--color-on-primary) !important;
+}
+
+body.tienda .btn-secondary {
+    --bs-btn-bg: var(--color-primary-strong);
+    --bs-btn-border-color: var(--color-primary-strong);
+    --bs-btn-color: var(--color-on-primary);
+    --bs-btn-hover-bg: var(--color-primary);
+    --bs-btn-hover-border-color: var(--color-primary);
+    --bs-btn-hover-color: var(--color-on-primary);
+}
+
+body.tienda .btn-info {
+    --bs-btn-color: var(--color-on-primary);
+    --bs-btn-bg: var(--color-primary);
+    --bs-btn-border-color: var(--color-primary);
+}
+
+body.tienda .modal-content {
+    background-color: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-text);
+}
+
+body.tienda .accordion-item {
+    background-color: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-text);
+}
+
+body.tienda .accordion-button {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+}
+
+body.tienda .accordion-button:not(.collapsed) {
+    background-color: var(--color-surface-alt);
+    color: var(--color-primary-strong);
+    box-shadow: none;
+}
+
+body.tienda .accordion-button::after {
+    filter: invert(0.85);
+}
+
+body.tienda .navbar {
+    background-color: var(--color-page) !important;
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: none;
+    padding: 0.9rem 0;
+}
+
+body.tienda .navbar-brand {
+    color: var(--color-text) !important;
+    margin-right: 2rem;
+}
+
+body.tienda .navbar-brand img,
+body.tienda .navbar-brand .brand-icon {
+    height: 38px;
+    width: auto;
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+}
+
+body.tienda .navbar .nav-link {
+    color: var(--color-text) !important;
+    background: transparent;
+    border-radius: 0;
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 300;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.5rem 0.75rem !important;
+}
+
+body.tienda .navbar .nav-link:hover,
+body.tienda .navbar .nav-link:focus-visible,
+body.tienda .navbar .nav-link.active {
+    color: var(--color-primary-strong) !important;
+    background: transparent;
+}
+
+body.tienda .navbar .dropdown-toggle {
+    text-transform: none;
+    letter-spacing: 0.04em;
+}
+
+body.tienda .navbar-toggler {
+    border-color: var(--color-border-strong);
+}
+
+body.tienda .navbar-toggler-icon {
+    filter: invert(1) sepia(1) saturate(0.3);
+}
+
+body.tienda .badge-cart {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+}
+
+.brand-wordmark {
+    font-family: var(--font-sans);
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-text);
+}
+
+body.tienda .brand-wordmark {
+    color: var(--color-text);
+    font-size: 1.02rem;
+}
+
+.text-gold { color: var(--color-primary-strong) !important; }
+
+.eyebrow {
+    color: var(--color-primary-strong);
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+}
+
+body.tienda .hero-entretela {
+    background: linear-gradient(135deg, #1C1A18 0%, #121110 100%);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+}
+
+body.tienda .hero-title {
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 500;
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+}
+
+body.tienda .hero-title em {
+    color: var(--color-primary-strong);
+    font-style: italic;
+}
+
+body.tienda .hero-lead {
+    color: var(--color-text-muted);
+    font-size: 1.08rem;
+    max-width: 32rem;
+}
+
+body.tienda .hero-image-wrap {
+    min-height: 420px;
+    max-height: 560px;
+    overflow: hidden;
+}
+
+body.tienda .hero-image-wrap img {
+    filter: saturate(0.85) contrast(1.02);
+}
+
+.hero-bird {
+    height: 26px;
+    width: auto;
+}
+
+body.tienda .site-footer {
+    background-color: #0E0D0C;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text);
+}
+
+body.tienda .site-footer .footer-meta,
+body.tienda .site-footer .small {
+    color: var(--color-text-muted);
+}
+
+body.tienda .site-footer a {
+    color: var(--color-text);
+}
+
+body.tienda .site-footer a:hover {
+    color: var(--color-primary-strong);
+}
+
+body.tienda .tela-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-top: 2px solid var(--color-primary);
+    border-radius: var(--radius-md);
+}
+
+body.tienda .receipt-container {
+    background-color: #FFFDF9;
+    color: #2A2622;
+}
+
+/* El recibo y la orden de trabajo se imprimen y viven en claro. */
+body.recibo-page {
+    background-color: var(--color-page);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+}
+
+body.recibo-page .receipt-container {
+    font-family: var(--font-sans);
+}
+
+body.recibo-page .receipt-container .business-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+}
+
+body.recibo-page .navbar,
+body.recibo-page .site-footer {
+    display: none !important;
+}
+
+body.recibo-page main {
+    padding-top: 2.5rem;
+}
+
+@media print {
+    body,
+    body.recibo-page {
+        background: #FFFFFF !important;
+        color: #000000 !important;
+    }
 }
 
 /* Brillo sutil de las tarjetas de estadística */

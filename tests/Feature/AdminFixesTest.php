@@ -9,7 +9,6 @@ use App\Models\Pedido;
 use App\Models\PedidoProducto;
 use App\Models\Producto;
 use App\Models\Rol;
-use App\Models\UnidadMedida;
 use App\Models\Usuario;
 use App\Services\OrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -34,14 +33,9 @@ class AdminFixesTest extends TestCase
             ['rol_id' => 3, 'nombre' => 'Visitante'],
         ]);
 
-        UnidadMedida::insert([
-            ['unidad_id' => 1, 'nombre' => 'Tonelada', 'abreviatura' => 'Tn'],
-            ['unidad_id' => 2, 'nombre' => 'Libra', 'abreviatura' => 'lb'],
-            ['unidad_id' => 3, 'nombre' => 'Unidad', 'abreviatura' => 'u'],
-        ]);
-
         Categoria::insert([['categoria_id' => 1, 'nombre' => 'Pescados']]);
         Configuracion::create(['clave' => 'iva_actual', 'valor' => '15']);
+        $this->activarVentaPorTalla();
 
         $this->admin = Usuario::create([
             'nombre_usuario' => 'admin1',
@@ -65,51 +59,59 @@ class AdminFixesTest extends TestCase
     private function productoConPedido(int $cantidad = 2): array
     {
         $producto = Producto::create([
-            'nombre' => 'Albacora',
+            'nombre' => 'Terno de prueba',
             'precio' => 10,
-            'stock' => 100,
             'categoria_id' => 1,
-            'unidad_compra_id' => 3,
-            'unidad_venta_id' => 3,
+            'vende_por_talla' => true,
+        ]);
+
+        $variante = \App\Models\ProductoVariante::create([
+            'producto_id' => $producto->producto_id,
+            'talla' => '40',
+            'color' => 'Azul noche',
+            'sku' => 'SKU-TEST',
+            'stock' => 100,
+            'activo' => true,
         ]);
 
         Carrito::create([
             'usuario_id' => $this->cliente->usuario_id,
             'producto_id' => $producto->producto_id,
+            'variante_id' => $variante->variante_id,
             'cantidad' => $cantidad,
         ]);
 
         $pedido = app(OrderService::class)->processOrder($this->cliente);
 
-        return [$producto->fresh(), $pedido];
+        return [$producto->fresh(), $variante->fresh(), $pedido];
     }
 
     public function test_cancelling_an_order_restores_stock(): void
     {
-        [$producto, $pedido] = $this->productoConPedido(2);
-        $this->assertEquals(98.0, (float) $producto->stock);
+        [$producto, $variante, $pedido] = $this->productoConPedido(2);
+        $this->assertEquals(98, $variante->stock);
 
         $this->actingAs($this->admin)
             ->put(route('admin.pedidos.update', $pedido->pedido_id), ['estado' => 'Cancelado'])
             ->assertSessionHas('success');
 
         $this->assertEquals('Cancelado', $pedido->fresh()->estado);
-        $this->assertEquals(100.0, (float) $producto->fresh()->stock);
+        $this->assertEquals(100, $variante->fresh()->stock);
     }
 
     public function test_cancelling_twice_does_not_duplicate_the_restock(): void
     {
-        [$producto, $pedido] = $this->productoConPedido(2);
+        [$producto, $variante, $pedido] = $this->productoConPedido(2);
 
         $this->actingAs($this->admin)->put(route('admin.pedidos.update', $pedido->pedido_id), ['estado' => 'Cancelado']);
         $this->actingAs($this->admin)->put(route('admin.pedidos.update', $pedido->pedido_id), ['estado' => 'Cancelado']);
 
-        $this->assertEquals(100.0, (float) $producto->fresh()->stock);
+        $this->assertEquals(100, $variante->fresh()->stock);
     }
 
     public function test_cancelled_order_cannot_be_reactivated(): void
     {
-        [$producto, $pedido] = $this->productoConPedido(2);
+        [$producto, $variante, $pedido] = $this->productoConPedido(2);
 
         $this->actingAs($this->admin)->put(route('admin.pedidos.update', $pedido->pedido_id), ['estado' => 'Cancelado']);
 
@@ -122,14 +124,14 @@ class AdminFixesTest extends TestCase
 
     public function test_product_with_order_lines_cannot_be_deleted(): void
     {
-        [$producto, $pedido] = $this->productoConPedido(2);
+        [$producto, $variante, $pedido] = $this->productoConPedido(2);
 
         $this->actingAs($this->admin)
             ->delete(route('admin.productos.destroy', $producto->producto_id))
             ->assertSessionHas('error');
 
         $this->assertDatabaseHas('producto', ['producto_id' => $producto->producto_id]);
-        $this->assertDatabaseHas('pedidoproducto', ['pedido_id' => $pedido->pedido_id]);
+        $this->assertDatabaseHas('pedido_linea', ['pedido_id' => $pedido->pedido_id]);
     }
 
     public function test_username_change_logs_the_admin_out(): void
@@ -192,31 +194,12 @@ class AdminFixesTest extends TestCase
             ->assertNotFound();
     }
 
-    public function test_product_with_unsupported_unit_pair_is_rejected(): void
-    {
-        $this->actingAs($this->admin)
-            ->post(route('admin.productos.store'), [
-                'nombre' => 'Producto raro',
-                'precio' => 5,
-                'stock' => 10,
-                'categoria_id' => 1,
-                'unidad_compra_id' => 1, // Tonelada
-                'unidad_venta_id' => 3,  // Unidad: sin conversión definida
-            ])
-            ->assertSessionHasErrors('unidad_venta_id');
-
-        $this->assertDatabaseMissing('producto', ['nombre' => 'Producto raro']);
-    }
-
     public function test_sales_report_excludes_cancelled_and_previous_years(): void
     {
         $producto = Producto::create([
             'nombre' => 'Albacora',
             'precio' => 10,
-            'stock' => 100,
             'categoria_id' => 1,
-            'unidad_compra_id' => 3,
-            'unidad_venta_id' => 3,
         ]);
 
         Pedido::create([
@@ -367,52 +350,68 @@ class AdminFixesTest extends TestCase
 
     public function test_footer_uses_the_business_configuration(): void
     {
-        Configuracion::updateOrCreate(['clave' => 'negocio_direccion'], ['valor' => 'Calle Configurada 123']);
+        Configuracion::updateOrCreate(['clave' => 'negocio_direccion'], ['valor' => 'Calle Exacta 456']);
+        Configuracion::updateOrCreate(['clave' => 'negocio_direccion_publica'], ['valor' => 'Calle Configurada 123']);
         Configuracion::updateOrCreate(['clave' => 'negocio_telefono'], ['valor' => '0990001111']);
 
         $response = $this->get(route('home'));
 
         $response->assertOk();
         $response->assertSee('Calle Configurada 123');
+        $response->assertDontSee('Calle Exacta 456');
         $response->assertSee('0990001111');
     }
 
     public function test_low_stock_threshold_is_configurable(): void
     {
-        Producto::create([
-            'nombre' => 'Albacora',
+        $producto = Producto::create([
+            'nombre' => 'Terno de prueba',
             'precio' => 10,
-            'stock' => 1,
             'categoria_id' => 1,
-            'unidad_compra_id' => 3,
-            'unidad_venta_id' => 3,
+        ]);
+
+        \App\Models\ProductoVariante::create([
+            'producto_id' => $producto->producto_id,
+            'talla' => '40',
+            'color' => null,
+            'sku' => 'SKU-BAJO',
+            'stock' => 1,
+            'activo' => true,
         ]);
 
         Configuracion::updateOrCreate(['clave' => 'umbral_bajo_stock'], ['valor' => '100']);
 
         $response = $this->actingAs($this->admin)->get(route('admin.reportes.bajo-stock'));
-        $this->assertCount(1, $response->viewData('productos'));
+        $this->assertCount(1, $response->viewData('variantes'));
 
         Configuracion::updateOrCreate(['clave' => 'umbral_bajo_stock'], ['valor' => '0']);
 
         $response = $this->actingAs($this->admin)->get(route('admin.reportes.bajo-stock'));
-        $this->assertCount(0, $response->viewData('productos'));
+        $this->assertCount(0, $response->viewData('variantes'));
     }
 
     public function test_receipt_uses_the_tax_rate_stored_on_the_order(): void
     {
         $producto = Producto::create([
-            'nombre' => 'Albacora',
+            'nombre' => 'Terno de prueba',
             'precio' => 10,
-            'stock' => 10,
             'categoria_id' => 1,
-            'unidad_compra_id' => 3,
-            'unidad_venta_id' => 3,
+            'vende_por_talla' => true,
+        ]);
+
+        $variante = \App\Models\ProductoVariante::create([
+            'producto_id' => $producto->producto_id,
+            'talla' => '40',
+            'color' => null,
+            'sku' => 'SKU-IVA',
+            'stock' => 10,
+            'activo' => true,
         ]);
 
         Carrito::create([
             'usuario_id' => $this->cliente->usuario_id,
             'producto_id' => $producto->producto_id,
+            'variante_id' => $variante->variante_id,
             'cantidad' => 2,
         ]);
 
@@ -436,7 +435,7 @@ class AdminFixesTest extends TestCase
                 'comprobante_serie' => '001-001',
                 'password_rotacion_dias' => 90,
                 'zona_horaria' => 'America/Guayaquil',
-                'negocio_nombre' => 'Pescadería Test',
+                'negocio_nombre' => 'Sastrería Test',
                 'negocio_ruc' => '1301234567001',
                 'negocio_direccion' => 'Manta',
                 'negocio_telefono' => '0999999999',

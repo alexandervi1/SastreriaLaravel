@@ -3,6 +3,9 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Configuracion;
+use App\Models\Producto;
+use Illuminate\Validation\Rule;
 
 class UpdateProductoRequest extends FormRequest
 {
@@ -26,30 +29,36 @@ class UpdateProductoRequest extends FormRequest
     {
         return [
             'nombre'            => 'required|string|max:255',
+            'tipo_prenda'       => ['sometimes', 'required', Rule::in(array_keys(Producto::TIPOS_PRENDA))],
+            'publico'           => ['sometimes', 'required', Rule::in(array_keys(Producto::PUBLICOS))],
             'descripcion'       => 'nullable|string',
             'precio'            => 'required|numeric|min:0',
-            'stock'             => 'required|numeric|min:0',
             'categoria_id'      => 'required|exists:categoria,categoria_id',
-            'unidad_compra_id'  => 'required|exists:unidad_medida,unidad_id',
-            'unidad_venta_id'   => 'required|exists:unidad_medida,unidad_id',
+            'vende_por_talla'   => 'boolean',
+            'vende_a_medida'    => 'boolean',
+            'precio_medida'     => 'nullable|numeric|min:0',
+            'dias_confeccion'   => 'nullable|integer|between:1,90',
             'imagen'            => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048|dimensions:max_width=4000,max_height=4000',
         ];
     }
 
-    /**
-     * Rechaza combinaciones de unidades sin factor de conversión definido.
-     */
-    public function withValidator($validator)
+    public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
-            $compra = $this->input('unidad_compra_id');
-            $venta = $this->input('unidad_venta_id');
+            $ventaPorTalla = Configuracion::ventaPorTallaActiva();
+            $porTalla = $ventaPorTalla && $this->boolean('vende_por_talla');
+            $aMedida = $ventaPorTalla ? $this->boolean('vende_a_medida') : true;
 
-            if ($compra && $venta && \App\Models\Producto::factorConversion((int) $compra, (int) $venta) === null) {
-                $validator->errors()->add(
-                    'unidad_venta_id',
-                    'La combinación de unidad de compra y unidad de venta no tiene conversión definida.'
-                );
+            if (! $porTalla && ! $aMedida) {
+                $validator->errors()->add('vende_por_talla', 'El modelo debe venderse al menos por talla o a medida.');
+            }
+
+            if ($aMedida && ! $this->filled('precio_medida')) {
+                $validator->errors()->add('precio_medida', 'Indica el precio del terno a medida.');
+            }
+
+            if ($aMedida && ! $this->filled('dias_confeccion')) {
+                $validator->errors()->add('dias_confeccion', 'Indica los días de confección.');
             }
         });
     }

@@ -14,6 +14,11 @@
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
+                        <button class="nav-link {{ $tab === 'taller' ? 'active fw-bold text-primary px-4 py-3 border-0 text-nowrap border-bottom border-primary border-3' : 'fw-bold text-secondary px-4 py-3 border-0 text-nowrap' }}" id="taller-tab" data-bs-toggle="tab" data-bs-target="#taller" type="button" role="tab" aria-controls="taller" aria-selected="{{ $tab === 'taller' ? 'true' : 'false' }}">
+                            <i class="fas fa-scissors me-2"></i> Taller
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
                         <button class="nav-link {{ $tab === 'seguridad' ? 'active fw-bold text-primary px-4 py-3 border-0 text-nowrap border-bottom border-primary border-3' : 'fw-bold text-secondary px-4 py-3 border-0 text-nowrap' }}" id="seguridad-tab" data-bs-toggle="tab" data-bs-target="#seguridad" type="button" role="tab" aria-controls="seguridad" aria-selected="{{ $tab === 'seguridad' ? 'true' : 'false' }}">
                             <i class="fas fa-shield-alt me-2"></i> Seguridad y Acceso
                         </button>
@@ -52,10 +57,15 @@
 
                             <h6 class="fw-bold mb-4 text-primary"><i class="fas fa-map-marked-alt me-2"></i> Local y Contactos</h6>
                             <div class="row g-4 mb-5">
-                                <div class="col-md-7">
-                                    <label class="form-label fw-bold text-secondary">Dirección del Local</label>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-secondary">Dirección pública</label>
+                                    <input type="text" class="form-control" name="negocio_direccion_publica" value="{{ old('negocio_direccion_publica', $configuraciones['negocio_direccion_publica']) }}" placeholder="Riobamba, sector…">
+                                    <div class="form-text mt-2"><i class="fas fa-eye me-1"></i> Se muestra en la web y en los comprobantes.</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-secondary">Dirección exacta del taller (privada)</label>
                                     <input type="text" class="form-control" name="negocio_direccion" value="{{ old('negocio_direccion', $configuraciones['negocio_direccion']) }}" required>
-                                    <div class="form-text mt-2"><i class="fas fa-info-circle me-1"></i> Se muestra en el pie de página y en los comprobantes.</div>
+                                    <div class="form-text mt-2"><i class="fas fa-lock me-1"></i> Solo la ve el cliente con una cita confirmada en el taller y el panel.</div>
                                 </div>
                                 <div class="col-md-5">
                                     <label class="form-label fw-bold text-secondary">Teléfono de Soporte</label>
@@ -73,6 +83,18 @@
                                     <label for="negocio_logo" class="form-label fw-bold">Cambiar logo</label>
                                     <input class="form-control" type="file" id="negocio_logo" name="negocio_logo" accept=".jpg,.jpeg,.png,.webp">
                                     <div class="form-text mt-2"><i class="fas fa-info-circle me-1"></i> JPG, PNG o WEBP, máximo 2MB. Se usa en la tienda, el panel y los comprobantes.</div>
+                                </div>
+                            </div>
+
+                            <h6 class="fw-bold mb-4 text-primary"><i class="fas fa-ruler-combined me-2"></i> Modos de venta</h6>
+                            <div class="row g-4 mb-5">
+                                <div class="col-md-12">
+                                    <input type="hidden" name="venta_por_talla" value="0">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="venta_por_talla" name="venta_por_talla" value="1" {{ old('venta_por_talla', $configuraciones['venta_por_talla']) === '1' ? 'checked' : '' }}>
+                                        <label class="form-check-label fw-bold text-secondary" for="venta_por_talla">Permitir venta por talla</label>
+                                    </div>
+                                    <div class="form-text mt-2">Apagado, la tienda solo acepta encargos a medida. Al activarlo vuelven las tallas, el stock y sus reportes.</div>
                                 </div>
                             </div>
 
@@ -109,6 +131,14 @@
                                     </div>
                                     <div class="form-text mt-2">Días antes de avisar que la clave venció.</div>
                                 </div>
+                                <div class="col-md-3">
+                                    <label for="capacidad_semanal" class="form-label fw-bold text-secondary">Prendas a medida por semana</label>
+                                    <div class="input-group border rounded">
+                                        <span class="input-group-text bg-light border-0"><i class="fas fa-scissors text-primary"></i></span>
+                                        <input type="number" min="1" max="100" class="form-control" id="capacidad_semanal" name="capacidad_semanal" value="{{ old('capacidad_semanal', $configuraciones['capacidad_semanal']) }}" required>
+                                    </div>
+                                    <div class="form-text mt-2">Agrega una semana de espera por cada bloque completo en la cola.</div>
+                                </div>
                             </div>
 
                             <h6 class="fw-bold mb-4 text-primary"><i class="fas fa-globe me-2"></i> Sistema</h6>
@@ -127,6 +157,66 @@
                             <div class="d-flex justify-content-end mt-5 pt-3 border-top">
                                 <button type="submit" class="btn btn-primary btn-lg fw-bold shadow-sm rounded-pill px-5">
                                     Guardar Negocio <i class="fas fa-save ms-2"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="tab-pane fade {{ $tab === 'taller' ? 'show active' : '' }} p-4 p-md-5 bg-white" id="taller" role="tabpanel" aria-labelledby="taller-tab">
+                        <form action="{{ route('admin.configuracion.update') }}" method="POST">
+                            @csrf
+                            @method('PUT')
+
+                            <h6 class="fw-bold mb-4 text-primary"><i class="fas fa-clock me-2"></i> Horario de atención</h6>
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-secondary" for="taller_dias">Días de atención (ISO)</label>
+                                    <input type="text" class="form-control" id="taller_dias" name="taller_dias" value="{{ old('taller_dias', $configuraciones['taller_dias']) }}" placeholder="1,2,3,4,5,6">
+                                    <div class="form-text">1 = lunes … 7 = domingo, separados por comas.</div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold text-secondary" for="taller_hora_inicio">Apertura</label>
+                                    <input type="time" class="form-control" id="taller_hora_inicio" name="taller_hora_inicio" value="{{ old('taller_hora_inicio', $configuraciones['taller_hora_inicio']) }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold text-secondary" for="taller_hora_fin">Cierre</label>
+                                    <input type="time" class="form-control" id="taller_hora_fin" name="taller_hora_fin" value="{{ old('taller_hora_fin', $configuraciones['taller_hora_fin']) }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold text-secondary" for="cita_duracion_min">Duración de cada cita (min)</label>
+                                    <input type="number" min="15" max="240" class="form-control" id="cita_duracion_min" name="cita_duracion_min" value="{{ old('cita_duracion_min', $configuraciones['cita_duracion_min']) }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold text-secondary" for="cita_anticipacion_max_dias">Anticipación máxima (días)</label>
+                                    <input type="number" min="1" max="365" class="form-control" id="cita_anticipacion_max_dias" name="cita_anticipacion_max_dias" value="{{ old('cita_anticipacion_max_dias', $configuraciones['cita_anticipacion_max_dias']) }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold text-secondary" for="cita_cancelacion_min_horas">Cancelación mínima (horas)</label>
+                                    <input type="number" min="0" max="168" class="form-control" id="cita_cancelacion_min_horas" name="cita_cancelacion_min_horas" value="{{ old('cita_cancelacion_min_horas', $configuraciones['cita_cancelacion_min_horas']) }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-secondary" for="negocio_whatsapp">WhatsApp del taller</label>
+                                    <input type="text" class="form-control" id="negocio_whatsapp" name="negocio_whatsapp" value="{{ old('negocio_whatsapp', $configuraciones['negocio_whatsapp']) }}" placeholder="593999999999">
+                                    <div class="form-text">Formato internacional sin «+».</div>
+                                </div>
+                                <div class="col-12"><hr class="my-2"></div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <div class="form-check form-switch">
+                                        <input type="hidden" name="cita_domicilio_activa" value="0">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="cita_domicilio_activa" name="cita_domicilio_activa" value="1" {{ old('cita_domicilio_activa', $configuraciones['cita_domicilio_activa']) === '1' ? 'checked' : '' }}>
+                                        <label class="form-check-label fw-bold text-secondary" for="cita_domicilio_activa">Permitir citas a domicilio</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="form-label fw-bold text-secondary" for="cita_domicilio_zona">Zona de visitas</label>
+                                    <input type="text" class="form-control" id="cita_domicilio_zona" name="cita_domicilio_zona" value="{{ old('cita_domicilio_zona', $configuraciones['cita_domicilio_zona']) }}" placeholder="Solo dentro de Riobamba urbano">
+                                    <div class="form-text">Se muestra al cliente al elegir domicilio.</div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end mt-5 pt-3 border-top">
+                                <button type="submit" class="btn btn-primary btn-lg fw-bold shadow-sm rounded-pill px-5">
+                                    Guardar Taller <i class="fas fa-save ms-2"></i>
                                 </button>
                             </div>
                         </form>

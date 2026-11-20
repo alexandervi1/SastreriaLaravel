@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - @yield('title', 'Dashboard') - Pescadería Don Walter</title>
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>@yield('title', 'Dashboard') · {{ $negocio['nombre'] }}</title>
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome -->
@@ -54,8 +53,8 @@
                         <li class="nav-section">Catálogo</li>
                         <li class="nav-item">
                             <a class="nav-link rounded d-flex align-items-center justify-content-between {{ request()->routeIs('admin.productos.*') ? 'active' : 'text-dark' }}" href="{{ route('admin.productos.index') }}">
-                                <span><i class="fas fa-fish fa-fw me-2"></i> Productos</span>
-                                @if($lowStockCount > 0)
+                                <span><i class="fas fa-shirt fa-fw me-2"></i> Productos</span>
+                                @if($ventaPorTalla && $lowStockCount > 0)
                                     <span class="badge badge-menu" title="{{ $lowStockCount }} {{ $lowStockCount === 1 ? 'producto bajo el umbral' : 'productos bajo el umbral' }}">{{ $lowStockCount }}</span>
                                 @endif
                             </a>
@@ -66,8 +65,8 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link rounded {{ request()->routeIs('admin.unidades.*') ? 'active' : 'text-dark' }}" href="{{ route('admin.unidades.index') }}">
-                                <i class="fas fa-ruler-combined fa-fw me-2"></i> Unidades
+                            <a class="nav-link rounded {{ request()->routeIs('admin.telas.*') ? 'active' : 'text-dark' }}" href="{{ route('admin.telas.index') }}">
+                                <i class="fas fa-scroll fa-fw me-2"></i> Telas
                             </a>
                         </li>
 
@@ -86,6 +85,14 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link rounded d-flex align-items-center justify-content-between {{ request()->routeIs('admin.citas.*') ? 'active' : 'text-dark' }}" href="{{ route('admin.citas.index') }}">
+                                <span><i class="fas fa-calendar-check fa-fw me-2"></i> Agenda</span>
+                                @if($citasHoy > 0)
+                                    <span class="badge badge-menu" title="{{ $citasHoy }} {{ $citasHoy === 1 ? 'cita hoy' : 'citas hoy' }}">{{ $citasHoy }}</span>
+                                @endif
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link rounded {{ request()->routeIs('admin.carritos.*') ? 'active' : 'text-dark' }}" href="{{ route('admin.carritos.index') }}">
                                 <i class="fas fa-cart-shopping fa-fw me-2"></i> Carritos
                             </a>
@@ -100,8 +107,10 @@
                                 <ul class="nav flex-column ms-3 mt-1 pb-2">
                                     <li class="nav-item"><a class="nav-link rounded py-1 {{ request()->routeIs('admin.reportes.ventas') ? 'active' : 'text-secondary' }}" href="{{ route('admin.reportes.ventas') }}"><i class="fas fa-angle-right me-2"></i>Ventas Totales</a></li>
                                     <li class="nav-item"><a class="nav-link rounded py-1 {{ request()->routeIs('admin.reportes.mas-vendidos') ? 'active' : 'text-secondary' }}" href="{{ route('admin.reportes.mas-vendidos') }}"><i class="fas fa-angle-right me-2"></i>Más Vendidos</a></li>
+                                    @if($ventaPorTalla)
                                     <li class="nav-item"><a class="nav-link rounded py-1 {{ request()->routeIs('admin.reportes.bajo-stock') ? 'active' : 'text-secondary' }}" href="{{ route('admin.reportes.bajo-stock') }}"><i class="fas fa-angle-right me-2"></i>Alerta Bajo Stock</a></li>
                                     <li class="nav-item"><a class="nav-link rounded py-1 {{ request()->routeIs('admin.reportes.stock-categoria') ? 'active' : 'text-secondary' }}" href="{{ route('admin.reportes.stock-categoria') }}"><i class="fas fa-angle-right me-2"></i>Stock Categoría</a></li>
+                                    @endif
                                 </ul>
                             </div>
                         </li>

@@ -23,6 +23,7 @@ class PagesSmokeTest extends TestCase
         parent::setUp();
 
         $this->seed();
+        $this->activarVentaPorTalla();
 
         $this->admin = Usuario::where('nombre_usuario', 'admin123')->firstOrFail();
 
@@ -37,6 +38,14 @@ class PagesSmokeTest extends TestCase
         ]);
     }
 
+    public function test_home_publica_la_marca_entretela(): void
+    {
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('Entretela')
+            ->assertDontSee('<NOMBRE_NEGOCIO>', false);
+    }
+
     public function test_admin_pages_render(): void
     {
         $rutas = [
@@ -44,7 +53,10 @@ class PagesSmokeTest extends TestCase
             route('admin.productos.index'),
             route('admin.productos.create'),
             route('admin.categorias.index'),
-            route('admin.unidades.index'),
+            route('admin.telas.index'),
+            route('admin.telas.create'),
+            route('admin.citas.index'),
+            route('admin.citas.create'),
             route('admin.clientes.index'),
             route('admin.clientes.create'),
             route('admin.carritos.index'),
@@ -68,8 +80,12 @@ class PagesSmokeTest extends TestCase
         $producto = Producto::firstOrFail();
 
         $this->get(route('home'))->assertOk();
-        $this->get(route('productos.show', $producto->producto_id))->assertOk();
-        $this->get(route('categorias.show', $producto->categoria_id))->assertOk();
+        $this->get(route('ayuda'))->assertOk();
+        $this->get(route('politicas'))->assertOk();
+        $this->get(route('terminos'))->assertOk();
+        $this->get(route('productos.show', $producto->slug))->assertOk();
+        $this->get(route('catalogo'))->assertOk();
+        $this->get('/categorias/' . $producto->categoria_id)->assertRedirect(route('catalogo'));
 
         $this->actingAs($this->cliente)->get(route('carrito.index'))->assertOk();
         $this->actingAs($this->cliente)->get(route('pedidos.index'))->assertOk();
@@ -79,9 +95,19 @@ class PagesSmokeTest extends TestCase
     {
         $producto = Producto::firstOrFail();
 
+        $variante = \App\Models\ProductoVariante::create([
+            'producto_id' => $producto->producto_id,
+            'talla' => '40',
+            'color' => null,
+            'sku' => 'SKU-SMOKE',
+            'stock' => 10,
+            'activo' => true,
+        ]);
+
         Carrito::create([
             'usuario_id' => $this->cliente->usuario_id,
             'producto_id' => $producto->producto_id,
+            'variante_id' => $variante->variante_id,
             'cantidad' => 2,
         ]);
 

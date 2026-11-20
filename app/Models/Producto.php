@@ -6,25 +6,51 @@ use Illuminate\Database\Eloquent\Model;
 
 class Producto extends Model
 {
+    public const TIPOS_PRENDA = [
+        'terno_2p' => 'Terno de 2 piezas',
+        'terno_3p' => 'Terno de 3 piezas',
+        'saco' => 'Saco',
+        'chaqueta' => 'Chaqueta',
+        'abrigo' => 'Abrigo',
+        'chaleco' => 'Chaleco',
+        'pantalon' => 'Pantalón',
+        'falda' => 'Falda',
+    ];
+
+    public const PUBLICOS = [
+        'caballero' => 'Caballero',
+        'dama' => 'Dama',
+        'nino' => 'Niño',
+    ];
+
     protected $table = 'producto';
     protected $primaryKey = 'producto_id';
 
     protected $fillable = [
         'nombre',
+        'tipo_prenda',
+        'publico',
         'descripcion',
         'precio',
-        'stock',
+        'slug',
+        'activo',
+        'destacado',
+        'vende_por_talla',
+        'vende_a_medida',
+        'precio_medida',
+        'dias_confeccion',
         'imagen_url',
         'categoria_id',
-        'unidad_compra_id',
-        'unidad_venta_id',
-        'factor_conversion',
     ];
 
     protected $casts = [
         'precio' => 'decimal:2',
-        'stock' => 'decimal:4',
-        'factor_conversion' => 'decimal:4',
+        'activo' => 'boolean',
+        'destacado' => 'boolean',
+        'vende_por_talla' => 'boolean',
+        'vende_a_medida' => 'boolean',
+        'precio_medida' => 'decimal:2',
+        'dias_confeccion' => 'integer',
     ];
 
     // ── Relaciones ──
@@ -34,125 +60,54 @@ class Producto extends Model
         return $this->belongsTo(Categoria::class, 'categoria_id', 'categoria_id');
     }
 
-    public function unidadCompra(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function variantes(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->belongsTo(UnidadMedida::class, 'unidad_compra_id', 'unidad_id');
+        return $this->hasMany(ProductoVariante::class, 'producto_id', 'producto_id');
     }
 
-    public function unidadVenta(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    /** @return \Illuminate\Database\Eloquent\Relations\HasMany<ProductoImagen, $this> */
+    public function imagenes(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->belongsTo(UnidadMedida::class, 'unidad_venta_id', 'unidad_id');
-    }
-
-    public function pedidos(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
-    {
-        return $this->belongsToMany(Pedido::class, 'pedidoproducto', 'producto_id', 'pedido_id')
-                    ->withPivot('cantidad');
+        return $this->hasMany(ProductoImagen::class, 'producto_id', 'producto_id')->orderBy('orden');
     }
 
     // ── Helpers ──
 
+    public function getTipoPrendaLabelAttribute(): string
+    {
+        return self::TIPOS_PRENDA[$this->tipo_prenda] ?? $this->tipo_prenda;
+    }
+
+    public function getPublicoLabelAttribute(): string
+    {
+        return self::PUBLICOS[$this->publico] ?? $this->publico;
+    }
+
     /**
-     * Obtener el stock disponible en unidad de venta.
+     * Stock sumado de las variantes activas.
      */
-    public function getStockVentaAttribute(): float
+    public function getStockTotalAttribute(): int
     {
-        return $this->stock * $this->factor_conversion;
+        return (int) $this->variantes()->where('activo', true)->sum('stock');
     }
 
     /**
-     * Descontar stock al registrar un pedido.
-     *
-     * @throws \RuntimeException cuando la cantidad supera la existencia disponible.
-     */
-    public function descontarStock(float $cantidadVenta): void
-    {
-        if ($cantidadVenta <= 0) {
-            throw new \InvalidArgumentException('La cantidad a descontar debe ser mayor que cero.');
-        }
-
-        if ($cantidadVenta > $this->stockVenta + 1e-9) {
-            throw new \RuntimeException(
-                "Stock insuficiente para {$this->nombre}: disponible {$this->stockVenta}, solicitado {$cantidadVenta}."
-            );
-        }
-
-        $this->stock -= $this->enUnidadCompra($cantidadVenta);
-        $this->save();
-    }
-
-    /**
-     * Devolver stock al anular un pedido.
-     */
-    public function reponerStock(float $cantidadVenta): void
-    {
-        if ($cantidadVenta <= 0) {
-            return;
-        }
-
-        $this->stock += $this->enUnidadCompra($cantidadVenta);
-        $this->save();
-    }
-
-    private function enUnidadCompra(float $cantidadVenta): float
-    {
-        $factor = (float) $this->factor_conversion;
-
-        if ($factor <= 0 || $this->unidad_compra_id === $this->unidad_venta_id) {
-            return $cantidadVenta;
-        }
-
-        return $cantidadVenta / $factor;
-    }
-
-    /**
-     * Productos por debajo del umbral configurado de bajo stock.
-     */
-    public function scopeBajoStock($query): \Illuminate\Database\Eloquent\Builder
-    {
-        return $query->whereRaw('(stock * factor_conversion) < ?', [Configuracion::obtenerUmbralBajoStock()]);
-    }
-
-    /**
-     * Factor de conversión entre la unidad de compra y la de venta.
-     * Devuelve null cuando la combinación no está soportada.
-     */
-    public static function factorConversion(?int $unidadCompraId, ?int $unidadVentaId): ?float
-    {
-        if ($unidadCompraId === null || $unidadVentaId === null) {
-            return null;
-        }
-
-        if ($unidadCompraId === $unidadVentaId) {
-            return 1.0;
-        }
-
-        $compra = UnidadMedida::find($unidadCompraId);
-        $venta = UnidadMedida::find($unidadVentaId);
-
-        if (!$compra || !$venta) {
-            return null;
-        }
-
-        if ($compra->abreviatura === 'Tn' && $venta->abreviatura === 'lb') {
-            return 2204.62;
-        }
-
-        return null;
-    }
-
-    /**
-     * Asignar factor de conversión al crear o al cambiar las unidades.
+     * Genera un slug único a partir del nombre.
      */
     protected static function booted()
     {
         static::saving(function (Producto $producto) {
-            if (!$producto->exists || $producto->isDirty(['unidad_compra_id', 'unidad_venta_id'])) {
-                $factor = self::factorConversion($producto->unidad_compra_id, $producto->unidad_venta_id);
-                if ($factor !== null) {
-                    $producto->factor_conversion = $factor;
-                }
+            $base = \Illuminate\Support\Str::slug($producto->nombre);
+            $base = $base !== '' ? $base : 'producto';
+            $slug = $base;
+            $sufijo = 2;
+
+            while (self::where('slug', $slug)->whereKeyNot($producto->getKey())->exists()) {
+                $slug = $base . '-' . $sufijo;
+                $sufijo++;
             }
+
+            $producto->slug = $slug;
         });
     }
 }

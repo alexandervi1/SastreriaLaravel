@@ -1,59 +1,42 @@
-<nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow">
+<nav class="navbar navbar-expand-lg sticky-top">
     <div class="container">
-        <!-- Brand / Logo -->
-        <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
-            <img src="{{ asset($negocio['logo']) }}" alt="Logo {{ $negocio['nombre'] }}" class="me-2">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('home') }}">
+            <img src="{{ asset('img/negocio/colibri-icono-oro.svg') }}" alt="" class="brand-icon" aria-hidden="true">
+            <span class="brand-wordmark">{{ $negocio['nombre'] }}</span>
         </a>
-        <button class="navbar-toggler position-absolute d-lg-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="right: 15px; top: 15px;">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menú">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Search Bar -->
-        <form class="d-flex mx-auto search-bar position-relative mt-3 mt-lg-0 w-100" style="max-width: 400px;" action="{{ route('home') }}" method="GET">
-            <input class="form-control me-2" type="search" name="buscar" value="{{ request('buscar') }}" placeholder="Filtrar..." aria-label="Search">
-            <button class="btn btn-search d-flex align-items-center justify-content-center" type="submit" aria-label="Buscar">
-                <i class="fas fa-search"></i>
-            </button>
-        </form>
-
-        <div class="collapse navbar-collapse mt-3 mt-lg-0" id="navbarNav">
-            <!-- Menú central -->
+        <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('home') ? 'active fw-bold' : '' }}" href="{{ route('home') }}">
-                        <i class="fas fa-home"></i> Inicio
-                    </a>
+                    <a class="nav-link" href="{{ route('home') }}#a-medida">A medida</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('quienes.somos') ? 'active fw-bold' : '' }}" href="{{ route('quienes.somos') }}">
-                        <i class="fas fa-info-circle"></i> Quiénes Somos
-                    </a>
+                    <a class="nav-link" href="{{ route('home') }}#telas">Telas</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('ayuda') ? 'active fw-bold' : '' }}" href="{{ route('ayuda') }}">
-                        <i class="fas fa-circle-question"></i> Ayuda
-                    </a>
+                    <a class="nav-link {{ request()->routeIs('quienes.somos') ? 'active' : '' }}" href="{{ route('quienes.somos') }}">El taller</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('citas.*') ? 'active' : '' }}" href="{{ route('citas.create') }}">Citas</a>
                 </li>
             </ul>
 
-            <!-- Menú derecho interactivo (Auth/Carrito) -->
-            <ul class="navbar-nav ms-auto align-items-center">
+            <ul class="navbar-nav align-items-lg-center gap-lg-2">
                 @guest
                     <li class="nav-item">
-                        <a href="{{ route('login') }}" class="btn btn-brand-soft px-3 me-2 fw-bold">
-                            <i class="fas fa-sign-in-alt me-1"></i> Iniciar Sesión
-                        </a>
+                        <a href="{{ route('login') }}" class="nav-link">Iniciar sesión</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('register') }}" class="btn btn-brand-dark px-3 fw-bold">
-                            <i class="fas fa-user-plus me-1"></i> Registrarse
-                        </a>
+                        <a href="{{ route('register') }}" class="btn btn-outline-gold btn-sm px-3">Crear cuenta</a>
                     </li>
                 @else
                     @if(auth()->user()->esCliente())
-                        <li class="nav-item me-3">
-                            <a class="nav-link d-flex align-items-center" href="{{ route('carrito.index') }}">
-                                <i class="fas fa-shopping-cart fa-lg"></i>
+                        <li class="nav-item">
+                            <a class="nav-link position-relative" href="{{ route('carrito.index') }}" aria-label="Carrito">
+                                <i class="fas fa-shopping-bag"></i>
                                 @php
                                     $cartCount = \App\Models\Carrito::where('usuario_id', auth()->id())->sum('cantidad');
                                 @endphp
@@ -65,21 +48,22 @@
                     @endif
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center fw-bold" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle fa-lg me-2"></i> {{ auth()->user()->nombre_completo }}
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ auth()->user()->nombre_completo }}
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="navbarDropdown">
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             @if(auth()->user()->esAdmin())
-                                <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}"><i class="fas fa-cogs me-2 text-secondary"></i> Panel de Control</a></li>
+                                <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}"><i class="fas fa-cogs me-2"></i> Panel de control</a></li>
                             @elseif(auth()->user()->esCliente())
-                                <li><a class="dropdown-item" href="{{ route('pedidos.index') }}"><i class="fas fa-box-open me-2 text-secondary"></i> Mis Pedidos</a></li>
+                                <li><a class="dropdown-item" href="{{ route('pedidos.index') }}"><i class="fas fa-box-open me-2"></i> Mis pedidos</a></li>
+                                <li><a class="dropdown-item" href="{{ route('medidas.index') }}"><i class="fas fa-ruler-combined me-2"></i> Mis medidas</a></li>
                             @endif
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="dropdown-item text-danger">
-                                        <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Cerrar sesión
                                     </button>
                                 </form>
                             </li>

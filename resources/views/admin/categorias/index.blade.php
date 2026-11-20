@@ -88,7 +88,7 @@
                 <div class="modal-body p-4">
                     <div class="mb-3">
                         <label for="nombre" class="form-label fw-bold">Nombre de la Categoría *</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre" required placeholder="Ej. Mariscos Frescos" autofocus>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required placeholder="Ej. Ternos" autofocus>
                         <div class="form-text mt-2"><i class="fas fa-info-circle me-1"></i> Esta categoría aparecerá visible públicamente en la barra lateral del catálogo.</div>
                     </div>
                 </div>

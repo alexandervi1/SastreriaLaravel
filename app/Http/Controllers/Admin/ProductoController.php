@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Categoria;
-use App\Models\PedidoProducto;
+use App\Models\Configuracion;
+use App\Models\PedidoLinea;
 use App\Models\Producto;
-use App\Models\UnidadMedida;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -15,20 +15,26 @@ class ProductoController extends Controller
 {
     public function index()
     {
-        $productos = Producto::with(['categoria', 'unidadCompra', 'unidadVenta'])->get();
-        return view('admin.productos.index', compact('productos'));
+        $productos = Producto::with(['categoria'])->get();
+        $ventaPorTalla = Configuracion::ventaPorTallaActiva();
+
+        return view('admin.productos.index', compact('productos', 'ventaPorTalla'));
     }
 
     public function create()
     {
         $categorias = Categoria::all();
-        $unidades = UnidadMedida::all();
-        return view('admin.productos.create', compact('categorias', 'unidades'));
+        $ventaPorTalla = Configuracion::ventaPorTallaActiva();
+
+        return view('admin.productos.create', compact('categorias', 'ventaPorTalla'));
     }
 
     public function store(\App\Http\Requests\Admin\StoreProductoRequest $request)
     {
         $data = Arr::except($request->validated(), ['imagen']);
+        $ventaPorTalla = Configuracion::ventaPorTallaActiva();
+        $data['vende_por_talla'] = $ventaPorTalla && $request->boolean('vende_por_talla');
+        $data['vende_a_medida'] = $ventaPorTalla ? $request->boolean('vende_a_medida') : true;
 
         if ($request->hasFile('imagen')) {
             $data['imagen_url'] = $this->guardarImagen($request);
@@ -40,16 +46,26 @@ class ProductoController extends Controller
             ->with('success', 'Producto creado exitosamente.');
     }
 
+    /** Tallas sugeridas en el formulario (el campo no las restringe). */
+    private const TALLAS_SUGERIDAS = ['36', '38', '40', '42', '44', '46', '48'];
+
     public function edit(Producto $producto)
     {
         $categorias = Categoria::all();
-        $unidades = UnidadMedida::all();
-        return view('admin.productos.edit', compact('producto', 'categorias', 'unidades'));
+        $tallas = self::TALLAS_SUGERIDAS;
+        $variantes = $producto->variantes()->orderBy('talla')->orderBy('color')->get();
+        $imagenes = $producto->imagenes()->get();
+        $ventaPorTalla = Configuracion::ventaPorTallaActiva();
+
+        return view('admin.productos.edit', compact('producto', 'categorias', 'tallas', 'variantes', 'imagenes', 'ventaPorTalla'));
     }
 
     public function update(\App\Http\Requests\Admin\UpdateProductoRequest $request, Producto $producto)
     {
         $data = Arr::except($request->validated(), ['imagen']);
+        $ventaPorTalla = Configuracion::ventaPorTallaActiva();
+        $data['vende_por_talla'] = $ventaPorTalla && $request->boolean('vende_por_talla');
+        $data['vende_a_medida'] = $ventaPorTalla ? $request->boolean('vende_a_medida') : true;
 
         if ($request->hasFile('imagen')) {
             $this->borrarImagen($producto->imagen_url);
@@ -64,7 +80,7 @@ class ProductoController extends Controller
 
     public function destroy(Producto $producto)
     {
-        if (PedidoProducto::where('producto_id', $producto->producto_id)->exists()) {
+        if (PedidoLinea::where('producto_id', $producto->producto_id)->exists()) {
             return redirect()->route('admin.productos.index')
                 ->with('error', 'No se puede eliminar un producto que ya forma parte de un pedido. Edita su stock o descártalo del catálogo.');
         }

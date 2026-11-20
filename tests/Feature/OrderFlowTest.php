@@ -5,10 +5,9 @@ namespace Tests\Feature;
 use App\Models\Carrito;
 use App\Models\Categoria;
 use App\Models\Configuracion;
-use App\Models\Pedido;
 use App\Models\Producto;
+use App\Models\ProductoVariante;
 use App\Models\Rol;
-use App\Models\UnidadMedida;
 use App\Models\Usuario;
 use App\Services\OrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -31,15 +30,10 @@ class OrderFlowTest extends TestCase
             ['rol_id' => 3, 'nombre' => 'Visitante'],
         ]);
 
-        UnidadMedida::insert([
-            ['unidad_id' => 1, 'nombre' => 'Tonelada', 'abreviatura' => 'Tn'],
-            ['unidad_id' => 2, 'nombre' => 'Libra', 'abreviatura' => 'lb'],
-            ['unidad_id' => 3, 'nombre' => 'Unidad', 'abreviatura' => 'u'],
-        ]);
-
-        Categoria::insert([['categoria_id' => 1, 'nombre' => 'Pescados']]);
+        Categoria::insert([['categoria_id' => 1, 'nombre' => 'Ternos']]);
 
         Configuracion::create(['clave' => 'iva_actual', 'valor' => '15']);
+        $this->activarVentaPorTalla();
 
         $this->cliente = Usuario::create([
             'nombre_usuario' => 'cliente1',
@@ -51,27 +45,45 @@ class OrderFlowTest extends TestCase
         ]);
     }
 
-    private function producto(array $overrides = []): Producto
+    /**
+     * @return array{0: Producto, 1: ProductoVariante}
+     */
+    private function productoConVariante(int $stock = 100, array $overrides = [], string $talla = '40'): array
     {
-        return Producto::create(array_merge([
-            'nombre' => 'Albacora',
-            'descripcion' => 'Fresca',
+        $producto = Producto::create(array_merge([
+            'nombre' => 'Terno Slim Fit Azul Noche',
+            'descripcion' => 'Terno de prueba',
             'precio' => 10,
-            'stock' => 100,
             'categoria_id' => 1,
-            'unidad_compra_id' => 3,
-            'unidad_venta_id' => 3,
+            'vende_por_talla' => true,
         ], $overrides));
+
+        $variante = ProductoVariante::create([
+            'producto_id' => $producto->producto_id,
+            'talla' => $talla,
+            'color' => 'Azul noche',
+            'sku' => 'SKU-' . $producto->producto_id . '-' . $talla,
+            'stock' => $stock,
+            'activo' => true,
+        ]);
+
+        return [$producto, $variante];
+    }
+
+    private function agregarAlCarrito(ProductoVariante $variante, int $cantidad): void
+    {
+        Carrito::create([
+            'usuario_id' => $this->cliente->usuario_id,
+            'producto_id' => $variante->producto_id,
+            'variante_id' => $variante->variante_id,
+            'cantidad' => $cantidad,
+        ]);
     }
 
     public function test_process_order_persists_subtotal_iva_and_total(): void
     {
-        $producto = $this->producto();
-        Carrito::create([
-            'usuario_id' => $this->cliente->usuario_id,
-            'producto_id' => $producto->producto_id,
-            'cantidad' => 2,
-        ]);
+        [$producto, $variante] = $this->productoConVariante();
+        $this->agregarAlCarrito($variante, 2);
 
         $pedido = app(OrderService::class)->processOrder($this->cliente);
 
@@ -79,35 +91,30 @@ class OrderFlowTest extends TestCase
         $this->assertEquals(3.00, (float) $pedido->iva);
         $this->assertEquals(23.00, (float) $pedido->total);
         $this->assertEquals('Pendiente', $pedido->estado);
+        $this->assertEquals(98, $variante->fresh()->stock);
     }
 
     public function test_process_order_snapshots_unit_price(): void
     {
-        $producto = $this->producto();
-        Carrito::create([
-            'usuario_id' => $this->cliente->usuario_id,
-            'producto_id' => $producto->producto_id,
-            'cantidad' => 2,
-        ]);
+        [$producto, $variante] = $this->productoConVariante();
+        $this->agregarAlCarrito($variante, 2);
 
         $pedido = app(OrderService::class)->processOrder($this->cliente);
         $producto->update(['precio' => 99]);
 
-        $linea = $pedido->fresh()->productos->first();
-        $this->assertEquals(10.00, (float) $linea->pivot->precio_unitario);
-        $this->assertEquals(20.00, (float) $linea->pivot->subtotal);
+        $linea = $pedido->fresh()->lineas->first();
+        $this->assertEquals(10.00, (float) $linea->precio_unitario);
+        $this->assertEquals(20.00, (float) $linea->subtotal);
+        $this->assertEquals('40', $linea->talla);
+        $this->assertEquals('Azul noche', $linea->color);
         $this->assertEquals(20.00, (float) $pedido->fresh()->subtotal);
         $this->assertEquals(23.00, (float) $pedido->fresh()->total);
     }
 
     public function test_process_order_rejects_quantity_above_stock(): void
     {
-        $producto = $this->producto(['stock' => 1]);
-        Carrito::create([
-            'usuario_id' => $this->cliente->usuario_id,
-            'producto_id' => $producto->producto_id,
-            'cantidad' => 2,
-        ]);
+        [, $variante] = $this->productoConVariante(1);
+        $this->agregarAlCarrito($variante, 2);
 
         try {
             app(OrderService::class)->processOrder($this->cliente);
@@ -117,27 +124,17 @@ class OrderFlowTest extends TestCase
         }
 
         $this->assertDatabaseCount('pedido', 0);
-        $this->assertEquals(1.0, (float) $producto->fresh()->stock);
+        $this->assertEquals(1, $variante->fresh()->stock);
         $this->assertDatabaseCount('carrito', 1);
     }
 
     public function test_process_order_rolls_back_every_item_when_one_is_short(): void
     {
-        $suficiente = $this->producto(['nombre' => 'Suficiente', 'stock' => 10]);
-        $corto = $this->producto(['nombre' => 'Corto', 'stock' => 1]);
+        [, $suficiente] = $this->productoConVariante(10, ['nombre' => 'Terno Suficiente'], '40');
+        [, $corto] = $this->productoConVariante(1, ['nombre' => 'Terno Corto'], '42');
 
-        Carrito::insert([
-            [
-                'usuario_id' => $this->cliente->usuario_id,
-                'producto_id' => $suficiente->producto_id,
-                'cantidad' => 2,
-            ],
-            [
-                'usuario_id' => $this->cliente->usuario_id,
-                'producto_id' => $corto->producto_id,
-                'cantidad' => 5,
-            ],
-        ]);
+        $this->agregarAlCarrito($suficiente, 2);
+        $this->agregarAlCarrito($corto, 5);
 
         try {
             app(OrderService::class)->processOrder($this->cliente);
@@ -147,17 +144,17 @@ class OrderFlowTest extends TestCase
         }
 
         $this->assertDatabaseCount('pedido', 0);
-        $this->assertDatabaseCount('pedidoproducto', 0);
-        $this->assertEquals(10.0, (float) $suficiente->fresh()->stock);
-        $this->assertEquals(1.0, (float) $corto->fresh()->stock);
+        $this->assertDatabaseCount('pedido_linea', 0);
+        $this->assertEquals(10, $suficiente->fresh()->stock);
+        $this->assertEquals(1, $corto->fresh()->stock);
     }
 
     public function test_cart_rejects_quantity_above_stock(): void
     {
-        $producto = $this->producto(['stock' => 3]);
+        [, $variante] = $this->productoConVariante(3);
 
         $response = $this->actingAs($this->cliente)->post(route('carrito.agregar'), [
-            'producto_id' => $producto->producto_id,
+            'variante_id' => $variante->variante_id,
             'cantidad' => 5,
         ]);
 
@@ -167,17 +164,76 @@ class OrderFlowTest extends TestCase
 
     public function test_cart_accepts_quantity_within_stock(): void
     {
-        $producto = $this->producto(['stock' => 3]);
+        [, $variante] = $this->productoConVariante(3);
 
         $this->actingAs($this->cliente)->post(route('carrito.agregar'), [
-            'producto_id' => $producto->producto_id,
+            'variante_id' => $variante->variante_id,
             'cantidad' => 2,
         ])->assertSessionHas('success');
 
         $this->assertDatabaseHas('carrito', [
-            'producto_id' => $producto->producto_id,
+            'variante_id' => $variante->variante_id,
             'cantidad' => 2,
         ]);
+    }
+
+    public function test_se_pueden_comprar_dos_tallas_del_mismo_modelo(): void
+    {
+        [$producto, $cuarenta] = $this->productoConVariante(5, [], '40');
+        $cuarentaYDos = ProductoVariante::create([
+            'producto_id' => $producto->producto_id,
+            'talla' => '42',
+            'color' => 'Azul noche',
+            'sku' => 'SKU-42',
+            'stock' => 4,
+            'activo' => true,
+        ]);
+
+        $this->agregarAlCarrito($cuarenta, 1);
+        $this->agregarAlCarrito($cuarentaYDos, 2);
+
+        $pedido = app(OrderService::class)->processOrder($this->cliente);
+
+        $this->assertCount(2, $pedido->fresh()->lineas);
+        $this->assertEquals(4, $cuarenta->fresh()->stock);
+        $this->assertEquals(2, $cuarentaYDos->fresh()->stock);
+    }
+
+    public function test_cancelar_repone_la_variante_correcta(): void
+    {
+        [$producto, $cuarenta] = $this->productoConVariante(5, [], '40');
+        $cuarentaYDos = ProductoVariante::create([
+            'producto_id' => $producto->producto_id,
+            'talla' => '42',
+            'color' => 'Azul noche',
+            'sku' => 'SKU-42',
+            'stock' => 4,
+            'activo' => true,
+        ]);
+
+        $this->agregarAlCarrito($cuarenta, 1);
+        $this->agregarAlCarrito($cuarentaYDos, 2);
+
+        $service = app(OrderService::class);
+        $pedido = $service->processOrder($this->cliente);
+        $service->cancelOrder($pedido);
+
+        $this->assertEquals(5, $cuarenta->fresh()->stock);
+        $this->assertEquals(4, $cuarentaYDos->fresh()->stock);
+    }
+
+    public function test_el_recibo_muestra_talla_y_color(): void
+    {
+        [, $variante] = $this->productoConVariante();
+        $this->agregarAlCarrito($variante, 1);
+
+        $pedido = app(OrderService::class)->processOrder($this->cliente);
+
+        $this->actingAs($this->cliente)
+            ->get(route('pedidos.receipt', $pedido->pedido_id))
+            ->assertOk()
+            ->assertSee('Talla 40')
+            ->assertSee('Azul noche');
     }
 
     public function test_checkout_no_expone_errores_internos_al_cliente(): void
@@ -198,12 +254,8 @@ class OrderFlowTest extends TestCase
     {
         Configuracion::updateOrCreate(['clave' => 'comprobante_serie'], ['valor' => '002-002']);
 
-        $producto = $this->producto();
-        Carrito::create([
-            'usuario_id' => $this->cliente->usuario_id,
-            'producto_id' => $producto->producto_id,
-            'cantidad' => 1,
-        ]);
+        [, $variante] = $this->productoConVariante();
+        $this->agregarAlCarrito($variante, 1);
 
         $pedido = app(OrderService::class)->processOrder($this->cliente);
 

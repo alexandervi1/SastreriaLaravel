@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Rol;
 use App\Models\Configuracion;
-use App\Models\UnidadMedida;
 use App\Models\Categoria;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Hash;
@@ -27,27 +26,38 @@ class DatabaseSeeder extends Seeder
 
         // ── 2. Configuración ──
         Configuracion::create(['clave' => 'iva_actual', 'valor' => '15']);
-        Configuracion::create(['clave' => 'negocio_nombre', 'valor' => 'COMERCIAL DE MARISCOS DON WALTER']);
-        Configuracion::create(['clave' => 'negocio_ruc', 'valor' => '1301234567001']);
-        Configuracion::create(['clave' => 'negocio_direccion', 'valor' => 'Barrio Tarqui, Calle 101 y Av. 102, Manta, Ecuador']);
-        Configuracion::create(['clave' => 'negocio_telefono', 'valor' => '0995432109']);
-        Configuracion::create(['clave' => 'negocio_leyenda', 'valor' => 'CONTRIBUYENTE RÉGIMEN RIMPE - NEGOCIO POPULAR']);
+        Configuracion::create(['clave' => 'negocio_nombre', 'valor' => 'Entretela']);
+        Configuracion::create(['clave' => 'negocio_ruc', 'valor' => '']);
+        Configuracion::create(['clave' => 'negocio_direccion', 'valor' => '']);
+        Configuracion::create(['clave' => 'negocio_direccion_publica', 'valor' => 'Riobamba, sector [COMPLETAR]']);
+        Configuracion::create(['clave' => 'negocio_telefono', 'valor' => '']);
+        Configuracion::create(['clave' => 'negocio_leyenda', 'valor' => 'Lo que no se ve es lo que da forma.']);
+        Configuracion::create(['clave' => 'negocio_logo', 'valor' => 'img/negocio/colibri-oro.svg']);
+        Configuracion::create(['clave' => 'venta_por_talla', 'valor' => '0']);
 
-        // ── 3. Unidades de Medida ──
-        UnidadMedida::insert([
-            ['unidad_id' => 1, 'nombre' => 'Tonelada', 'abreviatura' => 'Tn'],
-            ['unidad_id' => 2, 'nombre' => 'Libra', 'abreviatura' => 'lb'],
-            ['unidad_id' => 3, 'nombre' => 'Unidad', 'abreviatura' => 'u'],
-        ]);
+        // Taller y citas
+        Configuracion::create(['clave' => 'taller_dias', 'valor' => '1,2,3,4,5,6']);
+        Configuracion::create(['clave' => 'taller_hora_inicio', 'valor' => '09:00']);
+        Configuracion::create(['clave' => 'taller_hora_fin', 'valor' => '18:00']);
+        Configuracion::create(['clave' => 'cita_duracion_min', 'valor' => '45']);
+        Configuracion::create(['clave' => 'cita_anticipacion_max_dias', 'valor' => '30']);
+        Configuracion::create(['clave' => 'cita_cancelacion_min_horas', 'valor' => '24']);
+        Configuracion::create(['clave' => 'cita_domicilio_activa', 'valor' => '1']);
+        Configuracion::create(['clave' => 'cita_domicilio_zona', 'valor' => 'Solo dentro de Riobamba urbano']);
+        Configuracion::create(['clave' => 'capacidad_semanal', 'valor' => '3']);
+        Configuracion::create(['clave' => 'negocio_whatsapp', 'valor' => '']);
 
-        // ── 4. Categorías ──
+        // ── 3. Categorías ──
         Categoria::insert([
-            ['categoria_id' => 1, 'nombre' => 'Pescados'],
-            ['categoria_id' => 2, 'nombre' => 'Crustáceos y Moluscos'],
-            ['categoria_id' => 3, 'nombre' => 'Pulpos y Calamares'],
+            ['categoria_id' => 1, 'nombre' => 'Ternos'],
+            ['categoria_id' => 2, 'nombre' => 'Smokings'],
+            ['categoria_id' => 3, 'nombre' => 'Chalecos'],
+            ['categoria_id' => 4, 'nombre' => 'Accesorios'],
+            ['categoria_id' => 5, 'nombre' => 'Sacos y abrigos'],
+            ['categoria_id' => 6, 'nombre' => 'Pantalones y faldas'],
         ]);
 
-        // ── 5. Usuario Admin ──
+        // ── 4. Usuario Admin ──
         // En producción se define desde el entorno para no arrancar con credenciales conocidas.
         Usuario::create([
             'nombre_usuario'      => $admin['usuario'],
@@ -60,7 +70,7 @@ class DatabaseSeeder extends Seeder
             'password_changed_at' => $admin['password_changed_at'],
         ]);
 
-        // ── 6. Catálogo de demostración ──
+        // ── 5. Catálogo de demostración ──
         if (filter_var(env('SEED_DEMO', ! app()->environment('production')), FILTER_VALIDATE_BOOLEAN)) {
             $this->call(DemoCatalogoSeeder::class);
         }
@@ -114,10 +124,10 @@ class DatabaseSeeder extends Seeder
         return [
             'usuario'             => $usuario !== '' ? $usuario : 'admin123',
             'password'            => $password !== '' ? $password : 'admin123',
-            'correo'              => $correo !== '' ? $correo : 'maritza@gmail.com',
-            'nombre_completo'     => 'Maritza Rosero',
-            'direccion'           => 'Av. Canónigo Ramos y 11 de Noviembre',
-            'telefono'            => '0992470053',
+            'correo'              => $correo !== '' ? $correo : 'admin@example.com',
+            'nombre_completo'     => 'Administrador',
+            'direccion'           => '',
+            'telefono'            => null,
             'password_changed_at' => null,
         ];
     }

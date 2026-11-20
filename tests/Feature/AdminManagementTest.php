@@ -8,7 +8,6 @@ use App\Models\Configuracion;
 use App\Models\Pedido;
 use App\Models\Producto;
 use App\Models\Rol;
-use App\Models\UnidadMedida;
 use App\Models\Usuario;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -32,14 +31,9 @@ class AdminManagementTest extends TestCase
             ['rol_id' => 3, 'nombre' => 'Visitante'],
         ]);
 
-        UnidadMedida::insert([
-            ['unidad_id' => 1, 'nombre' => 'Tonelada', 'abreviatura' => 'Tn'],
-            ['unidad_id' => 2, 'nombre' => 'Libra', 'abreviatura' => 'lb'],
-            ['unidad_id' => 3, 'nombre' => 'Unidad', 'abreviatura' => 'u'],
-        ]);
-
         Categoria::insert([['categoria_id' => 1, 'nombre' => 'Pescados']]);
         Configuracion::create(['clave' => 'iva_actual', 'valor' => '15']);
+        $this->activarVentaPorTalla();
 
         $this->admin = Usuario::create([
             'nombre_usuario' => 'admin1',
@@ -58,63 +52,6 @@ class AdminManagementTest extends TestCase
             'direccion' => 'Calle 2',
             'correo' => 'cliente1@example.com',
         ]);
-    }
-
-    public function test_units_page_lists_units_with_usage(): void
-    {
-        Producto::create([
-            'nombre' => 'Albacora',
-            'precio' => 10,
-            'stock' => 5,
-            'categoria_id' => 1,
-            'unidad_compra_id' => 1,
-            'unidad_venta_id' => 2,
-        ]);
-
-        $response = $this->actingAs($this->admin)->get(route('admin.unidades.index'));
-
-        $response->assertOk();
-        $response->assertSee('Tonelada');
-        $response->assertSee('Libra');
-    }
-
-    public function test_unit_can_be_created(): void
-    {
-        $this->actingAs($this->admin)
-            ->post(route('admin.unidades.store'), [
-                'nombre' => 'Kilogramo',
-                'abreviatura' => 'kg',
-            ])
-            ->assertRedirect(route('admin.unidades.index'));
-
-        $this->assertDatabaseHas('unidad_medida', ['nombre' => 'Kilogramo', 'abreviatura' => 'kg']);
-    }
-
-    public function test_unit_in_use_cannot_be_deleted(): void
-    {
-        Producto::create([
-            'nombre' => 'Albacora',
-            'precio' => 10,
-            'stock' => 5,
-            'categoria_id' => 1,
-            'unidad_compra_id' => 1,
-            'unidad_venta_id' => 2,
-        ]);
-
-        $this->actingAs($this->admin)
-            ->delete(route('admin.unidades.destroy', 1))
-            ->assertSessionHas('error');
-
-        $this->assertDatabaseHas('unidad_medida', ['unidad_id' => 1]);
-    }
-
-    public function test_unused_unit_can_be_deleted(): void
-    {
-        $this->actingAs($this->admin)
-            ->delete(route('admin.unidades.destroy', 3))
-            ->assertRedirect(route('admin.unidades.index'));
-
-        $this->assertDatabaseMissing('unidad_medida', ['unidad_id' => 3]);
     }
 
     public function test_admin_list_only_shows_administrators(): void
@@ -275,17 +212,24 @@ class AdminManagementTest extends TestCase
     public function test_abandoned_carts_are_listed(): void
     {
         $producto = Producto::create([
-            'nombre' => 'Albacora',
+            'nombre' => 'Terno de prueba',
             'precio' => 10,
-            'stock' => 5,
             'categoria_id' => 1,
-            'unidad_compra_id' => 3,
-            'unidad_venta_id' => 3,
+        ]);
+
+        $variante = \App\Models\ProductoVariante::create([
+            'producto_id' => $producto->producto_id,
+            'talla' => '40',
+            'color' => null,
+            'sku' => 'SKU-CARRITO',
+            'stock' => 5,
+            'activo' => true,
         ]);
 
         Carrito::create([
             'usuario_id' => $this->cliente->usuario_id,
             'producto_id' => $producto->producto_id,
+            'variante_id' => $variante->variante_id,
             'cantidad' => 2,
         ]);
 
@@ -293,13 +237,13 @@ class AdminManagementTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('cliente1');
-        $response->assertSee('Albacora');
+        $response->assertSee('Terno de prueba');
         $response->assertSee('$20.00');
     }
 
     public function test_client_cannot_access_management_pages(): void
     {
-        foreach (['admin.unidades.index', 'admin.administradores.index', 'admin.carritos.index'] as $route) {
+        foreach (['admin.productos.index', 'admin.administradores.index', 'admin.carritos.index'] as $route) {
             $this->actingAs($this->cliente)->get(route($route))->assertRedirect(route('login'));
         }
     }

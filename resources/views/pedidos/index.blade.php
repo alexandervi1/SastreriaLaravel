@@ -26,17 +26,17 @@
                     <div class="card-body">
                         <h4 class="card-title fw-bold text-success mb-3">${{ number_format($pedido->total, 2) }}</h4>
                         <p class="card-text text-muted mb-4">
-                            <strong>{{ $pedido->productos->count() }}</strong> productos diferentes en este pedido.
+                            <strong>{{ $pedido->lineas->count() }}</strong> {{ \Illuminate\Support\Str::plural('línea', $pedido->lineas->count()) }} en este pedido.
                         </p>
                         <ul class="list-group list-group-flush mb-3">
-                            @foreach($pedido->productos->take(3) as $producto)
+                            @foreach($pedido->lineas->take(3) as $linea)
                                 <li class="list-group-item bg-transparent px-0 text-truncate d-flex justify-content-between">
-                                    <span>{{ $producto->nombre }}</span>
-                                    <span class="text-muted">{{ floor($producto->pivot->cantidad) }} u.</span>
+                                    <span>{{ $linea->producto_nombre }} @if($linea->talla) · {{ $linea->talla }}@endif</span>
+                                    <span class="text-muted">{{ $linea->cantidad }} u.</span>
                                 </li>
                             @endforeach
-                            @if($pedido->productos->count() > 3)
-                                <li class="list-group-item bg-transparent px-0 text-muted fst-italic border-bottom-0">...y {{ $pedido->productos->count() - 3 }} más</li>
+                            @if($pedido->lineas->count() > 3)
+                                <li class="list-group-item bg-transparent px-0 text-muted fst-italic border-bottom-0">...y {{ $pedido->lineas->count() - 3 }} más</li>
                             @endif
                         </ul>
                     </div>

@@ -105,7 +105,6 @@ class SeederProduccionTest extends TestCase
 
         $this->assertDatabaseCount('rol', 0);
         $this->assertDatabaseCount('configuracion', 0);
-        $this->assertDatabaseCount('unidad_medida', 0);
         $this->assertDatabaseCount('categoria', 0);
         $this->assertDatabaseCount('usuario', 0);
     }
@@ -114,7 +113,38 @@ class SeederProduccionTest extends TestCase
     {
         $this->sembrar();
 
-        $this->assertSame(18, \App\Models\Producto::count());
+        $this->assertSame(11, \App\Models\Producto::count());
+        $this->assertDatabaseCount('tela', 5);
+        $this->assertDatabaseCount('producto_variante', 0);
+        $this->assertSame(0, \App\Models\Producto::where('vende_por_talla', true)->count());
+        $this->assertSame(11, \App\Models\Producto::where('vende_a_medida', true)->count());
+        $this->assertSame(3, \App\Models\Producto::distinct()->count('publico'));
+        $this->assertTrue(\App\Models\Producto::where('tipo_prenda', 'terno_2p')->where('publico', 'caballero')->exists());
+        $this->assertTrue(\App\Models\Producto::where('tipo_prenda', 'terno_3p')->where('publico', 'caballero')->exists());
+        $this->assertTrue(\App\Models\Producto::where('publico', 'dama')->where('tipo_prenda', 'abrigo')->exists());
+        $this->assertTrue(\App\Models\Producto::where('publico', 'nino')->exists());
+        $this->assertTrue(is_file(public_path('img/productos/demo/demo-1.svg')));
+    }
+
+    public function test_los_precios_demo_son_reales_y_las_telas_no_se_disparan(): void
+    {
+        $this->sembrar();
+
+        $this->assertDatabaseHas('producto', ['nombre' => 'Terno clásico de 2 piezas', 'precio' => 90]);
+        $this->assertDatabaseHas('producto', ['nombre' => 'Terno de 3 piezas', 'precio' => 100]);
+        $this->assertDatabaseHas('producto', ['nombre' => 'Abrigo de paño', 'precio' => 100]);
+        $this->assertDatabaseHas('producto', ['nombre' => 'Smoking Midnight', 'precio' => 100]);
+        $this->assertDatabaseHas('producto', ['nombre' => 'Saco de sastre', 'precio' => 85]);
+        $this->assertDatabaseHas('producto', ['nombre' => 'Chaqueta de sastre', 'precio' => 85]);
+        $this->assertDatabaseHas('producto', ['nombre' => 'Terno de niño', 'precio' => 80]);
+        $this->assertDatabaseHas('producto', ['nombre' => 'Chaleco de gala', 'precio' => 80]);
+        $this->assertDatabaseHas('producto', ['nombre' => 'Pantalón de vestir', 'precio' => 80]);
+        $this->assertDatabaseHas('producto', ['nombre' => 'Falda de sastre', 'precio' => 80]);
+
+        $this->assertGreaterThanOrEqual(15, \App\Models\Tela::min('recargo'));
+        $this->assertLessThanOrEqual(40, \App\Models\Tela::max('recargo'));
+        $this->assertDatabaseHas('producto', ['nombre' => 'Abrigo de paño', 'categoria_id' => 5]);
+        $this->assertDatabaseHas('producto', ['nombre' => 'Falda de sastre', 'categoria_id' => 6]);
     }
 
     public function test_seed_demo_false_omite_el_catalogo_demo(): void
@@ -125,9 +155,8 @@ class SeederProduccionTest extends TestCase
 
         $this->assertSame(0, \App\Models\Producto::count());
         $this->assertDatabaseCount('rol', 3);
-        $this->assertDatabaseCount('categoria', 3);
-        $this->assertDatabaseCount('unidad_medida', 3);
-        $this->assertDatabaseCount('configuracion', 6);
+        $this->assertDatabaseCount('categoria', 6);
+        $this->assertDatabaseCount('configuracion', 19);
     }
 
     public function test_produccion_siembra_admin_sin_datos_personales_ni_catalogo(): void
@@ -135,7 +164,7 @@ class SeederProduccionTest extends TestCase
         $this->enProduccion();
         putenv('INITIAL_ADMIN_USER=admin_prod');
         putenv('INITIAL_ADMIN_PASSWORD=claveSeguraDeProduccion');
-        putenv('INITIAL_ADMIN_EMAIL=admin@pescaderia.example');
+        putenv('INITIAL_ADMIN_EMAIL=admin@sastreria.example');
         putenv('INITIAL_ADMIN_NAME=Encargado');
 
         $this->sembrar();

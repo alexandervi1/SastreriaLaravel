@@ -76,6 +76,11 @@ class Configuracion extends Model
         return (int) self::obtenerValor('password_rotacion_dias', 90);
     }
 
+    public static function obtenerCapacidadSemanal(): int
+    {
+        return max(1, (int) self::obtenerValor('capacidad_semanal', 3));
+    }
+
     public static function obtenerZonaHoraria(): string
     {
         return (string) self::obtenerValor('zona_horaria', 'America/Guayaquil');
@@ -88,6 +93,88 @@ class Configuracion extends Model
 
     public static function obtenerLogo(): string
     {
-        return (string) self::obtenerValor('negocio_logo', 'img/Pescaderia Don Walter logo.png');
+        return (string) self::obtenerValor('negocio_logo', 'img/negocio/colibri-oro.svg');
+    }
+
+    /**
+     * Versión para fondos claros (panel, recibo y orden de trabajo).
+     */
+    public static function obtenerLogoTinta(): string
+    {
+        $logo = self::obtenerLogo();
+
+        return in_array($logo, [
+            'img/negocio/colibri-oro.svg',
+            'img/negocio/logo-placeholder.svg',
+            'img/placeholder.svg',
+        ], true) ? 'img/negocio/colibri-tinta.svg' : $logo;
+    }
+
+    public static function ventaPorTallaActiva(): bool
+    {
+        return (string) self::obtenerValor('venta_por_talla', '0') === '1';
+    }
+
+    public static function citaDomicilioActiva(): bool
+    {
+        return (string) self::obtenerValor('cita_domicilio_activa', '1') === '1';
+    }
+
+    public static function obtenerZonaDomicilio(): string
+    {
+        return (string) self::obtenerValor('cita_domicilio_zona', '');
+    }
+
+    public static function obtenerDireccionPublica(): string
+    {
+        return (string) self::obtenerValor('negocio_direccion_publica', '');
+    }
+
+    public static function obtenerDireccionExacta(): string
+    {
+        return (string) self::obtenerValor('negocio_direccion', '');
+    }
+
+    /**
+     * Días ISO en que abre el taller.
+     *
+     * @return array<int, int>
+     */
+    public static function obtenerDiasTaller(): array
+    {
+        $csv = (string) self::obtenerValor('taller_dias', '1,2,3,4,5,6');
+        $dias = array_filter(array_map('intval', explode(',', $csv)), fn (int $dia) => $dia >= 1 && $dia <= 7);
+
+        return array_values(array_unique($dias));
+    }
+
+    public static function obtenerHoraInicio(): string
+    {
+        return (string) self::obtenerValor('taller_hora_inicio', '09:00');
+    }
+
+    public static function obtenerHoraFin(): string
+    {
+        return (string) self::obtenerValor('taller_hora_fin', '18:00');
+    }
+
+    public static function obtenerDuracionCita(): int
+    {
+        return (int) self::obtenerValor('cita_duracion_min', 45);
+    }
+
+    public static function obtenerAnticipacionMaxima(): int
+    {
+        return (int) self::obtenerValor('cita_anticipacion_max_dias', 30);
+    }
+
+    public static function obtenerCancelacionMinima(): int
+    {
+        return (int) self::obtenerValor('cita_cancelacion_min_horas', 24);
+    }
+
+    public static function obtenerWhatsapp(): string
+    {
+        return (string) self::obtenerValor('negocio_whatsapp', '');
     }
 }

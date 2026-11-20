@@ -6,8 +6,8 @@ use App\Models\Carrito;
 use App\Models\Categoria;
 use App\Models\Configuracion;
 use App\Models\Producto;
+use App\Models\ProductoVariante;
 use App\Models\Rol;
-use App\Models\UnidadMedida;
 use App\Models\Usuario;
 use App\Services\OrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -33,14 +33,9 @@ class OrderStatusTest extends TestCase
             ['rol_id' => 3, 'nombre' => 'Visitante'],
         ]);
 
-        UnidadMedida::insert([
-            ['unidad_id' => 1, 'nombre' => 'Tonelada', 'abreviatura' => 'Tn'],
-            ['unidad_id' => 2, 'nombre' => 'Libra', 'abreviatura' => 'lb'],
-            ['unidad_id' => 3, 'nombre' => 'Unidad', 'abreviatura' => 'u'],
-        ]);
-
-        Categoria::insert([['categoria_id' => 1, 'nombre' => 'Pescados']]);
+        Categoria::insert([['categoria_id' => 1, 'nombre' => 'Ternos']]);
         Configuracion::create(['clave' => 'iva_actual', 'valor' => '15']);
+        $this->activarVentaPorTalla();
 
         $this->admin = Usuario::create([
             'nombre_usuario' => 'admin1',
@@ -61,27 +56,35 @@ class OrderStatusTest extends TestCase
         ]);
     }
 
-    private function producto(string $nombre, float $precio, float $stock, int $compra, int $venta): Producto
+    private function producto(string $nombre, float $precio, int $stock, ?Producto $en = null): ProductoVariante
     {
-        return Producto::create([
+        $producto = $en ?? Producto::create([
             'nombre' => $nombre,
             'precio' => $precio,
-            'stock' => $stock,
             'categoria_id' => 1,
-            'unidad_compra_id' => $compra,
-            'unidad_venta_id' => $venta,
+            'vende_por_talla' => true,
+        ]);
+
+        return ProductoVariante::create([
+            'producto_id' => $producto->producto_id,
+            'talla' => '40',
+            'color' => 'Azul noche',
+            'sku' => 'SKU-' . $producto->producto_id . '-' . $nombre . '-' . $stock,
+            'stock' => $stock,
+            'activo' => true,
         ]);
     }
 
     /**
-     * @param array<int, array{0: Producto, 1: int}> $lineas
+     * @param array<int, array{0: ProductoVariante, 1: int}> $lineas
      */
     private function pedidoCon(array $lineas): \App\Models\Pedido
     {
-        foreach ($lineas as [$producto, $cantidad]) {
+        foreach ($lineas as [$variante, $cantidad]) {
             Carrito::create([
                 'usuario_id' => $this->cliente->usuario_id,
-                'producto_id' => $producto->producto_id,
+                'producto_id' => $variante->producto_id,
+                'variante_id' => $variante->variante_id,
                 'cantidad' => $cantidad,
             ]);
         }
@@ -97,51 +100,53 @@ class OrderStatusTest extends TestCase
 
     public function test_pendiente_a_cancelado_repone_el_stock_exacto(): void
     {
-        $libra = $this->producto('Albacora', 10, 1.0, 1, 2);
-        $unidad = $this->producto('Almeja', 5, 100, 3, 3);
+        $albacora = $this->producto('Albacora', 10, 100);
+        $almeja = $this->producto('Almeja', 5, 100);
 
-        $pedido = $this->pedidoCon([[$libra, 2], [$unidad, 3]]);
+        $pedido = $this->pedidoCon([[$albacora, 2], [$almeja, 3]]);
 
-        $this->assertLessThan(2204.62, $libra->fresh()->stockVenta);
-        $this->assertEquals(97.0, (float) $unidad->fresh()->stock);
+        $this->assertEquals(98, $albacora->fresh()->stock);
+        $this->assertEquals(97, $almeja->fresh()->stock);
 
         $this->cancelar($pedido)->assertSessionHas('success');
 
         $this->assertSame('Cancelado', $pedido->fresh()->estado);
-        $this->assertEqualsWithDelta(2204.62, $libra->fresh()->stockVenta, 0.01);
-        $this->assertEquals(100.0, (float) $unidad->fresh()->stock);
+        $this->assertEquals(100, $albacora->fresh()->stock);
+        $this->assertEquals(100, $almeja->fresh()->stock);
     }
 
-    public function test_enviado_a_cancelado_repone_el_stock(): void
+    public function test_confirmado_a_cancelado_repone_el_stock(): void
     {
-        $producto = $this->producto('Almeja', 5, 100, 3, 3);
-        $pedido = $this->pedidoCon([[$producto, 4]]);
-        app(OrderService::class)->changeStatus($pedido, 'Enviado');
+        $variante = $this->producto('Almeja', 5, 100);
+        $pedido = $this->pedidoCon([[$variante, 4]]);
+        app(OrderService::class)->changeStatus($pedido, 'Confirmado');
 
         $this->cancelar($pedido->fresh())->assertSessionHas('success');
 
         $this->assertSame('Cancelado', $pedido->fresh()->estado);
-        $this->assertEquals(100.0, (float) $producto->fresh()->stock);
+        $this->assertEquals(100, $variante->fresh()->stock);
     }
 
     public function test_entregado_a_cancelado_es_rechazado_y_no_toca_el_stock(): void
     {
-        $producto = $this->producto('Almeja', 5, 100, 3, 3);
-        $pedido = $this->pedidoCon([[$producto, 4]]);
+        $variante = $this->producto('Almeja', 5, 100);
+        $pedido = $this->pedidoCon([[$variante, 4]]);
         $service = app(OrderService::class);
-        $service->changeStatus($pedido, 'Enviado');
+        $service->changeStatus($pedido, 'Confirmado');
+        $service->changeStatus($pedido->fresh(), 'En confección');
+        $service->changeStatus($pedido->fresh(), 'Listo para entrega');
         $service->changeStatus($pedido->fresh(), 'Entregado');
 
         $this->cancelar($pedido->fresh())->assertSessionHas('error');
 
         $this->assertSame('Entregado', $pedido->fresh()->estado);
-        $this->assertEquals(96.0, (float) $producto->fresh()->stock);
+        $this->assertEquals(96, $variante->fresh()->stock);
     }
 
     public function test_cancelado_a_pendiente_es_rechazado(): void
     {
-        $producto = $this->producto('Almeja', 5, 100, 3, 3);
-        $pedido = $this->pedidoCon([[$producto, 4]]);
+        $variante = $this->producto('Almeja', 5, 100);
+        $pedido = $this->pedidoCon([[$variante, 4]]);
         $this->cancelar($pedido);
 
         $this->actingAs($this->admin)
@@ -153,10 +158,12 @@ class OrderStatusTest extends TestCase
 
     public function test_entregado_a_pendiente_es_rechazado(): void
     {
-        $producto = $this->producto('Almeja', 5, 100, 3, 3);
-        $pedido = $this->pedidoCon([[$producto, 4]]);
+        $variante = $this->producto('Almeja', 5, 100);
+        $pedido = $this->pedidoCon([[$variante, 4]]);
         $service = app(OrderService::class);
-        $service->changeStatus($pedido, 'Enviado');
+        $service->changeStatus($pedido, 'Confirmado');
+        $service->changeStatus($pedido->fresh(), 'En confección');
+        $service->changeStatus($pedido->fresh(), 'Listo para entrega');
         $service->changeStatus($pedido->fresh(), 'Entregado');
 
         $this->actingAs($this->admin)
@@ -168,25 +175,25 @@ class OrderStatusTest extends TestCase
 
     public function test_cancelar_dos_veces_no_repone_dos_veces(): void
     {
-        $producto = $this->producto('Almeja', 5, 100, 3, 3);
-        $pedido = $this->pedidoCon([[$producto, 4]]);
+        $variante = $this->producto('Almeja', 5, 100);
+        $pedido = $this->pedidoCon([[$variante, 4]]);
 
         $this->cancelar($pedido)->assertSessionHas('success');
         $this->cancelar($pedido->fresh())->assertSessionHas('error');
 
-        $this->assertEquals(100.0, (float) $producto->fresh()->stock);
+        $this->assertEquals(100, $variante->fresh()->stock);
     }
 
     public function test_cancelar_un_pedido_cuyo_producto_fue_borrado_no_falla(): void
     {
-        $producto = $this->producto('Almeja', 5, 100, 3, 3);
-        $pedido = $this->pedidoCon([[$producto, 4]]);
+        $variante = $this->producto('Almeja', 5, 100);
+        $pedido = $this->pedidoCon([[$variante, 4]]);
 
         // La FK restrict impide el borrado normal; se fuerza el estado que el código debe tolerar.
         // En SQLite, foreign_keys=OFF no surte efecto dentro de la transacción de RefreshDatabase:
         // se difiere la comprobación al commit, que nunca llega porque la prueba hace rollback.
         DB::statement('PRAGMA defer_foreign_keys = ON');
-        Producto::whereKey($producto->producto_id)->delete();
+        Producto::whereKey($variante->producto_id)->delete();
 
         $cancelado = app(OrderService::class)->cancelOrder($pedido);
 
@@ -195,8 +202,8 @@ class OrderStatusTest extends TestCase
 
     public function test_un_cliente_no_puede_cambiar_el_estado_de_un_pedido(): void
     {
-        $producto = $this->producto('Almeja', 5, 100, 3, 3);
-        $pedido = $this->pedidoCon([[$producto, 4]]);
+        $variante = $this->producto('Almeja', 5, 100);
+        $pedido = $this->pedidoCon([[$variante, 4]]);
 
         $this->actingAs($this->cliente)
             ->put(route('admin.pedidos.update', $pedido->pedido_id), ['estado' => 'Cancelado'])

@@ -34,33 +34,63 @@ class ReporteController extends Controller
 
     public function masVendidos()
     {
-        $productos = Producto::with(['categoria', 'unidadVenta'])
-        ->withCount(['pedidos as cantidad_vendida' => function($query) {
-            $query->select(DB::raw('SUM(pedidoproducto.cantidad)'));
-        }])
-        ->orderBy('cantidad_vendida', 'desc')
-        ->take(10)
-        ->get();
+        $filas = DB::table('pedido_linea')
+            ->join('producto', 'pedido_linea.producto_id', '=', 'producto.producto_id')
+            ->leftJoin('categoria', 'producto.categoria_id', '=', 'categoria.categoria_id')
+            ->select(
+                'producto.producto_id',
+                'producto.nombre',
+                'categoria.nombre as categoria_nombre',
+                'pedido_linea.talla',
+                DB::raw('SUM(pedido_linea.cantidad) as cantidad_vendida')
+            )
+            ->groupBy('producto.producto_id', 'producto.nombre', 'categoria.nombre', 'pedido_linea.talla')
+            ->get();
+
+        $productos = $filas
+            ->groupBy('producto_id')
+            ->map(fn ($grupo) => (object) [
+                'producto_id' => $grupo->first()->producto_id,
+                'nombre' => $grupo->first()->nombre,
+                'categoria_nombre' => $grupo->first()->categoria_nombre,
+                'cantidad_vendida' => (int) $grupo->sum('cantidad_vendida'),
+                'tallas' => $grupo->map(fn ($fila) => (object) [
+                    'talla' => $fila->talla ?? 'Única',
+                    'cantidad' => (int) $fila->cantidad_vendida,
+                ])->sortByDesc('cantidad')->values(),
+            ])
+            ->sortByDesc('cantidad_vendida')
+            ->take(10)
+            ->values();
 
         return view('admin.reportes.mas_vendidos', compact('productos'));
     }
 
     public function bajoStock()
     {
+        abort_unless(Configuracion::ventaPorTallaActiva(), 404);
+
         $umbral = Configuracion::obtenerUmbralBajoStock();
 
-        $productos = Producto::with(['unidadVenta', 'unidadCompra'])->bajoStock()->get();
+        $variantes = \App\Models\ProductoVariante::with('producto.categoria')
+            ->bajoStock()
+            ->orderBy('stock')
+            ->get();
 
-        return view('admin.reportes.bajo_stock', compact('productos', 'umbral'));
+        return view('admin.reportes.bajo_stock', compact('variantes', 'umbral'));
     }
 
     public function stockPorCategoria()
     {
+        abort_unless(Configuracion::ventaPorTallaActiva(), 404);
+
         $categorias = Categoria::withCount('productos')->get();
-        
-        $stockCategorias = DB::table('producto')
+
+        $stockCategorias = DB::table('producto_variante')
+            ->join('producto', 'producto_variante.producto_id', '=', 'producto.producto_id')
             ->join('categoria', 'producto.categoria_id', '=', 'categoria.categoria_id')
-            ->select('categoria.nombre', DB::raw('SUM(producto.stock * producto.factor_conversion) as total_stock'))
+            ->where('producto_variante.activo', true)
+            ->select('categoria.nombre', DB::raw('SUM(producto_variante.stock) as total_stock'))
             ->groupBy('categoria.categoria_id', 'categoria.nombre')
             ->get();
 

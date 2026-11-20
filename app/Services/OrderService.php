@@ -5,8 +5,8 @@ namespace App\Services;
 use App\Models\Carrito;
 use App\Models\Configuracion;
 use App\Models\Pedido;
-use App\Models\PedidoProducto;
-use App\Models\Producto;
+use App\Models\PedidoLinea;
+use App\Models\ProductoVariante;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
@@ -25,37 +25,62 @@ class OrderService
      *
      * @throws \RuntimeException con un mensaje apto para el cliente.
      */
-    public function processOrder(Usuario $usuario): Pedido
+    public function processOrder(Usuario $usuario, string $metodoEntrega = 'retiro', ?string $direccionEnvio = null): Pedido
     {
-        return DB::transaction(function () use ($usuario) {
-            $items = Carrito::where('usuario_id', $usuario->usuario_id)->get();
+        return DB::transaction(function () use ($usuario, $metodoEntrega, $direccionEnvio) {
+            $items = Carrito::with(['producto', 'variante', 'tela', 'medida'])
+                ->where('usuario_id', $usuario->usuario_id)
+                ->get();
 
             if ($items->isEmpty()) {
                 throw new RuntimeException('El carrito está vacío.');
             }
 
-            // Bloquea las filas para que dos checkouts simultáneos no sobrevendan.
-            $productos = Producto::whereIn('producto_id', $items->pluck('producto_id'))
+            if (! Configuracion::ventaPorTallaActiva() && $items->contains('tipo', 'talla')) {
+                throw new RuntimeException('La venta por talla no está disponible.');
+            }
+
+            $idsTalla = $items->where('tipo', 'talla')->pluck('variante_id')->filter()->unique();
+
+            if ($idsTalla->count() !== $items->where('tipo', 'talla')->count()) {
+                throw new RuntimeException('Una de las tallas del carrito ya no está disponible. Vuelve a elegirla.');
+            }
+
+            // Bloquea las variantes para que dos checkouts simultáneos no sobrevendan.
+            $variantes = ProductoVariante::whereIn('variante_id', $idsTalla)
                 ->lockForUpdate()
                 ->get()
-                ->keyBy('producto_id');
+                ->keyBy('variante_id');
 
             $subtotal = 0.0;
+            $precios = [];
 
             foreach ($items as $item) {
-                $producto = $productos->get($item->producto_id);
+                $producto = $item->producto;
 
-                if (!$producto) {
+                if (! $producto) {
                     throw new RuntimeException('Uno de los productos del carrito ya no está disponible.');
                 }
 
-                if ($item->cantidad > $producto->stockVenta + 1e-9) {
-                    throw new RuntimeException(
-                        "Stock insuficiente para {$producto->nombre}: disponible {$producto->stockVenta}, solicitado {$item->cantidad}."
-                    );
+                if ($item->tipo === 'medida') {
+                    $this->validarMedida($item, $usuario);
+                } else {
+                    $variante = $variantes->get($item->variante_id);
+
+                    if (! $variante || ! $variante->activo) {
+                        throw new RuntimeException('Una de las tallas del carrito ya no está disponible. Vuelve a elegirla.');
+                    }
+
+                    if ($item->cantidad > $variante->stock) {
+                        throw new RuntimeException(
+                            "Stock insuficiente para {$producto->nombre} talla {$variante->talla}: disponible {$variante->stock}, solicitado {$item->cantidad}."
+                        );
+                    }
                 }
 
-                $subtotal += $item->cantidad * (float) $producto->precio;
+                $precio = $this->pricing->precioLinea($producto, $item->tela, $item->tipo);
+                $precios[$item->carrito_id] = $precio;
+                $subtotal += $item->cantidad * $precio;
             }
 
             $totales = $this->pricing->desglosar($subtotal);
@@ -67,6 +92,8 @@ class OrderService
                 'iva_pct' => $totales['iva_pct'],
                 'total' => $totales['total'],
                 'estado' => 'Pendiente',
+                'metodo_entrega' => $metodoEntrega,
+                'direccion_envio' => $metodoEntrega === 'envio' ? $direccionEnvio : null,
             ]);
 
             // Secuencial a partir del ID insertado: seguro ante concurrencia.
@@ -75,24 +102,69 @@ class OrderService
             $pedido->save();
 
             foreach ($items as $item) {
-                $producto = $productos->get($item->producto_id);
-                $precio = (float) $producto->precio;
+                $producto = $item->producto;
+                $precio = $precios[$item->carrito_id];
+                $variante = $item->tipo === 'talla' ? $variantes->get($item->variante_id) : null;
 
-                PedidoProducto::create([
+                $desglose = $this->pricing->desglosarLinea($producto, $item->tela, $item->tipo);
+
+                PedidoLinea::create([
                     'pedido_id' => $pedido->pedido_id,
                     'producto_id' => $producto->producto_id,
+                    'variante_id' => $variante?->variante_id,
+                    'tipo' => $item->tipo,
+                    'tela_id' => $item->tela_id,
+                    'tela_nombre' => $item->tela?->nombre,
+                    'medidas' => $item->tipo === 'medida' ? $item->medida?->comoArreglo() : null,
+                    'requiere_cita' => $item->requiere_cita,
+                    'notas' => $item->notas,
+                    'producto_nombre' => $producto->nombre,
+                    'talla' => $variante?->talla,
+                    'color' => $variante?->color,
                     'cantidad' => $item->cantidad,
                     'precio_unitario' => $precio,
+                    'precio_hechura' => $desglose['hechura'],
+                    'precio_tela' => $desglose['tela'],
                     'subtotal' => round($item->cantidad * $precio, 2),
                 ]);
 
-                $producto->descontarStock((float) $item->cantidad);
+                if ($variante) {
+                    $variante->descontarStock((int) $item->cantidad);
+                }
             }
 
             Carrito::where('usuario_id', $usuario->usuario_id)->delete();
 
             return $pedido->fresh();
         });
+    }
+
+    /**
+     * Valida que el encargo a medida siga siendo realizable.
+     *
+     * @throws \RuntimeException
+     */
+    private function validarMedida(Carrito $item, Usuario $usuario): void
+    {
+        if (! $item->producto->vende_a_medida) {
+            throw new RuntimeException("{$item->producto->nombre} ya no se confecciona a medida.");
+        }
+
+        if (! $item->tela || ! $item->tela->activo) {
+            throw new RuntimeException('La tela elegida ya no está disponible. Elige otra.');
+        }
+
+        if ($item->requiere_cita) {
+            return;
+        }
+
+        if (! $item->medida || $item->medida->usuario_id !== $usuario->usuario_id) {
+            throw new RuntimeException('El perfil de medidas elegido ya no está disponible.');
+        }
+
+        if (! $item->medida->tieneMedidasMinimas($item->producto->tipo_prenda)) {
+            throw new RuntimeException('El perfil de medidas está incompleto para esta prenda. Completa las medidas o pide tomarlas en el taller.');
+        }
     }
 
     /**
@@ -113,20 +185,22 @@ class OrderService
                 throw new RuntimeException("No se puede cancelar un pedido en estado {$bloqueado->estado}.");
             }
 
-            $lineas = PedidoProducto::where('pedido_id', $bloqueado->pedido_id)->get();
+            $lineas = PedidoLinea::where('pedido_id', $bloqueado->pedido_id)
+                ->whereNotNull('variante_id')
+                ->get();
 
             // Mismo bloqueo que processOrder: evita que un checkout simultáneo pise la reposición.
-            $productos = Producto::whereIn('producto_id', $lineas->pluck('producto_id'))
+            $variantes = ProductoVariante::whereIn('variante_id', $lineas->pluck('variante_id')->unique())
                 ->lockForUpdate()
                 ->get()
-                ->keyBy('producto_id');
+                ->keyBy('variante_id');
 
             foreach ($lineas as $linea) {
-                $producto = $productos->get($linea->producto_id);
+                $variante = $variantes->get($linea->variante_id);
 
-                // El producto pudo borrarse; la cancelación no debe fallar por eso.
-                if ($producto) {
-                    $producto->reponerStock((float) $linea->cantidad);
+                // La variante pudo borrarse; la cancelación no debe fallar por eso.
+                if ($variante) {
+                    $variante->reponerStock((int) $linea->cantidad);
                 }
             }
 
@@ -135,6 +209,27 @@ class OrderService
 
             return $bloqueado->fresh();
         });
+    }
+
+    /**
+     * Fecha de entrega: días hábiles de confección más las semanas de cola.
+     *
+     * La cola son las líneas a medida de pedidos confirmados o en confección.
+     */
+    public function fechaEntregaEstimada(int $diasConfeccion): \Carbon\Carbon
+    {
+        $fecha = now()->addWeekdays(max(0, $diasConfeccion));
+
+        $cola = PedidoLinea::where('tipo', 'medida')
+            ->whereHas('pedido', fn ($query) => $query->whereIn('estado', [
+                Pedido::ESTADO_CONFIRMADO,
+                Pedido::ESTADO_EN_CONFECCION,
+            ]))
+            ->count();
+
+        $semanas = intdiv($cola, Configuracion::obtenerCapacidadSemanal());
+
+        return $fecha->addWeeks($semanas)->startOfDay();
     }
 
     /**
@@ -157,6 +252,26 @@ class OrderService
 
             if (! $bloqueado->puedeCambiarA($estado)) {
                 throw new RuntimeException("No se puede pasar un pedido de {$bloqueado->estado} a {$estado}.");
+            }
+
+            $lineasMedida = PedidoLinea::where('pedido_id', $bloqueado->pedido_id)
+                ->where('tipo', 'medida')
+                ->count();
+
+            if ($estado === Pedido::ESTADO_LISTO && $bloqueado->estado === Pedido::ESTADO_CONFIRMADO && $lineasMedida > 0) {
+                throw new RuntimeException('Un pedido a medida debe pasar por «En confección» antes de estar listo.');
+            }
+
+            if ($estado === Pedido::ESTADO_CONFIRMADO && $bloqueado->fecha_entrega_estimada === null) {
+                $dias = PedidoLinea::with('producto')
+                    ->where('pedido_id', $bloqueado->pedido_id)
+                    ->where('tipo', 'medida')
+                    ->get()
+                    ->max(fn (PedidoLinea $linea) => (int) ($linea->producto->dias_confeccion ?? 0));
+
+                if ($dias > 0) {
+                    $bloqueado->fecha_entrega_estimada = $this->fechaEntregaEstimada($dias);
+                }
             }
 
             $bloqueado->estado = $estado;

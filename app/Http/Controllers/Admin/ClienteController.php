@@ -48,7 +48,9 @@ class ClienteController extends Controller
     {
         $this->soloCliente($cliente);
 
-        return view('admin.clientes.edit', compact('cliente'));
+        $medidas = $cliente->medidas()->orderBy('nombre')->get();
+
+        return view('admin.clientes.edit', compact('cliente', 'medidas'));
     }
 
     public function update(Request $request, Usuario $cliente)

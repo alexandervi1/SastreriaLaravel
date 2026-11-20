@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('body_class', 'recibo-page')
+
 @section('title', 'Recibo de Compra - ' . $pedido->numero_comprobante)
 
 @section('content')
@@ -16,12 +18,11 @@
             <div class="mt-2 small">
                 <strong>RUC:</strong> {{ $negocio['ruc'] }}<br>
                 <strong>Dirección:</strong> {{ $negocio['direccion'] }}<br>
-                <strong>Teléfono:</strong> {{ $negocio['telefono'] }}<br>
-                <strong>Matriz:</strong> MANTA - ECUADOR
+                <strong>Teléfono:</strong> {{ $negocio['telefono'] }}
             </div>
         </div>
         <div class="col-4 text-center">
-            <img src="{{ asset($negocio['logo']) }}" alt="Logo" class="receipt-logo">
+            <img src="{{ asset($negocio['logo_tinta']) }}" alt="Logo" class="receipt-logo">
         </div>
     </div>
 
@@ -57,12 +58,21 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($pedido->productos as $producto)
+            @foreach($pedido->lineas as $linea)
             <tr>
-                <td>{{ number_format($producto->pivot->cantidad, 2) }}</td>
-                <td>{{ $producto->nombre }} ({{ $producto->unidadVenta->nombre ?? 'Unidad' }})</td>
-                <td class="text-end">${{ number_format($producto->pivot->precio_unitario, 2) }}</td>
-                <td class="text-end">${{ number_format($producto->pivot->subtotal, 2) }}</td>
+                <td>{{ $linea->cantidad }}</td>
+                <td>
+                    {{ $linea->producto_nombre }}@if($linea->talla) Talla {{ $linea->talla }}@endif @if($linea->color) · {{ $linea->color }}@endif @if($linea->tela_nombre) · {{ $linea->tela_nombre }}@endif
+                    @if($linea->tipo === 'medida' && $linea->precio_hechura !== null)
+                        <div class="text-muted" style="font-size: .8em;">
+                            Hechura ${{ number_format($linea->precio_hechura, 2) }}
+                            + tela ${{ number_format($linea->precio_tela ?? 0, 2) }}
+                            = ${{ number_format($linea->precio_unitario, 2) }} (sin IVA)
+                        </div>
+                    @endif
+                </td>
+                <td class="text-end">${{ number_format($linea->precio_unitario, 2) }}</td>
+                <td class="text-end">${{ number_format($linea->subtotal, 2) }}</td>
             </tr>
             @endforeach
         </tbody>
@@ -74,7 +84,7 @@
             <div class="border p-2 rounded small bg-light" style="min-height: 100px;">
                 <strong>Observaciones:</strong><br>
                 {{ $negocio['leyenda'] }}<br>
-                Gracias por preferir Pescadería Don Walter. "Del mar a tu mesa".
+                Gracias por preferir {{ $negocio['nombre'] }}.
             </div>
         </div>
         <div class="col-12 col-sm-5">

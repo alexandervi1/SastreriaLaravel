@@ -30,22 +30,29 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($pedido->productos as $producto)
+                            @foreach($pedido->lineas as $linea)
                                 <tr>
                                     <td class="ps-4 py-3">
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ asset($producto->imagen_url ?? 'img/placeholder.jpg') }}" class="rounded-3 me-3 object-fit-cover" style="width: 50px; height: 50px;" alt="{{ $producto->nombre }}">
-                                            <span class="fw-bold">{{ $producto->nombre }}</span>
+                                            <img src="{{ asset($linea->producto->imagen_url ?? 'img/placeholder.svg') }}" class="rounded-3 me-3 object-fit-cover" style="width: 50px; height: 50px;" alt="{{ $linea->producto_nombre }}">
+                                            <div>
+                                                <span class="fw-bold d-block">{{ $linea->producto_nombre }}</span>
+                                                @if($linea->tipo === 'medida')
+                                                    <small class="text-muted">A medida @if($linea->tela_nombre) · {{ $linea->tela_nombre }}@endif</small>
+                                                @elseif($linea->talla || $linea->color)
+                                                    <small class="text-muted">{{ $linea->talla }}@if($linea->color) · {{ $linea->color }}@endif</small>
+                                                @endif
+                                            </div>
                                         </div>
                                     </td>
                                     <td class="text-center text-muted">
-                                        ${{ number_format($producto->pivot->precio_unitario, 2) }}
+                                        ${{ number_format($linea->precio_unitario, 2) }}
                                     </td>
                                     <td class="text-center">
-                                        {{ floor($producto->pivot->cantidad) }} {{ $producto->unidadVenta->abreviatura ?? 'u' }}
+                                        {{ $linea->cantidad }} u
                                     </td>
                                     <td class="text-end fw-bold pe-4">
-                                        ${{ number_format($producto->pivot->subtotal, 2) }}
+                                        ${{ number_format($linea->subtotal, 2) }}
                                     </td>
                                 </tr>
                             @endforeach
@@ -91,6 +98,27 @@
                     <a href="{{ route('pedidos.receipt', $pedido->pedido_id) }}" target="_blank" class="btn btn-brand-dark w-100 py-2 fw-bold">
                         <i class="fas fa-file-invoice me-2"></i> Ver Recibo / Imprimir
                     </a>
+
+                    @if($pedido->lineas->contains('requiere_cita', true) && $pedido->estado !== 'Cancelado')
+                        <a href="{{ route('citas.create', ['tipo' => 'medidas', 'pedido_id' => $pedido->pedido_id]) }}" class="btn btn-primary w-100 py-2 fw-bold mt-2">
+                            <i class="fas fa-calendar-plus me-2"></i> Agenda tu cita de medidas
+                        </a>
+                    @endif
+
+                    @if($pedido->estado === 'En confección')
+                        <a href="{{ route('citas.create', ['tipo' => 'prueba', 'pedido_id' => $pedido->pedido_id]) }}" class="btn btn-outline-primary w-100 py-2 fw-bold mt-2">
+                            <i class="fas fa-ruler me-2"></i> Agendar prueba
+                        </a>
+                    @endif
+
+                    @php
+                        $waPago = \App\Support\WhatsApp::enlace('Hola, quiero coordinar el pago del pedido ' . ($pedido->numero_comprobante ?? $pedido->pedido_id) . ' por $' . number_format((float) $pedido->total, 2) . '.');
+                    @endphp
+                    @if($waPago)
+                        <a href="{{ $waPago }}" target="_blank" rel="noopener" class="btn btn-success w-100 py-2 fw-bold mt-2">
+                            <i class="fab fa-whatsapp me-2"></i> Coordinar pago por WhatsApp
+                        </a>
+                    @endif
                 </div>
             </div>
             <div class="card-footer bg-light border-0 rounded-bottom-4 py-3 text-center">

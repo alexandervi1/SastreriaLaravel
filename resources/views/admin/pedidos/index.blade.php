@@ -51,8 +51,12 @@
                         <td>
                             @if($pedido->estado == 'Entregado')
                                 <span class="badge bg-success rounded-pill px-3 py-2">Entregado</span>
-                            @elseif($pedido->estado == 'Enviado')
-                                <span class="badge bg-info rounded-pill px-3 py-2 text-dark">Enviado</span>
+                            @elseif($pedido->estado == 'Confirmado')
+                                <span class="badge bg-primary rounded-pill px-3 py-2">Confirmado</span>
+                            @elseif($pedido->estado == 'En confección')
+                                <span class="badge bg-info rounded-pill px-3 py-2 text-dark">En confección</span>
+                            @elseif($pedido->estado == 'Listo para entrega')
+                                <span class="badge bg-success rounded-pill px-3 py-2">Listo para entrega</span>
                             @elseif($pedido->estado == 'Cancelado')
                                 <span class="badge bg-danger rounded-pill px-3 py-2">Cancelado</span>
                             @else

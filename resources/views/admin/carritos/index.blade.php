@@ -37,7 +37,7 @@
                                 <div class="small text-muted">{{ $item->producto->categoria->nombre ?? '' }}</div>
                             </td>
                             <td class="text-center">
-                                {{ $item->cantidad }} {{ $item->producto->unidadVenta->abreviatura ?? 'u' }}
+                                {{ $item->cantidad }} u
                             </td>
                             <td class="text-center text-muted">${{ number_format($item->producto->precio ?? 0, 2) }}</td>
                             <td class="text-end fw-bold text-success">${{ number_format($item->cantidad * ($item->producto->precio ?? 0), 2) }}</td>

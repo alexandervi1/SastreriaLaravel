@@ -10,7 +10,7 @@
             <div class="card-body p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h6 class="text-uppercase fw-bold stat-label mb-0">Total Productos</h6>
-                    <i class="fas fa-fish fa-2x opacity-75"></i>
+                    <i class="fas fa-shirt fa-2x opacity-75"></i>
                 </div>
                 <h2 class="display-5 fw-bold mb-0">{{ $totalProductos }}</h2>
             </div>
@@ -52,6 +52,22 @@
         </div>
     </div>
 
+    <!-- Citas de hoy -->
+    <div class="col">
+        <div class="card h-100 rounded-4 border-0 shadow-sm stat-card stat-card-navy">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="text-uppercase fw-bold stat-label mb-0">Citas de hoy</h6>
+                    <i class="fas fa-calendar-check fa-2x opacity-75"></i>
+                </div>
+                <h2 class="display-5 fw-bold mb-0">{{ $citasHoy }}</h2>
+            </div>
+            <div class="card-footer bg-transparent border-0 pt-0 px-4 pb-4">
+                <a href="{{ route('admin.citas.index') }}" class="text-white text-decoration-none small text-uppercase fw-bold">Ver agenda <i class="fas fa-arrow-right ms-1"></i></a>
+            </div>
+        </div>
+    </div>
+
     <!-- Resumen de Ingresos -->
     <div class="col">
         <div class="card h-100 rounded-4 border-0 shadow-sm stat-card stat-card-sky">
@@ -71,7 +87,7 @@
 
 <div class="row g-4 mb-4">
     <!-- Gráfico de Ventas Mensuales Analíticas -->
-    <div class="col-12 col-xl-8">
+    <div class="col-12 {{ $ventaPorTalla ? 'col-xl-8' : '' }}">
         <div class="card border-0 shadow-sm rounded-4 h-100">
             <div class="card-header bg-white py-3 border-bottom d-flex align-items-center">
                 <i class="fas fa-chart-area text-primary fs-5 me-2"></i>
@@ -85,6 +101,7 @@
     </div>
 
     <!-- Alertas Activas de Stock -->
+    @if($ventaPorTalla)
     <div class="col-12 col-xl-4">
         <div class="card border-0 shadow-sm rounded-4 h-100">
             <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
@@ -101,11 +118,13 @@
                             <div class="d-flex align-items-center">
                                 <span class="bg-danger rounded-circle p-2 me-3 d-inline-block shadow-sm"></span>
                                 <div>
-                                    <h6 class="mb-0 fw-bold">{{ $prod->nombre }}</h6>
-                                    <small class="text-muted"><i class="fas fa-tag me-1"></i>{{ $prod->categoria->nombre ?? 'Sin Categoría' }}</small>
+                                    <h6 class="mb-0 fw-bold">{{ $prod->producto->nombre ?? 'Modelo eliminado' }}</h6>
+                                    <small class="text-muted">
+                                        <i class="fas fa-ruler-combined me-1"></i>Talla {{ $prod->talla }}@if($prod->color) · {{ $prod->color }}@endif
+                                    </small>
                                 </div>
                             </div>
-                            <span class="badge bg-danger rounded-pill px-3 py-2 fs-6 shadow-sm">Solo {{ floor($prod->stockVenta) }} {{ $prod->unidadVenta->abreviatura ?? 'u' }}</span>
+                            <span class="badge bg-danger rounded-pill px-3 py-2 fs-6 shadow-sm">Solo {{ $prod->stock }} u</span>
                         </div>
                     @empty
                         <div class="text-center py-5">
@@ -118,6 +137,7 @@
             </div>
         </div>
     </div>
+    @endif
 </div>
 
 <!-- Cola Prioritaria: Últimos 5 Pedidos -->
@@ -158,8 +178,12 @@
                         <td class="py-3">
                             @if($pr->estado == 'Entregado')
                                 <span class="badge bg-success rounded-pill px-3 py-2 shadow-sm"><i class="fas fa-check me-1"></i>Entregado</span>
-                            @elseif($pr->estado == 'Enviado')
-                                <span class="badge bg-info rounded-pill px-3 py-2 text-dark shadow-sm"><i class="fas fa-truck me-1"></i>Enviado</span>
+                            @elseif($pr->estado == 'Confirmado')
+                                <span class="badge bg-primary rounded-pill px-3 py-2 shadow-sm"><i class="fas fa-check me-1"></i>Confirmado</span>
+                            @elseif($pr->estado == 'En confección')
+                                <span class="badge bg-info rounded-pill px-3 py-2 text-dark shadow-sm"><i class="fas fa-scissors me-1"></i>En confección</span>
+                            @elseif($pr->estado == 'Listo para entrega')
+                                <span class="badge bg-success rounded-pill px-3 py-2 shadow-sm"><i class="fas fa-box me-1"></i>Listo</span>
                             @elseif($pr->estado == 'Cancelado')
                                 <span class="badge bg-danger rounded-pill px-3 py-2 shadow-sm"><i class="fas fa-times me-1"></i>Cancelado</span>
                             @else

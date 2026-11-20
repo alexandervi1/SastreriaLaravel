@@ -16,7 +16,7 @@
     <div class="text-center py-5 bg-white rounded-4 shadow-sm">
         <i class="fas fa-shopping-basket fa-4x text-muted mb-3"></i>
         <h3 class="fw-bold text-secondary">Tu carrito está vacío</h3>
-        <p class="text-muted mb-4">¡Agrega algunos pescados o mariscos para empezar!</p>
+        <p class="text-muted mb-4">Agrega un terno por talla o un encargo a medida para empezar.</p>
         <a href="{{ route('home') }}" class="btn btn-info btn-lg fw-bold text-dark px-5">Ir al Catálogo</a>
     </div>
 @else
@@ -32,9 +32,9 @@
                             <thead class="table-light">
                                 <tr>
                                     <th scope="col" class="ps-4">Producto</th>
-                                    <th scope="col" class="text-center">Precio</th>
-                                    <th scope="col" class="text-center" style="width: 150px;">Cantidad</th>
-                                    <th scope="col" class="text-end">Subtotal</th>
+                                    <th scope="col" class="text-center d-none d-md-table-cell">Precio</th>
+                                    <th scope="col" class="text-center" style="width: 110px;">Cantidad</th>
+                                    <th scope="col" class="text-end d-none d-md-table-cell">Subtotal</th>
                                     <th scope="col" class="text-center pe-4">Acción</th>
                                 </tr>
                             </thead>
@@ -43,28 +43,47 @@
                                     <tr>
                                         <td class="ps-4 py-3">
                                             <div class="d-flex align-items-center">
-                                                <img src="{{ asset($item->producto->imagen_url ?? 'img/placeholder.jpg') }}" class="rounded-3 me-3 object-fit-cover" style="width: 60px; height: 60px;" alt="{{ $item->producto->nombre }}">
+                                                <img src="{{ asset($item->producto->imagen_url ?? 'img/placeholder.svg') }}" class="rounded-3 me-3 object-fit-cover" style="width: 60px; height: 60px;" alt="{{ $item->producto->nombre }}">
                                                 <div>
                                                     <h6 class="mb-0 fw-bold">{{ $item->producto->nombre }}</h6>
-                                                    <small class="text-muted">{{ $item->producto->categoria->nombre ?? '' }}</small>
+                                                    <small class="text-muted">
+                                                        {{ $item->producto->categoria->nombre ?? '' }}
+                                                        @if($item->tipo === 'medida')
+                                                            · A medida @if($item->tela) · {{ $item->tela->nombre }}@endif
+                                                            @if($item->requiere_cita) · Medidas en taller @endif
+                                                        @elseif($item->variante)
+                                                            · Talla {{ $item->variante->talla }}@if($item->variante->color) · {{ $item->variante->color }}@endif
+                                                        @endif
+                                                    </small>
+                                                    @if($item->tipo === 'medida')
+                                                        <div class="small text-muted mt-1">
+                                                            Hechura ${{ number_format($desgloses[$item->carrito_id]['hechura'], 2) }}
+                                                            + tela ${{ number_format($desgloses[$item->carrito_id]['tela'], 2) }}
+                                                            = <span class="fw-bold">${{ number_format($desgloses[$item->carrito_id]['total'], 2) }}</span>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-center">
-                                            ${{ number_format($item->producto->precio, 2) }} <small class="text-muted">/ {{ $item->producto->unidadVenta->abreviatura }}</small>
+                                        <td class="text-center d-none d-md-table-cell">
+                                            ${{ number_format($precios[$item->carrito_id], 2) }}
                                         </td>
                                         <td>
-                                            <form action="{{ route('carrito.actualizar') }}" method="POST" class="d-flex justify-content-center">
-                                                @csrf
-                                                @method('PUT')
-                                                <input type="hidden" name="carrito_id" value="{{ $item->carrito_id }}">
-                                                <div class="input-group input-group-sm w-75">
-                                                    <input type="number" name="cantidad" class="form-control text-center bg-light" value="{{ floor($item->cantidad) }}" min="1" max="{{ floor($item->producto->stockVenta) }}" onchange="this.form.submit()">
-                                                </div>
-                                            </form>
+                                            @if($item->tipo === 'medida')
+                                                <div class="text-center text-muted small">1 unidad</div>
+                                            @else
+                                                <form action="{{ route('carrito.actualizar') }}" method="POST" class="d-flex justify-content-center">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="hidden" name="carrito_id" value="{{ $item->carrito_id }}">
+                                                    <div class="input-group input-group-sm w-75">
+                                                        <input type="number" name="cantidad" class="form-control text-center bg-light" value="{{ $item->cantidad }}" min="1" max="{{ $item->variante->stock ?? 0 }}" onchange="this.form.submit()">
+                                                    </div>
+                                                </form>
+                                            @endif
                                         </td>
-                                        <td class="text-end fw-bold text-success">
-                                            ${{ number_format($item->subtotal, 2) }}
+                                        <td class="text-end fw-bold text-success d-none d-md-table-cell">
+                                            ${{ number_format($subtotales[$item->carrito_id], 2) }}
                                         </td>
                                         <td class="text-center pe-4">
                                             <form action="{{ route('carrito.eliminar') }}" method="POST">
@@ -111,9 +130,24 @@
 
                     <form action="{{ route('pedidos.procesar') }}" method="POST">
                         @csrf
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small" for="metodo_entrega">Entrega *</label>
+                            <select name="metodo_entrega" id="metodo_entrega" class="form-select" required>
+                                <option value="retiro" {{ old('metodo_entrega') === 'envio' ? '' : 'selected' }}>Retiro en el taller</option>
+                                <option value="envio" {{ old('metodo_entrega') === 'envio' ? 'selected' : '' }}>Envío a domicilio</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small" for="direccion_envio">Dirección de envío</label>
+                            <input type="text" name="direccion_envio" id="direccion_envio" class="form-control" value="{{ old('direccion_envio', auth()->user()->direccion) }}" maxlength="255">
+                            <div class="form-text">Obligatoria si eliges envío.</div>
+                        </div>
                         <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow">
                             <i class="fas fa-check-circle me-2"></i> Confirmar Pedido
                         </button>
+                        <p class="text-muted small text-center mt-3 mb-0">
+                            Al confirmar aceptas las <a href="{{ route('politicas') }}">políticas de cambios y devoluciones</a>.
+                        </p>
                     </form>
                     
                     <p class="text-muted small text-center mt-3 mb-0">

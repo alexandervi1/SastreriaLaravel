@@ -82,4 +82,6 @@
         </form>
     </div>
 </div>
+
+@yield('medidas')
 @endsection
