@@ -3,24 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
-use App\Models\Categoria;
 use App\Models\Tela;
 
 class HomeController extends Controller
 {
     public function index(\Illuminate\Http\Request $request)
     {
-        $categorias = Categoria::all();
         $query = Producto::with(['categoria']);
-        
-        $categoria_actual = null;
-        if ($request->has('categoria') && !empty($request->categoria)) {
-            $categoria_actual = Categoria::find($request->categoria);
-            if ($categoria_actual) {
-                $query->where('categoria_id', $categoria_actual->categoria_id);
-            }
-        }
-        
+
         if ($request->has('buscar') && !empty($request->buscar)) {
             $buscar = $request->buscar;
             $query->where(function($q) use ($buscar) {
@@ -45,7 +35,7 @@ class HomeController extends Controller
             $query->where('tipo_prenda', $tipoActual);
         }
         
-        if (!$request->has('categoria') && !$request->has('buscar') && !$publicoActual && !$tipoActual) {
+        if (!$request->has('buscar') && !$publicoActual && !$tipoActual) {
             // Si no hay filtros, mostrar solo hasta 8 productos como antes
             $query->orderBy('nombre')->take(8);
         }
@@ -61,7 +51,7 @@ class HomeController extends Controller
 
         $telas = Tela::where('activo', true)->orderBy('nombre')->get();
 
-        return view('home', compact('productos', 'categorias', 'categoria_actual', 'destacados', 'publicoActual', 'tipoActual', 'telas'));
+        return view('home', compact('productos', 'destacados', 'publicoActual', 'tipoActual', 'telas'));
     }
 
     public function quienesSomos()

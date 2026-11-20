@@ -63,12 +63,4 @@ class SeoMetadataTest extends TestCase
         $response->assertSee('property="og:image" content="' . asset('img/placeholder.svg') . '"', false);
         $response->assertSee('Terno Slim Fit ·', false);
     }
-
-    public function test_la_categoria_tiene_su_propia_descripcion(): void
-    {
-        $response = $this->get(route('categorias.show', 1));
-
-        $response->assertOk();
-        $response->assertSee('Ternos y accesorios de la categoría Ternos.', false);
-    }
 }

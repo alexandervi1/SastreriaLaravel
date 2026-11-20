@@ -84,7 +84,8 @@ class PagesSmokeTest extends TestCase
         $this->get(route('politicas'))->assertOk();
         $this->get(route('terminos'))->assertOk();
         $this->get(route('productos.show', $producto->slug))->assertOk();
-        $this->get(route('categorias.show', $producto->categoria_id))->assertOk();
+        $this->get(route('catalogo'))->assertOk();
+        $this->get('/categorias/' . $producto->categoria_id)->assertRedirect(route('catalogo'));
 
         $this->actingAs($this->cliente)->get(route('carrito.index'))->assertOk();
         $this->actingAs($this->cliente)->get(route('pedidos.index'))->assertOk();

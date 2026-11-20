@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductoPublicoController;
-use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\Admin\ProductoController as AdminProductoController;
@@ -22,7 +22,8 @@ Route::get('/terminos', [HomeController::class, 'terminos'])->name('terminos');
 
 
 Route::get('/productos/{producto:slug}', [ProductoPublicoController::class, 'show'])->name('productos.show');
-Route::get('/categorias/{categoria}', [CategoriaController::class, 'show'])->name('categorias.show');
+Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo');
+Route::get('/categorias/{categoria}', fn () => redirect()->route('catalogo'))->name('categorias.show');
 
 // ── Rutas de Autenticación ──
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login')->middleware('guest');

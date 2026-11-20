@@ -24,6 +24,23 @@ class ContenidoSoloMedidaTest extends TestCase
         $response->assertDontSee('$');
     }
 
+    public function test_el_catalogo_filtra_solo_por_publico_y_prenda(): void
+    {
+        $response = $this->get(route('home'));
+
+        $response->assertOk();
+        $response->assertDontSee('categorias/', false);
+        $response->assertSee('publico=caballero', false);
+        $response->assertSee('tipo_prenda=abrigo', false);
+
+        $catalogo = $this->get(route('catalogo'));
+        $catalogo->assertOk();
+        $catalogo->assertSee('Hechura desde');
+        $catalogo->assertDontSee('categorias/', false);
+
+        $this->get('/categorias/1')->assertRedirect(route('catalogo'));
+    }
+
     public function test_la_home_explica_el_proceso_a_medida(): void
     {
         $response = $this->get(route('home'));
