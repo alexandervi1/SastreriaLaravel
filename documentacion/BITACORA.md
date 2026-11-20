@@ -33,6 +33,22 @@ con el hash real del commit de la subfase.
 - [x] F3.5 — `3ccf209` — enlaces de WhatsApp para pagos y citas — pruebas: 149 passed
 - [x] F3.5b — `e208a5a` — corrige la compilación de los enlaces de WhatsApp — pruebas: 149 passed
 
+<!-- F4 -->
+- [x] F4.1 — `10d1c8c` — paleta y tipografía de sastrería — pruebas: 158 passed
+- [x] F4.2 — `590f8c4` — nombre, logo y favicon configurables — pruebas: 158 passed
+- [x] F4.3 — `2f9af71` — home, guía de tallas, medidas y políticas — pruebas: 158 passed
+- [x] F4.4 — `ec28086` — galería de imágenes por modelo — pruebas: 158 passed
+- [x] F4.5 — `4bd2a42` — metadatos y Open Graph — pruebas: 158 passed
+
+<!-- F5 -->
+- [x] F5.1 — `66528a4` — catálogo demo de ternos y telas — pruebas: 158 passed
+- [x] F5.2 — `c054d06` — cobertura de extremo a extremo de los tres flujos — pruebas: 160 passed
+- [x] F5.3 — `577c051` + `bb1776b` — ajustes responsive y de accesibilidad — pruebas: 160 passed
+
+<!-- F6 -->
+- [x] F6.1 — `3127b85` — notas de despliegue — pruebas: 160 passed
+- [ ] F6.2 — prompt para el agente del servidor (lo hace la persona)
+
 ## Puertas Docker
 
 | Fase | Resultado |
@@ -40,7 +56,39 @@ con el hash real del commit de la subfase.
 | F1 | **OK.** Build `sastreria:verif`; `/api/salud` → `{"estado":"ok"}`. Básico: `/`, `/login`, `/registro`, `/ayuda` y ficha por slug → 200; `/admin` sin sesión → 302. Flujo talla: registro → login → variante 1 con cantidad 2 → checkout → stock 10→8 → admin cancela → 8→10 → reactivar a Entregado rechazado (sigue `Cancelado`). Permisos en `public/img/productos` y `storage/framework/cache` OK; `production.ERROR` = 0. `/politicas` y `public/img/telas` llegan en F4.3 y F2.1, así que no se probaron en esta puerta. |
 | F2 | **OK.** Build `sastreria:verif`; `/api/salud` 200. Flujo talla cubierto en F1. Flujo medida: admin crea tela y modelo a medida → cliente se registra, crea perfil (pecho 101.5) → agrega encargo con tela → checkout → `pedido_linea.medidas` contiene la copia (pecho 101.5) → admin pasa a `Confirmado` y `En confección` → `fecha_entrega_estimada` = 2026-12-03 → orden de trabajo 200 y muestra 101.5 y la tela. Permisos en `public/img/telas` OK; `production.ERROR` = 0. |
 | F3 | **OK.** Build `sastreria:verif`. Flujo talla: stock 10→8. Flujo medida: pedido con copia de medidas (101.5), admin lo confirma y pasa a `En confección`; orden de trabajo 200 con las medidas. Flujo cita: 12 huecos para el viernes; cliente A reserva 09:00; cliente B intenta el mismo hueco y queda 1 sola cita; el admin la confirma y la agenda del día la muestra. `production.ERROR` = 0. |
-| F5 | pendiente |
+| F5 | **OK.** Build `sastreria:verif` con el catálogo demo. Básico: `/`, `/login`, `/registro`, `/ayuda`, `/politicas`, `/terminos` y ficha por slug → 200; `/admin` sin sesión → 302. Talla: variante 1 con cantidad 2 → stock 4→2; el admin cancela → 4. Medida: perfil con pecho 101.5 → encargo con tela → `pedido_linea.medidas` conserva la copia; confirmado y en confección, fecha 2026-12-17; orden de trabajo 200 con 101.5. Cita: 12 huecos; cliente A reserva 09:00; otro cliente no puede repetir el hueco; el admin la confirma y aparece en la agenda. Permisos en `public/img/productos`, `public/img/telas` y caché OK; `production.ERROR` = 0. |
+
+## Contrastes medidos (WCAG)
+
+| Combinación | Ratio | Uso |
+|---|---|---|
+| Carbón `#1C1C1E` / marfil `#F7F4EE` | 15.50 | texto principal |
+| Atenuado `#5C5F66` / marfil | 5.83 | texto secundario |
+| Blanco / azul noche `#1F2A44` | 14.26 | botones y sidebar |
+| Blanco / carbón | 17.01 | botón oscuro |
+| Éxito `#146C43` / marfil | 5.88 | estados |
+| Peligro `#B02A37` / marfil | 5.92 | errores |
+| Aviso `#B45309` / marfil | 4.57 | avisos |
+| Dorado `#B08D57` / azul noche | 4.61 | acento sobre fondo oscuro |
+| Dorado / marfil | 2.82 | **solo bordes e iconos**, nunca texto |
+
+## Revisión visual (F5.3)
+
+Anchos revisados: 360, 768, 1024 y 1440 px.
+
+* Home: 360, 768 y 1440.
+* Ficha de producto (pestañas por talla y a medida): 360 y 768.
+* Carrito con una línea: 360.
+* Nuevo perfil de medidas: 360.
+* Nueva cita con huecos: 360.
+* Agenda del taller: 1024 y 1440.
+* Edición de producto con variantes y galería: 768 y 1440.
+* Panel: 1440.
+
+Corregido tras la revisión: enlaces del footer sin recorte, sidebar legible a 1024, columnas de
+precio/subtotal ocultas en el carrito móvil, acciones del catálogo según el modo de venta,
+iconos de sastre y textos de producto. La orden de trabajo se validó por HTTP en la puerta
+Docker, no con captura visual.
 
 ## Datos pendientes de la dueña (`PENDIENTE DATO`)
 
@@ -104,3 +152,17 @@ con el hash real del commit de la subfase.
   `admin/pedidos/show` (error 500). Se reemplazó por bloques `@php ... @endphp` y se
   añadió una prueba que renderiza esa vista; las puertas Docker lo detectaron porque
   la suite no visitaba el detalle del pedido en el panel.
+- **2026-11-19 — F4:** el detector de Impeccable marca Inter como tipografía
+  sobreusada; se mantiene porque el plan la fija explícitamente. Coste si es erróneo:
+  menor diferenciación tipográfica, sin impacto funcional.
+- **2026-11-19 — F4.3/F4.5:** la metadata de la home viajó en el commit de contenido
+  porque comparte archivo; F4.5 conserva la prueba y la metadata de categoría.
+- **2026-11-19 — F5.3:** se eliminaron del seeder el nombre, correo, dirección y
+  teléfono reales del administrador heredados de la pescadería; ahora son
+  `Administrador` y `admin@example.com`. Coste si es erróneo: ninguno; los datos
+  productivos se definen por entorno.
+- **2026-11-19 — F5.3:** en móvil el carrito oculta precio y subtotal por línea; el
+  resumen y el total siguen visibles. Coste si es erróneo: menos detalle por línea en
+  pantallas pequeñas.
+- **2026-11-19 — F6.1:** el despliegue se documenta como patrón (`~/infra/apps/<app>`),
+  sin rutas, IPs ni subredes del servidor.
