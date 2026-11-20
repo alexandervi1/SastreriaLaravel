@@ -68,7 +68,8 @@ class AppServiceProvider extends ServiceProvider
             return [
                 'nombre' => (string) Configuracion::obtenerValor('negocio_nombre', '<NOMBRE_NEGOCIO>'),
                 'ruc' => (string) Configuracion::obtenerValor('negocio_ruc', ''),
-                'direccion' => (string) Configuracion::obtenerValor('negocio_direccion', ''),
+                'direccion' => Configuracion::obtenerDireccionPublica(),
+                'direccion_publica' => Configuracion::obtenerDireccionPublica(),
                 'telefono' => (string) Configuracion::obtenerValor('negocio_telefono', ''),
                 'leyenda' => (string) Configuracion::obtenerValor('negocio_leyenda', ''),
                 'logo' => Configuracion::obtenerLogo(),
@@ -78,6 +79,7 @@ class AppServiceProvider extends ServiceProvider
                 'nombre' => '<NOMBRE_NEGOCIO>',
                 'ruc' => '',
                 'direccion' => '',
+                'direccion_publica' => '',
                 'telefono' => '',
                 'leyenda' => '',
                 'logo' => 'img/placeholder.svg',

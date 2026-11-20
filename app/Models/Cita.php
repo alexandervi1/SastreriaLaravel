@@ -12,6 +12,14 @@ class Cita extends Model
 
     public const TIPOS = [self::TIPO_MEDIDAS, self::TIPO_PRUEBA, self::TIPO_CONSULTA];
 
+    public const LUGAR_TALLER = 'taller';
+    public const LUGAR_DOMICILIO = 'domicilio';
+
+    public const LUGARES = [
+        self::LUGAR_TALLER => 'En el taller',
+        self::LUGAR_DOMICILIO => 'A domicilio',
+    ];
+
     public const ESTADO_SOLICITADA = 'Solicitada';
     public const ESTADO_CONFIRMADA = 'Confirmada';
     public const ESTADO_ATENDIDA = 'Atendida';
@@ -40,7 +48,7 @@ class Cita extends Model
     protected $table = 'cita';
     protected $primaryKey = 'cita_id';
 
-    protected $fillable = ['usuario_id', 'tipo', 'inicio', 'fin', 'estado', 'pedido_id', 'notas'];
+    protected $fillable = ['usuario_id', 'tipo', 'lugar', 'direccion_cliente', 'inicio', 'fin', 'estado', 'pedido_id', 'notas'];
 
     protected $casts = [
         'inicio' => 'datetime',

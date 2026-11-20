@@ -19,6 +19,15 @@
                 <label class="form-label fw-bold small">Día</label>
                 <input type="date" name="dia" class="form-control" value="{{ $dia->toDateString() }}">
             </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold small">Lugar</label>
+                <select name="lugar" class="form-select">
+                    <option value="taller" {{ $lugar === 'taller' ? 'selected' : '' }}>En el taller</option>
+                    @if($domicilioActiva)
+                        <option value="domicilio" {{ $lugar === 'domicilio' ? 'selected' : '' }}>A domicilio</option>
+                    @endif
+                </select>
+            </div>
             <div class="col-md-2">
                 <button class="btn btn-outline-primary w-100">Ver huecos</button>
             </div>
@@ -46,12 +55,19 @@
                         <option value="consulta">Consulta</option>
                     </select>
                 </div>
+                <input type="hidden" name="lugar" value="{{ $lugar }}">
+                @if($lugar === 'domicilio')
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Dirección de la visita *</label>
+                        <input type="text" name="direccion_cliente" class="form-control" required maxlength="255" placeholder="Calle, número, referencia">
+                    </div>
+                @endif
                 <div class="col-12">
                     <label class="form-label fw-bold">Horario *</label>
                     <div class="d-flex flex-wrap gap-2">
                         @foreach($huecos as $hueco)
                             <input type="radio" class="btn-check" name="inicio" id="hueco-admin-{{ $loop->index }}" value="{{ $hueco['inicio']->format('Y-m-d H:i:s') }}" {{ $loop->first ? 'checked' : '' }} required>
-                            <label class="btn btn-outline-primary" for="hueco-admin-{{ $loop->index }}">{{ $hueco['inicio']->format('H:i') }}</label>
+                            <label class="btn btn-outline-primary" for="hueco-admin-{{ $loop->index }}">{{ $hueco['inicio']->format('H:i') }}–{{ $hueco['fin']->format('H:i') }}</label>
                         @endforeach
                     </div>
                 </div>

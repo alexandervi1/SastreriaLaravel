@@ -20,6 +20,12 @@
 @else
     <div class="row row-cols-1 row-cols-md-2 g-4">
         @foreach($citas as $cita)
+            @php
+                $lugarLabel = \App\Models\Cita::LUGARES[$cita->lugar] ?? $cita->lugar;
+                $direccionVisible = $cita->lugar === 'domicilio'
+                    ? $cita->direccion_cliente
+                    : ($cita->estado === 'Confirmada' ? \App\Models\Configuracion::obtenerDireccionExacta() : null);
+            @endphp
             <div class="col">
                 <div class="card h-100 border-0 shadow-sm rounded-4">
                     <div class="card-body">
@@ -29,6 +35,12 @@
                         </div>
                         <p class="mb-2"><i class="far fa-calendar me-2 text-muted"></i>{{ $cita->inicio->format('d/m/Y') }}</p>
                         <p class="mb-2"><i class="far fa-clock me-2 text-muted"></i>{{ $cita->inicio->format('H:i') }} – {{ $cita->fin->format('H:i') }}</p>
+                        <p class="mb-2"><i class="fas fa-location-dot me-2 text-muted"></i>{{ $lugarLabel }}</p>
+                        @if($direccionVisible)
+                            <p class="mb-2 small"><i class="fas fa-map-pin me-2 text-muted"></i>{{ $direccionVisible }}</p>
+                        @elseif($cita->lugar === 'taller')
+                            <p class="mb-2 small text-muted">La dirección exacta se comparte al confirmar la cita.</p>
+                        @endif
                         @if($cita->pedido)
                             <p class="mb-0 small text-muted">Pedido {{ $cita->pedido->numero_comprobante ?? $cita->pedido->pedido_id }}</p>
                         @endif
@@ -43,7 +55,11 @@
                                 </button>
                             </form>
                             @php
-                                $waCita = \App\Support\WhatsApp::enlace('Hola, tengo una cita el ' . $cita->inicio->format('d/m/Y') . ' a las ' . $cita->inicio->format('H:i') . '.');
+                                $textoCita = 'Hola, tengo una cita el ' . $cita->inicio->format('d/m/Y') . ' a las ' . $cita->inicio->format('H:i') . '.';
+                                if ($direccionVisible) {
+                                    $textoCita .= ' La cita es en ' . $direccionVisible . '.';
+                                }
+                                $waCita = \App\Support\WhatsApp::enlace($textoCita);
                             @endphp
                             @if($waCita)
                                 <a href="{{ $waCita }}" target="_blank" rel="noopener" class="btn btn-success w-100 rounded-pill fw-bold mt-2">

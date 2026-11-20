@@ -57,10 +57,15 @@
 
                             <h6 class="fw-bold mb-4 text-primary"><i class="fas fa-map-marked-alt me-2"></i> Local y Contactos</h6>
                             <div class="row g-4 mb-5">
-                                <div class="col-md-7">
-                                    <label class="form-label fw-bold text-secondary">Dirección del Local</label>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-secondary">Dirección pública</label>
+                                    <input type="text" class="form-control" name="negocio_direccion_publica" value="{{ old('negocio_direccion_publica', $configuraciones['negocio_direccion_publica']) }}" placeholder="Riobamba, sector…">
+                                    <div class="form-text mt-2"><i class="fas fa-eye me-1"></i> Se muestra en la web y en los comprobantes.</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-secondary">Dirección exacta del taller (privada)</label>
                                     <input type="text" class="form-control" name="negocio_direccion" value="{{ old('negocio_direccion', $configuraciones['negocio_direccion']) }}" required>
-                                    <div class="form-text mt-2"><i class="fas fa-info-circle me-1"></i> Se muestra en el pie de página y en los comprobantes.</div>
+                                    <div class="form-text mt-2"><i class="fas fa-lock me-1"></i> Solo la ve el cliente con una cita confirmada en el taller y el panel.</div>
                                 </div>
                                 <div class="col-md-5">
                                     <label class="form-label fw-bold text-secondary">Teléfono de Soporte</label>
@@ -185,6 +190,19 @@
                                     <label class="form-label fw-bold text-secondary" for="negocio_whatsapp">WhatsApp del taller</label>
                                     <input type="text" class="form-control" id="negocio_whatsapp" name="negocio_whatsapp" value="{{ old('negocio_whatsapp', $configuraciones['negocio_whatsapp']) }}" placeholder="593999999999">
                                     <div class="form-text">Formato internacional sin «+».</div>
+                                </div>
+                                <div class="col-12"><hr class="my-2"></div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <div class="form-check form-switch">
+                                        <input type="hidden" name="cita_domicilio_activa" value="0">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="cita_domicilio_activa" name="cita_domicilio_activa" value="1" {{ old('cita_domicilio_activa', $configuraciones['cita_domicilio_activa']) === '1' ? 'checked' : '' }}>
+                                        <label class="form-check-label fw-bold text-secondary" for="cita_domicilio_activa">Permitir citas a domicilio</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="form-label fw-bold text-secondary" for="cita_domicilio_zona">Zona de visitas</label>
+                                    <input type="text" class="form-control" id="cita_domicilio_zona" name="cita_domicilio_zona" value="{{ old('cita_domicilio_zona', $configuraciones['cita_domicilio_zona']) }}" placeholder="Solo dentro de Riobamba urbano">
+                                    <div class="form-text">Se muestra al cliente al elegir domicilio.</div>
                                 </div>
                             </div>
 

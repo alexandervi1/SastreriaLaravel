@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
         Configuracion::create(['clave' => 'negocio_nombre', 'valor' => '<NOMBRE_NEGOCIO>']);
         Configuracion::create(['clave' => 'negocio_ruc', 'valor' => '']);
         Configuracion::create(['clave' => 'negocio_direccion', 'valor' => '']);
+        Configuracion::create(['clave' => 'negocio_direccion_publica', 'valor' => 'Riobamba, sector [COMPLETAR]']);
         Configuracion::create(['clave' => 'negocio_telefono', 'valor' => '']);
         Configuracion::create(['clave' => 'negocio_leyenda', 'valor' => '']);
         Configuracion::create(['clave' => 'negocio_logo', 'valor' => 'img/negocio/logo-placeholder.svg']);
@@ -41,6 +42,8 @@ class DatabaseSeeder extends Seeder
         Configuracion::create(['clave' => 'cita_duracion_min', 'valor' => '45']);
         Configuracion::create(['clave' => 'cita_anticipacion_max_dias', 'valor' => '30']);
         Configuracion::create(['clave' => 'cita_cancelacion_min_horas', 'valor' => '24']);
+        Configuracion::create(['clave' => 'cita_domicilio_activa', 'valor' => '1']);
+        Configuracion::create(['clave' => 'cita_domicilio_zona', 'valor' => 'Solo dentro de Riobamba urbano']);
         Configuracion::create(['clave' => 'negocio_whatsapp', 'valor' => '']);
 
         // ── 3. Categorías ──

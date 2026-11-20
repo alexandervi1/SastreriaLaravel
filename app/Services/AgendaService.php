@@ -18,8 +18,9 @@ class AgendaService
      *
      * @return array<int, array{inicio: Carbon, fin: Carbon}>
      */
-    public function huecosDisponibles(Carbon $dia): array
+    public function huecosDisponibles(Carbon $dia, int $bloques = 1): array
     {
+        $bloques = max(1, $bloques);
         $zona = Configuracion::obtenerZonaHoraria();
         $dia = $dia->copy()->setTimezone($zona)->startOfDay();
         $hoy = Carbon::now($zona);
@@ -55,12 +56,13 @@ class AgendaService
 
         $huecos = [];
         $cursor = $inicioJornada->copy();
+        $paso = $duracion * $bloques;
 
-        while ($cursor->copy()->addMinutes($duracion)->lte($finJornada)) {
-            $fin = $cursor->copy()->addMinutes($duracion);
+        while ($cursor->copy()->addMinutes($paso)->lte($finJornada)) {
+            $fin = $cursor->copy()->addMinutes($paso);
 
             if ($cursor->lt($hoy)) {
-                $cursor = $fin;
+                $cursor = $cursor->copy()->addMinutes($paso);
                 continue;
             }
 
@@ -82,16 +84,38 @@ class AgendaService
      *
      * @throws \RuntimeException con un mensaje apto para el cliente.
      */
-    public function reservar(Usuario $usuario, string $tipo, Carbon $inicio, ?Pedido $pedido = null, ?string $notas = null): Cita
-    {
+    public function reservar(
+        Usuario $usuario,
+        string $tipo,
+        Carbon $inicio,
+        ?Pedido $pedido = null,
+        ?string $notas = null,
+        string $lugar = Cita::LUGAR_TALLER,
+        ?string $direccionCliente = null
+    ): Cita {
         if (! in_array($tipo, Cita::TIPOS, true)) {
             throw new RuntimeException('Tipo de cita inválido.');
         }
 
+        if (! array_key_exists($lugar, Cita::LUGARES)) {
+            throw new RuntimeException('Lugar de cita inválido.');
+        }
+
+        if ($lugar === Cita::LUGAR_DOMICILIO) {
+            if (! Configuracion::citaDomicilioActiva()) {
+                throw new RuntimeException('Las citas a domicilio no están disponibles.');
+            }
+
+            if (trim((string) $direccionCliente) === '') {
+                throw new RuntimeException('Indica la dirección donde tomaremos las medidas.');
+            }
+        }
+
         $zona = Configuracion::obtenerZonaHoraria();
         $inicio = $inicio->copy()->setTimezone($zona);
+        $bloques = $lugar === Cita::LUGAR_DOMICILIO ? 2 : 1;
 
-        return DB::transaction(function () use ($usuario, $tipo, $inicio, $pedido, $notas) {
+        return DB::transaction(function () use ($usuario, $tipo, $inicio, $pedido, $notas, $lugar, $direccionCliente, $bloques) {
             $dia = $inicio->copy()->startOfDay();
 
             // Bloquea las citas activas del día antes de revalidar.
@@ -100,7 +124,7 @@ class AgendaService
                 ->lockForUpdate()
                 ->get();
 
-            $hueco = collect($this->huecosDisponibles($dia))
+            $hueco = collect($this->huecosDisponibles($dia, $bloques))
                 ->first(fn (array $h) => $h['inicio']->equalTo($inicio));
 
             if (! $hueco) {
@@ -110,6 +134,8 @@ class AgendaService
             return Cita::create([
                 'usuario_id' => $usuario->usuario_id,
                 'tipo' => $tipo,
+                'lugar' => $lugar,
+                'direccion_cliente' => $lugar === Cita::LUGAR_DOMICILIO ? trim((string) $direccionCliente) : null,
                 'inicio' => $hueco['inicio'],
                 'fin' => $hueco['fin'],
                 'estado' => Cita::ESTADO_SOLICITADA,

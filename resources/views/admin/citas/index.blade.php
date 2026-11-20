@@ -49,6 +49,14 @@
                                         <div>
                                             <div class="fw-bold">{{ $cita->inicio->format('H:i') }} – {{ $cita->fin->format('H:i') }}</div>
                                             <div>{{ $cita->usuario->nombre_completo ?? 'Cliente eliminado' }} · <span class="text-capitalize">{{ $cita->tipo }}</span></div>
+                                            <div class="small text-muted">
+                                                <i class="fas fa-location-dot me-1"></i>{{ \App\Models\Cita::LUGARES[$cita->lugar] ?? $cita->lugar }}
+                                                @if($cita->lugar === 'domicilio')
+                                                    · {{ $cita->direccion_cliente }}
+                                                @elseif(\App\Models\Configuracion::obtenerDireccionExacta())
+                                                    · {{ \App\Models\Configuracion::obtenerDireccionExacta() }}
+                                                @endif
+                                            </div>
                                             @if($cita->pedido)
                                                 <div class="small text-muted">Pedido {{ $cita->pedido->numero_comprobante ?? $cita->pedido->pedido_id }}</div>
                                             @endif

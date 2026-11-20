@@ -36,6 +36,7 @@ class ConfiguracionController extends Controller
             'negocio_nombre' => Configuracion::obtenerValor('negocio_nombre', ''),
             'negocio_ruc' => Configuracion::obtenerValor('negocio_ruc', ''),
             'negocio_direccion' => Configuracion::obtenerValor('negocio_direccion', ''),
+            'negocio_direccion_publica' => Configuracion::obtenerValor('negocio_direccion_publica', ''),
             'negocio_telefono' => Configuracion::obtenerValor('negocio_telefono', ''),
             'negocio_leyenda' => Configuracion::obtenerValor('negocio_leyenda', ''),
             'negocio_logo' => Configuracion::obtenerLogo(),
@@ -46,6 +47,8 @@ class ConfiguracionController extends Controller
             'cita_duracion_min' => Configuracion::obtenerDuracionCita(),
             'cita_anticipacion_max_dias' => Configuracion::obtenerAnticipacionMaxima(),
             'cita_cancelacion_min_horas' => Configuracion::obtenerCancelacionMinima(),
+            'cita_domicilio_activa' => Configuracion::citaDomicilioActiva() ? '1' : '0',
+            'cita_domicilio_zona' => Configuracion::obtenerZonaDomicilio(),
             'negocio_whatsapp' => Configuracion::obtenerWhatsapp(),
         ];
 
@@ -71,6 +74,7 @@ class ConfiguracionController extends Controller
             'negocio_nombre' => 'sometimes|required|string|max:255',
             'negocio_ruc' => 'sometimes|required|string|max:13',
             'negocio_direccion' => 'sometimes|required|string|max:255',
+            'negocio_direccion_publica' => 'nullable|string|max:255',
             'negocio_telefono' => 'sometimes|required|string|max:20',
             'negocio_leyenda' => 'nullable|string|max:255',
             'negocio_logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048|dimensions:max_width=4000,max_height=4000',
@@ -81,6 +85,8 @@ class ConfiguracionController extends Controller
             'cita_duracion_min' => 'nullable|integer|between:15,240',
             'cita_anticipacion_max_dias' => 'nullable|integer|between:1,365',
             'cita_cancelacion_min_horas' => 'nullable|integer|between:0,168',
+            'cita_domicilio_activa' => 'sometimes|boolean',
+            'cita_domicilio_zona' => 'nullable|string|max:255',
             'negocio_whatsapp' => ['nullable', 'string', 'regex:/^[0-9]{8,15}$/'],
         ], [
             'comprobante_serie.regex' => 'La serie debe tener el formato 000-000 (por ejemplo 001-001).',

@@ -350,13 +350,15 @@ class AdminFixesTest extends TestCase
 
     public function test_footer_uses_the_business_configuration(): void
     {
-        Configuracion::updateOrCreate(['clave' => 'negocio_direccion'], ['valor' => 'Calle Configurada 123']);
+        Configuracion::updateOrCreate(['clave' => 'negocio_direccion'], ['valor' => 'Calle Exacta 456']);
+        Configuracion::updateOrCreate(['clave' => 'negocio_direccion_publica'], ['valor' => 'Calle Configurada 123']);
         Configuracion::updateOrCreate(['clave' => 'negocio_telefono'], ['valor' => '0990001111']);
 
         $response = $this->get(route('home'));
 
         $response->assertOk();
         $response->assertSee('Calle Configurada 123');
+        $response->assertDontSee('Calle Exacta 456');
         $response->assertSee('0990001111');
     }
 

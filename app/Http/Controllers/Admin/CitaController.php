@@ -55,9 +55,11 @@ class CitaController extends Controller
             : Carbon::now($zona)->addDay()->startOfDay();
 
         $clientes = Usuario::where('rol_id', 2)->orderBy('nombre_completo')->get();
-        $huecos = app(AgendaService::class)->huecosDisponibles($dia);
+        $lugar = $request->query('lugar') === Cita::LUGAR_DOMICILIO ? Cita::LUGAR_DOMICILIO : Cita::LUGAR_TALLER;
+        $huecos = app(AgendaService::class)->huecosDisponibles($dia, $lugar === Cita::LUGAR_DOMICILIO ? 2 : 1);
+        $domicilioActiva = Configuracion::citaDomicilioActiva();
 
-        return view('admin.citas.create', compact('clientes', 'huecos', 'dia'));
+        return view('admin.citas.create', compact('clientes', 'huecos', 'dia', 'lugar', 'domicilioActiva'));
     }
 
     public function store(Request $request, AgendaService $agenda)
@@ -65,6 +67,8 @@ class CitaController extends Controller
         $data = $request->validate([
             'usuario_id' => 'required|exists:usuario,usuario_id',
             'tipo'       => 'required|in:medidas,prueba,consulta',
+            'lugar'      => 'nullable|in:taller,domicilio',
+            'direccion_cliente' => 'nullable|required_if:lugar,domicilio|string|max:255',
             'inicio'     => 'required|date',
             'notas'      => 'nullable|string|max:500',
         ]);
@@ -77,7 +81,15 @@ class CitaController extends Controller
 
         try {
             $inicio = Carbon::parse($data['inicio'], Configuracion::obtenerZonaHoraria());
-            $agenda->reservar($cliente, $data['tipo'], $inicio, null, $data['notas'] ?? null);
+            $agenda->reservar(
+                $cliente,
+                $data['tipo'],
+                $inicio,
+                null,
+                $data['notas'] ?? null,
+                $data['lugar'] ?? Cita::LUGAR_TALLER,
+                $data['direccion_cliente'] ?? null
+            );
         } catch (RuntimeException $e) {
             return back()->with('error', $e->getMessage());
         }

@@ -96,6 +96,26 @@ class Configuracion extends Model
         return (string) self::obtenerValor('venta_por_talla', '0') === '1';
     }
 
+    public static function citaDomicilioActiva(): bool
+    {
+        return (string) self::obtenerValor('cita_domicilio_activa', '1') === '1';
+    }
+
+    public static function obtenerZonaDomicilio(): string
+    {
+        return (string) self::obtenerValor('cita_domicilio_zona', '');
+    }
+
+    public static function obtenerDireccionPublica(): string
+    {
+        return (string) self::obtenerValor('negocio_direccion_publica', '');
+    }
+
+    public static function obtenerDireccionExacta(): string
+    {
+        return (string) self::obtenerValor('negocio_direccion', '');
+    }
+
     /**
      * Días ISO en que abre el taller.
      *
