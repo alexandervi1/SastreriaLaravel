@@ -16,7 +16,7 @@
     <div class="text-center py-5 bg-white rounded-4 shadow-sm">
         <i class="fas fa-shopping-basket fa-4x text-muted mb-3"></i>
         <h3 class="fw-bold text-secondary">Tu carrito está vacío</h3>
-        <p class="text-muted mb-4">¡Agrega algunos pescados o mariscos para empezar!</p>
+        <p class="text-muted mb-4">Agrega un terno por talla o un encargo a medida para empezar.</p>
         <a href="{{ route('home') }}" class="btn btn-info btn-lg fw-bold text-dark px-5">Ir al Catálogo</a>
     </div>
 @else

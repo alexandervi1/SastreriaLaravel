@@ -16,8 +16,7 @@
             <div class="mt-2 small">
                 <strong>RUC:</strong> {{ $negocio['ruc'] }}<br>
                 <strong>Dirección:</strong> {{ $negocio['direccion'] }}<br>
-                <strong>Teléfono:</strong> {{ $negocio['telefono'] }}<br>
-                <strong>Matriz:</strong> MANTA - ECUADOR
+                <strong>Teléfono:</strong> {{ $negocio['telefono'] }}
             </div>
         </div>
         <div class="col-4 text-center">
@@ -74,7 +73,7 @@
             <div class="border p-2 rounded small bg-light" style="min-height: 100px;">
                 <strong>Observaciones:</strong><br>
                 {{ $negocio['leyenda'] }}<br>
-                Gracias por preferir Pescadería Don Walter. "Del mar a tu mesa".
+                Gracias por preferir {{ $negocio['nombre'] }}.
             </div>
         </div>
         <div class="col-12 col-sm-5">

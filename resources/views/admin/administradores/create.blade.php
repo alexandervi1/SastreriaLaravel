@@ -23,7 +23,7 @@
             <div class="row g-4 mb-4">
                 <div class="col-md-6">
                     <label class="form-label fw-bold">Nombres y Apellidos *</label>
-                    <input type="text" class="form-control" name="nombre_completo" value="{{ old('nombre_completo', $administrador->nombre_completo ?? '') }}" required placeholder="Ej. Maritza Rosero">
+                    <input type="text" class="form-control" name="nombre_completo" value="{{ old('nombre_completo', $administrador->nombre_completo ?? '') }}" required placeholder="Ej. Nombre Apellido">
                 </div>
 
                 <div class="col-md-6">
