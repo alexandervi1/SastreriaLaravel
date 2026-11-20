@@ -102,6 +102,25 @@ vendor/bin/phpstan analyse --no-progress --memory-limit=1G
 
 ---
 
+## 🚀 Despliegue
+
+El servidor usa el patrón de `~/infra/apps/<app>`: el repositorio se clona en esa carpeta,
+el `docker-compose.yml` del proyecto corre **sin `ports:`** y se une a la red `proxy-net`,
+donde nginx y el túnel de Cloudflare publican el dominio. No escribas rutas reales, IPs ni
+subredes en este repositorio.
+
+* **Contenedores:** `sastreria-app` y `sastreria-db`; la app usa `DB_HOST=sastreria-db`.
+* **Variables mínimas:** `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL`, `APP_KEY`,
+  `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`, `INITIAL_ADMIN_*` (solo en el primer arranque).
+* **Persistencia:** volúmenes para `public/img` (productos, telas y logo) y `storage`.
+* **Migraciones:** el entrypoint espera a MySQL y ejecuta `migrate --force`; no hay paso manual.
+* **Respaldo:** programa un `mysqldump` y una copia de `public/img` con la misma política de
+  retención que el resto de aplicaciones del servidor.
+* **Arranque:** el entrypoint cachea configuración, rutas, vistas y eventos cuando
+  `APP_ENV=production`.
+
+---
+
 ## 📂 Arquitectura
 
 * **MVC** con controladores delgados y lógica de negocio en `app/Services/`
@@ -111,5 +130,3 @@ vendor/bin/phpstan analyse --no-progress --memory-limit=1G
   y memoizada por petición.
 * **Un solo stylesheet** (`public/css/style.css`) con primitivos de marca, tokens semánticos y
   puente a Bootstrap; las vistas no usan colores hex.
-
-El despliegue se documenta en la sección «Despliegue» de este README.
