@@ -123,7 +123,10 @@ class SeederProduccionTest extends TestCase
         $this->assertTrue(\App\Models\Producto::where('tipo_prenda', 'terno_3p')->where('publico', 'caballero')->exists());
         $this->assertTrue(\App\Models\Producto::where('publico', 'dama')->where('tipo_prenda', 'abrigo')->exists());
         $this->assertTrue(\App\Models\Producto::where('publico', 'nino')->exists());
-        $this->assertTrue(is_file(public_path('img/productos/demo/demo-1.svg')));
+        foreach (\App\Models\Producto::all() as $producto) {
+            $this->assertStringStartsWith('img/productos/modelos/', $producto->imagen_url);
+            $this->assertFileExists(public_path($producto->imagen_url));
+        }
     }
 
     public function test_los_precios_demo_son_reales_y_las_telas_no_se_disparan(): void
