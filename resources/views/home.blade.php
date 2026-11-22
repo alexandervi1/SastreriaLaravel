@@ -30,9 +30,7 @@
         </div>
     </div>
     <div class="col-lg-6 hero-image-wrap">
-        @php
-            $hero = is_file(public_path('img/productos/demo/demo-1.svg')) ? 'img/productos/demo/demo-1.svg' : 'img/placeholder.svg';
-        @endphp
+        @php($hero = $destacados->firstWhere('tipo_prenda', 'terno_2p')?->imagen_url ?? $destacados->first()?->imagen_url ?? 'img/placeholder.svg')
         <img src="{{ asset($hero) }}" alt="Terno de gala confeccionado a medida" class="w-100 h-100 object-fit-cover">
     </div>
 </section>
